@@ -1,2 +1,2 @@
 # SmartIEP
-Simple database for student IEP's
+Simple database webapp for student IEP's
