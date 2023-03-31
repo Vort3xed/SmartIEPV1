@@ -40,6 +40,14 @@
                 </div>
             </form>
         </div>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="notification is-danger border border-secondary border-3" style="width: 50%; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+            {{ messages[0] }}. Go to <a href="/">login page</a>.
+        </div>
+        {% endif %}
+        {% endwith %}
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>
