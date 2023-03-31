@@ -1,5 +1,6 @@
 import bcrypt
 from flask import Flask, render_template, request, redirect, url_for, flash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -22,43 +23,49 @@ class Students(db.Model):
 	goals = db.Column(db.String(200),nullable=False)
 
 @app.route("/")
-def login():
+def home():
+	return render_template("login.html")
+
+@app.route("/signin", methods=('GET', 'POST'))
+def signin():
+	if request.method == 'POST':
+		username = request.form["logusername"]
+		password = request.form["logpassword"]
+
+		user = Accounts.query.filter_by(username=username).first()
+
+		if not user or not check_password_hash(user.password, password):
+			flash('Please check your login details and try again.')
+			print(check_password_hash(user.password,password))
+			return render_template("login.html")
+		else:
+			accounts = Accounts.query.all()
+			return render_template('accounts.html',accounts=accounts)
+
 	return render_template("login.html")
 
 @app.route("/register", methods=('GET', 'POST'))
 def register():
 	if request.method == 'POST':
-		username = request.form["username"]
-		password = request.form["password"]
+		username = request.form["regusername"]
+		password = request.form["regpassword"]
 
-		user = Accounts.query.filter_by(username=username).first() # if this returns a user, then the email already exists in database
+		user = Accounts.query.filter_by(username=username).first()
 		
-		if user: # if a user is found, we want to redirect back to signup page so user can try again
+		if user:
 			flash('Email address already exists')
 			return render_template("register.html")
 
-		account_user = Accounts(username=username, password=password)
+		account_user = Accounts(username=username, password=generate_password_hash(password, method='sha256'))
 
 		db.session.add(account_user)
 		db.session.commit()
-		#return redirect(url_for('index'))
 	return render_template("register.html")
 
 @app.route("/accounts")
 def account():
 	accounts = Accounts.query.all()
 	return render_template('accounts.html',accounts=accounts)
-
-@app.route("/", methods=('GET', 'POST'))
-def signin():
-	accountData = Accounts.query.all()
-	if request.method == 'POST':
-		if Accounts.password.verify_password(request.form["password"]) and request.form["username"] == Accounts.username:
-			return render_template('accounts.html',accounts=accountData)
-
-def verify_password(self, password):
-    pwhash = bcrypt.hashpw(password, self.password)
-    return self.password == pwhash
 
 if __name__ == '__main__':
 	app.run(debug=True)
