@@ -13,6 +13,7 @@ db.init_app(app)
 class Accounts(db.Model):
 	__tablename__ = 'accounts'
 	account_id = db.Column(db.Integer, primary_key=True)
+	callname = db.Column(db.String(200),nullable=False)
 	username = db.Column(db.String(200),nullable=False)
 	password = db.Column(db.String(200),nullable=False)
 
@@ -36,7 +37,6 @@ def signin():
 
 		if not user or not check_password_hash(user.password, password):
 			flash('Please check your login details and try again.')
-			print(check_password_hash(user.password,password))
 			return render_template("login.html")
 		else:
 			accounts = Accounts.query.all()
@@ -47,6 +47,7 @@ def signin():
 @app.route("/register", methods=('GET', 'POST'))
 def register():
 	if request.method == 'POST':
+		callname = request.form["regcallname"]
 		username = request.form["regusername"]
 		password = request.form["regpassword"]
 
@@ -56,7 +57,7 @@ def register():
 			flash('Email address already exists')
 			return render_template("register.html")
 
-		account_user = Accounts(username=username, password=generate_password_hash(password, method='sha256'))
+		account_user = Accounts(callname=callname, username=username, password=generate_password_hash(password, method='sha256'))
 
 		db.session.add(account_user)
 		db.session.commit()
