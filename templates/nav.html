@@ -1,23 +1,33 @@
 <nav class="px-4 navbar fixed-top navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">SmartIEP</a>
+    <a class="navbar-brand" href="/"><img src="static\smartieplogo.png" alt="" width="120" height="40"></a>
     <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button> -->
-    <div id="navbarText">
+    <div>
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
           <a class="nav-link" href="/signin">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="register">Register</a>
+          <a class="nav-link" href="/register">Register</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="accounts">Accounts</a>
+          <a class="nav-link" href="/contactus">Contact Us</a>
+        </li>
+        {% if current_user.is_authenticated %}
+        <li class="nav-item">
+          <a class="nav-link" href="/accounts">Accounts</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/contactus">Contact Us</a>
-          </li>
+          <a class="nav-link" href="/logout">Log out</a>
+        </li>
+      
+        <span class="navbar-text navbar-right">
+          Signed in as {{ current_user.callname }}
+        </span>
       </ul>
+        {% endif %}
+      
       <!-- <span class="navbar-text">
         Navbar text with an inline element
       </span> -->
