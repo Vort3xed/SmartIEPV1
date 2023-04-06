@@ -43,6 +43,10 @@ auth = Blueprint('auth', __name__)
 def home():
 	return render_template("login.html")
 
+@main.route("/contactus")
+def contactus():
+	return render_template("contactus.html")
+
 @main.route("/accounts")
 @login_required
 def account():
