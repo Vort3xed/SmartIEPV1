@@ -30,7 +30,9 @@ class Students(db.Model):
 	__tablename__ = 'students'
 	student_id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(200),nullable=False)
-	goals = db.Column(db.String(200),nullable=False)
+	grade = db.Column(db.Integer)
+	dateofbirth = db.Column(db.String(200),nullable=False)
+	tasks = db.Column(db.String(500),nullable=False)
 
 @login_manager.user_loader
 def load_user(account_id):
