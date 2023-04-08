@@ -12,7 +12,15 @@
                 flex-direction: row;
                 flex-wrap: wrap;
             }
-            </style>
+            body {
+                padding-top: 60px;
+            }
+            @media (max-width: 979px) {
+                body {
+                    padding-top: 0px;
+                }
+            }
+        </style>
 
         <title>SmartIEP</title>
         <link rel="icon" type="image/x-icon" href="static\smallsmartieplogo.png">
@@ -24,10 +32,6 @@
     </header>
 
     <body>
-        &nbsp;
-        &nbsp;
-        &nbsp;
-        &nbsp;
         <div class="content">
             {% for account in accounts %}
                 <div class="m-4 border border-primary rounded">

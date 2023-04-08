@@ -12,6 +12,14 @@
                 flex-direction: row;
                 flex-wrap: wrap;
             }
+            body {
+                padding-top: 60px;
+            }
+            @media (max-width: 979px) {
+                body {
+                    padding-top: 0px;
+                }
+            }
             </style>
 
         <title>SmartIEP</title>
@@ -24,10 +32,7 @@
     </header>
 
     <body>
-        &nbsp;
-        &nbsp;
-        &nbsp;
-        &nbsp;
+        
         <div class="content">
             {% for student in students %}
                 <div class="m-4 border border-primary rounded">
@@ -37,13 +42,20 @@
                         <li>{{ student.grade }}</li>
                         <li>{{ student.dateofbirth }}</li>
                     </ul>
-                    {% for taskarr in parse_tasks(student.tasks) %}
+                    {% for taskarr in parse_tasks(student.tasks) if not taskarr|length == 0%}
                         <ul>
-                            <li>{{ taskarr[0] }}</li>
+                            <!-- <li>{{ taskarr[0] }}</li> -->
+                            <li>
+                                <input type="checkbox" {% if taskarr[0][0] == "1" %} checked="checked"{% endif %}>{{ taskarr[0][1:] }}</input>
+                            </li>
+                            </li>
                                 <ul>
                                     {% set counter = 1%}
                                     {% for objective in taskarr[1:] %}
-                                        <li>{{ taskarr[loop.index] }}</li>
+                                        <!-- <li>{{ taskarr[loop.index] }}</li> -->
+                                        <li>
+                                            <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}>{{ taskarr[loop.index][1:] }}</input>
+                                        </li>
                                     {% endfor %}
                                 </ul>
                         </ul>
