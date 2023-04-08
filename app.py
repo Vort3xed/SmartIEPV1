@@ -1,4 +1,5 @@
 import bcrypt
+import re
 from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -51,9 +52,15 @@ def contactus():
 
 @main.route("/accounts")
 @login_required
-def account():
+def accounts():
 	accounts = Accounts.query.all()
 	return render_template('accounts.html',accounts=accounts)
+
+@main.route("/students")
+@login_required
+def students():
+	students = Students.query.all()
+	return render_template('students.html',students=students)
 
 @auth.route("/signin", methods=('GET', 'POST'))
 def signin():
@@ -69,7 +76,7 @@ def signin():
 		else:
 			login_user(user)
 			accounts = Accounts.query.all()
-			return redirect(url_for('main.account'))
+			return redirect(url_for('main.accounts'))
 
 	return render_template("login.html")
 
@@ -99,6 +106,32 @@ def logout():
 
 app.register_blueprint(auth)
 app.register_blueprint(main)
+
+@app.context_processor
+def utility_processor():
+	def parse_tasks(newData):
+		tasks1 = []
+		tasks2 = []
+		tasks3 = []
+		tasks4 = []
+		tasks5 = []
+		goalArrays = [tasks1,tasks2,tasks3,tasks4,tasks5]
+		parts = newData[:-1].split(";")
+		counter = 0
+		for part in parts:
+			if part[1] == "[":
+				part = re.sub("\[.*?\]","[]",part)
+				part = part.replace("[","").replace("]","")
+				goalArrays[counter].append(part)
+				counter = counter + 1
+		for part in parts:
+			if part[1] == "(":
+				goalKey = int(part[part.find("(")+1:part.find(")")])
+				part = re.sub("\(.*?\)","()",part)
+				part = part.replace("(","").replace(")","")
+				goalArrays[goalKey].append(part)
+		return goalArrays
+	return dict(parse_tasks=parse_tasks)
 
 if __name__ == '__main__':
 	app.run(debug=True)

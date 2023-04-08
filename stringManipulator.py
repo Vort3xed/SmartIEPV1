@@ -1,7 +1,7 @@
 import re
 
 newData = "0[0]get better at english;1(0)study more;0(0)do more practice quizzes;1[1]get better at math;1(1)use khan academy;1(1)study multiplication;0(0)do a shit more reading;1(1)learn about exponents;"
-def parse_goals(newData):
+def parse_tasks(newData):
     tasks1 = []
     tasks2 = []
     tasks3 = []
@@ -24,4 +24,4 @@ def parse_goals(newData):
             goalArrays[goalKey].append(part)
 
     return goalArrays
-print(parse_goals(newData))
+print(parse_tasks(newData))

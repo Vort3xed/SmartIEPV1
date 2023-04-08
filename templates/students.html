@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            .form-group { 
+                margin-top:15px;
+            }
+            .content {
+                margin: 5px;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            </style>
+
+        <title>SmartIEP</title>
+        <link rel="icon" type="image/x-icon" href="static\smallsmartieplogo.png">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+
+    <header>
+      {% include 'nav.html' %}
+    </header>
+
+    <body>
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <div class="content">
+            {% for student in students %}
+                <div class="m-4 border border-primary rounded">
+                    <ul>
+                        <li>#{{ student.account_id }}</li>
+                        <li>{{ student.name }}</li>
+                        <li>{{ student.grade }}</li>
+                        <li>{{ student.dateofbirth }}</li>
+                    </ul>
+                    {% for taskarr in parse_tasks(student.tasks) %}
+                        <ul>
+                            <li>{{ taskarr[0] }}</li>
+                                <ul>
+                                    {% set counter = 1%}
+                                    {% for objective in taskarr[1:] %}
+                                        <li>{{ taskarr[loop.index] }}</li>
+                                    {% endfor %}
+                                </ul>
+                        </ul>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
