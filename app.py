@@ -62,6 +62,25 @@ def students():
 	students = Students.query.all()
 	return render_template('students.html',students=students)
 
+@main.route("/createstudent", methods=('GET', 'POST'))
+@login_required
+def createstudent():
+	if request.method == 'POST':
+		name = request.form["stuname"]
+		grade = request.form["stugrade"]
+		dateofbirth = request.form["studob"]
+		tasks = request.form["stutasks"]
+
+		user = Students.query.filter_by(name=name).first()
+		if user:
+			flash('Student already exists')
+			return(render_template("createstudent.html"))
+		created_student = Students(name=name,grade=grade,dateofbirth=dateofbirth,tasks=tasks)
+		db.session.add(created_student)
+		db.session.commit()
+	return(render_template("createstudent.html"))
+
+
 @auth.route("/signin", methods=('GET', 'POST'))
 def signin():
 	if request.method == 'POST':
