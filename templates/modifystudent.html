@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <style>
+            .form-group { 
+                margin-top:15px;
+            }
+        </style>
+
+        <title>SmartIEP</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="icon" type="image/x-icon" href="static\smallsmartieplogo.png">
+    </head>
+
+    <header>
+        {% include 'nav.html' %}
+    </header>
+
+    <body>
+        &nbsp;
+        <h1 class="mt-5" style="text-align: center">
+            Modify a Student
+        </h1>
+        <div class="m-4">
+            <form class="mt-2" style="text-align: center" method = "post" action="/modifystudent">
+                <div class="form-group">
+                    <label for="stuid">I.D.</label>
+                    <input class="form-control" name="modid" id="modid"
+                        placeholder="I.D.">
+                </div>
+                <div class="form-group">
+                    <label for="stuname">Name</label>
+                    <input class="form-control" name="modname" id="modname"
+                        placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label for="stugrade">Grade</label>
+                    <input class="form-control" name="modgrade" id="modgrade"
+                        placeholder="Grade">
+                </div>
+                <div class="form-group">
+                    <label for="studob">Date of Birth</label>
+                    <input class="form-control" name="moddob" id="moddob"
+                        placeholder="Date of Birth">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default border border-secondary border-3">Submit</button>
+                </div>
+            </form>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="notification is-danger border border-secondary border-3" style="width: 50%; position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                    {{ messages[0] }}. Go to <a href="/createstudent">create student page</a>.
+                </div>
+            {% endif %}
+        {% endwith %}
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

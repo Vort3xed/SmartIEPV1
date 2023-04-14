@@ -1,8 +1,8 @@
 <nav class="px-4 navbar fixed-top navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="/"><img src="static\smartieplogo.png" width="120" height="40"></a>
-    <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
-    </button> -->
+    </button>
     <div>
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
@@ -25,10 +25,13 @@
           <a class="nav-link" href="/createstudent">Create a Student</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href="/modifystudent">Modify a Student</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="/logout">Log out</a>
         </li> 
         <span class="navbar-text navbar-right">
-          Signed in as {{ current_user.callname }}
+          <b>Signed in as {{ current_user.callname }}</b>
         </span>
       </ul>
         {% endif %}

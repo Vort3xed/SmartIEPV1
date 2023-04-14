@@ -1,6 +1,6 @@
 import bcrypt
 import re
-from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint
+from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint, session
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -61,6 +61,27 @@ def accounts():
 def students():
 	students = Students.query.all()
 	return render_template('students.html',students=students)
+
+@main.route("/modifystudent", methods=('GET', 'POST'))
+@login_required
+def modifystudent():
+	if request.method == 'POST':
+		student_id = request.form["modid"]
+		name = request.form["modname"]
+		grade = request.form["modgrade"]
+		dateofbirth = request.form["moddob"]
+
+		student = Students.query.filter_by(student_id=student_id).first()
+		if student:
+			student.name = name
+			student.grade = grade
+			student.dateofbirth = dateofbirth
+
+			db.session.commit()
+			return(render_template("modifystudent.html"))
+		else:
+			flash("Student ID does not exist!")
+	return(render_template("modifystudent.html"))
 
 @main.route("/createstudent", methods=('GET', 'POST'))
 @login_required
