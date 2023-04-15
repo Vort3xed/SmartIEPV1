@@ -56,9 +56,34 @@ def accounts():
 	accounts = Accounts.query.all()
 	return render_template('accounts.html',accounts=accounts)
 
-@main.route("/students")
+@main.route("/students", methods=('GET', 'POST'))
 @login_required
 def students():
+	if request.method == 'POST':
+		button_value = request.form["submit_button"]
+		modify_student = re.sub("\D", "", button_value)
+		
+		name = request.form["boxmodname"+modify_student]
+		grade = request.form["boxmodgrade"+modify_student]
+		dob = request.form["boxmoddob"+modify_student]
+		
+		query_student = Students.query.filter_by(student_id=modify_student).first()
+
+		print(query_student.name)
+		print(query_student.grade)
+		print(query_student.dateofbirth)
+
+		if query_student:
+			query_student.name = name
+			query_student.grade = grade
+			query_student.dateofbirth = dob
+
+			db.session.commit()
+			students = Students.query.all()
+			return render_template('students.html',students=students)
+		else:
+			flash("Cannot Modify Student!")
+
 	students = Students.query.all()
 	return render_template('students.html',students=students)
 

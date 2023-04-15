@@ -42,8 +42,32 @@
                         <li>{{ student.grade }}</li>
                         <li>{{ student.dateofbirth }}</li>
                     </ul>
+
+                    <div class="container">
+                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#dropDownForm{{ student.student_id }}" aria-expanded="false" aria-controls="dropDownForm">
+                            Modify Student
+                        </button>
+                        <div class="collapse" id="dropDownForm{{ student.student_id }}">
+                            <form method = "post" action="/students">
+                                <div class="form-group">
+                                    <label for="boxmodname">Name</label>
+                                    <input type="text" class="form-control" name="boxmodname{{ student.student_id }}" id="boxmodname" placeholder="Enter name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="boxmodgrade">Grade</label>
+                                    <input type="text" class="form-control" name="boxmodgrade{{ student.student_id }}" id="boxmodgrade" placeholder="Enter grade">
+                                </div>
+                                <div class="form-group">
+                                    <label for="boxmoddob">Date of Birth</label>
+                                    <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth">
+                                </div>
+                                <button type="submit" class="btn btn-primary mt-2" name="submit_button" value="submit{{ student.student_id }}">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+
                     {% for taskarr in parse_tasks(student.tasks) if not taskarr|length == 0%}
-                        <ul>
+                        <ul class="mt-4">
                             <!-- <li>{{ taskarr[0] }}</li> -->
                             <li>
                                 <input type="checkbox" {% if taskarr[0][0] == "1" %} checked="checked"{% endif %}>{{ taskarr[0][1:] }}</input>
@@ -64,5 +88,8 @@
             {% endfor %}
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     </body>
 </html>
