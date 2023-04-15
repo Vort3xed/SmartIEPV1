@@ -69,10 +69,6 @@ def students():
 		
 		query_student = Students.query.filter_by(student_id=modify_student).first()
 
-		print(query_student.name)
-		print(query_student.grade)
-		print(query_student.dateofbirth)
-
 		if query_student:
 			query_student.name = name
 			query_student.grade = grade
@@ -86,6 +82,29 @@ def students():
 
 	students = Students.query.all()
 	return render_template('students.html',students=students)
+
+@main.route("/addgoal", methods=('GET', 'POST'))
+@login_required
+def addGoals():
+	if request.method == 'POST':
+		button_value = request.form["submit_goal"]
+		modify_student = re.sub("\D", "", button_value)
+
+		goal_to_append = request.form["addgoal"+modify_student]
+
+		query_student = Students.query.filter_by(student_id=modify_student).first()
+
+		if query_student:
+			array_index = find_next_empty_array(parse_student_tasks(query_student.tasks))
+			formatted_task = "0" + "["+str(array_index)+"]" + goal_to_append + ";"
+			query_student.tasks = query_student.tasks + formatted_task
+
+			db.session.commit()
+			return redirect(url_for('main.students'))
+		else:
+			flash("Cannot Modify Student!")
+
+
 
 @main.route("/modifystudent", methods=('GET', 'POST'))
 @login_required
@@ -172,15 +191,16 @@ def logout():
 app.register_blueprint(auth)
 app.register_blueprint(main)
 
+MAX_GOALS = 10
+
 @app.context_processor
 def utility_processor():
 	def parse_tasks(newData):
-		tasks1 = []
-		tasks2 = []
-		tasks3 = []
-		tasks4 = []
-		tasks5 = []
-		goalArrays = [tasks1,tasks2,tasks3,tasks4,tasks5]
+		goalArrays = []
+
+		for i in range(MAX_GOALS):
+			goalArrays.append([])
+
 		parts = newData[:-1].split(";")
 		counter = 0
 		for part in parts:
@@ -197,6 +217,34 @@ def utility_processor():
 				goalArrays[goalKey].append(part)
 		return goalArrays
 	return dict(parse_tasks=parse_tasks)
+
+def parse_student_tasks(newData):
+	goalArrays = []
+
+	for i in range(MAX_GOALS):
+		goalArrays.append([])
+
+	parts = newData[:-1].split(";")
+	counter = 0
+	for part in parts:
+		if part[1] == "[":
+			part = re.sub("\[.*?\]","[]",part)
+			part = part.replace("[","").replace("]","")
+			goalArrays[counter].append(part)
+			counter = counter + 1
+	for part in parts:
+		if part[1] == "(":
+			goalKey = int(part[part.find("(")+1:part.find(")")])
+			part = re.sub("\(.*?\)","()",part)
+			part = part.replace("(","").replace(")","")
+			goalArrays[goalKey].append(part)
+	return goalArrays
+
+def find_next_empty_array(arr):
+    for i in range(len(arr)):
+        if not arr[i]:
+            return i
+    return -1
 
 if __name__ == '__main__':
 	app.run(debug=True)

@@ -1,6 +1,6 @@
 import re
 
-newData = "0[0]get better at english;1(0)study more;0(0)do more practice quizzes;1[1]get better at math;1(1)use khan academy;1(1)study multiplication;0(0)do a shit more reading;1(1)learn about exponents;"
+newData = "0[0]get better at english;1(0)study more;0(0)do more practice quizzes;1[1]get better at math;1(1)use khan academy;1(1)study multiplication;0(0)do a lot more reading;1(1)learn about exponents;"
 def parse_tasks(newData):
     tasks1 = []
     tasks2 = []

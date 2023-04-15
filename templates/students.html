@@ -37,16 +37,18 @@
             {% for student in students %}
                 <div class="m-4 border border-primary rounded">
                     <ul>
-                        <li>#{{ student.student_id }}</li>
-                        <li>{{ student.name }}</li>
-                        <li>{{ student.grade }}</li>
-                        <li>{{ student.dateofbirth }}</li>
+                        <li>Student Database ID: #{{ student.student_id }}</li>
+                        <li>Name: {{ student.name }}</li>
+                        <li>Grade: {{ student.grade }}</li>
+                        <li>Date of Birth: {{ student.dateofbirth }}</li>
                     </ul>
 
                     <div class="container">
-                        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#dropDownForm{{ student.student_id }}" aria-expanded="false" aria-controls="dropDownForm">
-                            Modify Student
-                        </button>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#dropDownForm{{ student.student_id }}" aria-expanded="false" aria-controls="dropDownForm">
+                                Modify Student
+                            </button>
+                        </div>
                         <div class="collapse" id="dropDownForm{{ student.student_id }}">
                             <form method = "post" action="/students">
                                 <div class="form-group">
@@ -66,22 +68,36 @@
                         </div>
                     </div>
 
+                    <!-- HERE -->
+                    <form method="post" class="m-2" action="/addgoal">
+                        <div class="input-group mb-3">
+                          <input type="text" class="form-control" name="addgoal{{ student.student_id }}" id="addgoal" placeholder="Goals">
+                          <button class="btn btn-success" type="submit" name="submit_goal" value="submit_goal{{ student.student_id }}">+</button>
+                        </div>
+                    </form>
                     {% for taskarr in parse_tasks(student.tasks) if not taskarr|length == 0%}
-                        <ul class="mt-4">
+                        <ul class="mt-1">
                             <!-- <li>{{ taskarr[0] }}</li> -->
                             <li>
-                                <input type="checkbox" {% if taskarr[0][0] == "1" %} checked="checked"{% endif %}>{{ taskarr[0][1:] }}</input>
-                            </li>
+                                <input type="checkbox" {% if taskarr[0][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[0][1:] }}</input>
                             </li>
                                 <ul>
                                     {% set counter = 1%}
                                     {% for objective in taskarr[1:] %}
                                         <!-- <li>{{ taskarr[loop.index] }}</li> -->
                                         <li>
-                                            <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}>{{ taskarr[loop.index][1:] }}</input>
+                                            <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[loop.index][1:] }}</input>
                                         </li>
                                     {% endfor %}
                                 </ul>
+
+                                <!-- HERE -->
+                                <form method="post" class="m-2">
+                                    <div class="input-group mb-3">
+                                      <input type="text" class="form-control" placeholder="Objectives">
+                                      <button class="btn btn-success" type="submit">+</button>
+                                    </div>
+                                </form>
                         </ul>
                     {% endfor %}
                 </div>
