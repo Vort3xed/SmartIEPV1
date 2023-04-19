@@ -195,50 +195,95 @@ MAX_GOALS = 10
 
 @app.context_processor
 def utility_processor():
+	# def parse_tasks(newData):
+	# 	goalArrays = []
+
+	# 	for i in range(MAX_GOALS):
+	# 		goalArrays.append([])
+
+	# 	parts = newData[:-1].split(";")
+	# 	counter = 0
+	# 	for part in parts:
+	# 		if part[1] == "[":
+	# 			part = re.sub("\[.*?\]","[]",part)
+	# 			part = part.replace("[","").replace("]","")
+	# 			goalArrays[counter].append(part)
+	# 			counter = counter + 1
+	# 	for part in parts:
+	# 		if part[1] == "(":
+	# 			goalKey = int(part[part.find("(")+1:part.find(")")])
+	# 			part = re.sub("\(.*?\)","()",part)
+	# 			part = part.replace("(","").replace(")","")
+	# 			goalArrays[goalKey].append(part)
+	# 	return goalArrays
 	def parse_tasks(newData):
-		goalArrays = []
-
-		for i in range(MAX_GOALS):
-			goalArrays.append([])
-
-		parts = newData[:-1].split(";")
-		counter = 0
-		for part in parts:
-			if part[1] == "[":
-				part = re.sub("\[.*?\]","[]",part)
-				part = part.replace("[","").replace("]","")
-				goalArrays[counter].append(part)
-				counter = counter + 1
-		for part in parts:
-			if part[1] == "(":
-				goalKey = int(part[part.find("(")+1:part.find(")")])
-				part = re.sub("\(.*?\)","()",part)
-				part = part.replace("(","").replace(")","")
-				goalArrays[goalKey].append(part)
-		return goalArrays
+		if (newData != ""):
+			goalArrays = []
+			for i in range(MAX_GOALS):
+				goalArrays.append([])
+			parts = newData[:-1].split(";")
+			counter = 0
+			for part in parts:
+				if part[1] == "[":
+					part = re.sub("\[.*?\]","[]",part)
+					part = part.replace("[","").replace("]","")
+					goalArrays[counter].append(part)
+					counter = counter + 1
+			for part in parts:
+				if part[1] == "(":
+					goalKey = int(part[part.find("(")+1:part.find(")")])
+					part = re.sub("\(.*?\)","()",part)
+					part = part.replace("(","").replace(")","")
+					goalArrays[goalKey].append(part)            
+			return goalArrays
+		else:
+			return []
 	return dict(parse_tasks=parse_tasks)
 
+# def parse_student_tasks(newData):
+# 	goalArrays = []
+
+# 	for i in range(MAX_GOALS):
+# 		goalArrays.append([])
+
+# 	parts = newData[:-1].split(";")
+# 	counter = 0
+# 	for part in parts:
+# 		if part[1] == "[":
+# 			part = re.sub("\[.*?\]","[]",part)
+# 			part = part.replace("[","").replace("]","")
+# 			goalArrays[counter].append(part)
+# 			counter = counter + 1
+# 	for part in parts:
+# 		if part[1] == "(":
+# 			goalKey = int(part[part.find("(")+1:part.find(")")])
+# 			part = re.sub("\(.*?\)","()",part)
+# 			part = part.replace("(","").replace(")","")
+# 			goalArrays[goalKey].append(part)
+# 	return goalArrays
+
 def parse_student_tasks(newData):
-	goalArrays = []
-
-	for i in range(MAX_GOALS):
-		goalArrays.append([])
-
-	parts = newData[:-1].split(";")
-	counter = 0
-	for part in parts:
-		if part[1] == "[":
-			part = re.sub("\[.*?\]","[]",part)
-			part = part.replace("[","").replace("]","")
-			goalArrays[counter].append(part)
-			counter = counter + 1
-	for part in parts:
-		if part[1] == "(":
-			goalKey = int(part[part.find("(")+1:part.find(")")])
-			part = re.sub("\(.*?\)","()",part)
-			part = part.replace("(","").replace(")","")
-			goalArrays[goalKey].append(part)
-	return goalArrays
+    if (newData != ""):
+        goalArrays = []
+        for i in range(MAX_GOALS):
+            goalArrays.append([])
+        parts = newData[:-1].split(";")
+        counter = 0
+        for part in parts:
+            if part[1] == "[":
+                part = re.sub("\[.*?\]","[]",part)
+                part = part.replace("[","").replace("]","")
+                goalArrays[counter].append(part)
+                counter = counter + 1
+        for part in parts:
+            if part[1] == "(":
+                goalKey = int(part[part.find("(")+1:part.find(")")])
+                part = re.sub("\(.*?\)","()",part)
+                part = part.replace("(","").replace(")","")
+                goalArrays[goalKey].append(part)            
+        return goalArrays
+    else:
+        return []
 
 def find_next_empty_array(arr):
     for i in range(len(arr)):
