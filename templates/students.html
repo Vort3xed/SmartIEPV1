@@ -70,10 +70,16 @@
 
                     <!-- HERE -->
                     <form method="post" class="m-2" action="/addgoal">
-                        <div class="input-group mb-3">
-                          <input type="text" class="form-control" name="addgoal{{ student.student_id }}" id="addgoal" placeholder="Goals">
-                          <button class="btn btn-success" type="submit" name="submit_goal" value="submit_goal{{ student.student_id }}">+</button>
+                        <div class="input-group">
+                          <input type="text" class="form-control" name="add_goal{{ student.student_id }}" id="add_goal" placeholder="Add Goals">
+                          <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ student.student_id }}">+</button>
                         </div>
+                    </form>
+                    <form method="post" class="m-2" action="/removegoal">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" name="remove_goal{{ student.student_id }}" id="input_goal" placeholder="Remove Goals">
+                            <button type="submit" class="btn btn-danger" name="remove_goal" value="remove{{ student.student_id }}">-</button>
+                          </div>
                     </form>
                     {% for taskarr in parse_tasks(student.tasks) if not taskarr|length == 0%}
                         <ul class="mt-1">
