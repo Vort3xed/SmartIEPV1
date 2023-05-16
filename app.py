@@ -1,4 +1,3 @@
-import bcrypt
 import re
 from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint, session
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
@@ -198,26 +197,19 @@ def removeGoals():
 		else:
 			flash("Cannot Modify Student!")
 
-@main.route("/modifystudent", methods=('GET', 'POST'))
+@main.route("/terminatestudent", methods=('GET', 'POST'))
 @login_required
-def modifystudent():
+def terminatestudent():
 	if request.method == 'POST':
 		student_id = request.form["modid"]
-		name = request.form["modname"]
-		grade = request.form["modgrade"]
-		dateofbirth = request.form["moddob"]
-
 		student = Students.query.filter_by(student_id=student_id).first()
 		if student:
-			student.name = name
-			student.grade = grade
-			student.dateofbirth = dateofbirth
-
+			db.session.delete(student)
 			db.session.commit()
-			return(render_template("modifystudent.html"))
+			return(render_template("terminatestudent.html"))
 		else:
 			flash("Student ID does not exist!")
-	return(render_template("modifystudent.html"))
+	return(render_template("terminatestudent.html"))
 
 @main.route("/createstudent", methods=('GET', 'POST'))
 @login_required
