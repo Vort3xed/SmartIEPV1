@@ -137,7 +137,7 @@ def addGoals():
 
 		if query_student:
 			array_index = find_next_empty_array(parse_student_tasks(query_student.tasks))
-			formatted_task = "0" + "["+str(array_index)+"]" + goal_to_append + ";"
+			formatted_task = "0" + "["+str(array_index + 1)+"]" + goal_to_append + ";"
 			query_student.tasks = query_student.tasks + formatted_task
 
 			db.session.commit()
@@ -185,17 +185,12 @@ def removeGoals():
 		query_student = Students.query.filter_by(student_id=modify_student).first()
 
 		if query_student:
-			print(query_student.tasks)
-			if query_student.tasks.__contains__(goal_to_remove):
-				updated_tasks = remove_string(query_student.tasks,goal_to_remove)
-				no_objectives_for_goals = remove_objectives_for_goal(updated_tasks,goal_to_remove)
-				query_student.tasks = no_objectives_for_goals
-				db.session.commit()
-			print(query_student.tasks)
-			
+			clean_tasks = poachGoal(query_student.tasks,goal_to_remove)
+			query_student.tasks = clean_tasks
+			db.session.commit()
 			return redirect(url_for('main.students'))
 		else:
-			flash("Cannot Modify Student!")
+			flash("Cannot remove goal!")
 
 @main.route("/terminatestudent", methods=('GET', 'POST'))
 @login_required
@@ -207,6 +202,18 @@ def terminatestudent():
 			db.session.delete(student)
 			db.session.commit()
 			return(render_template("terminatestudent.html"))
+		else:
+			flash("Student ID does not exist!")
+	return(render_template("terminatestudent.html"))
+
+@main.route("/debugstudent", methods=('GET', 'POST'))
+@login_required
+def debugstudent():
+	if request.method == 'POST':
+		student_id = request.form["debugid"]
+		student = Students.query.filter_by(student_id=student_id).first()
+		if student:
+			flash(student.tasks)
 		else:
 			flash("Student ID does not exist!")
 	return(render_template("terminatestudent.html"))
@@ -243,7 +250,6 @@ def signin():
 			return render_template("login.html")
 		else:
 			login_user(user)
-			accounts = Accounts.query.all()
 			return redirect(url_for('main.accounts'))
 
 	return render_template("login.html")
@@ -381,5 +387,53 @@ def remove_string(s, substring):
         s = s[:index-4] + s[index+len(substring)+1:]
     return s
 
+def is_goal(DATA, SPECIFICATION):
+    start = DATA.find(SPECIFICATION)
+    if start == -1:
+        return False
+    if start == 0:
+        return False
+    previous_char = DATA[start-1]
+    return previous_char == ']'
+
+def find_number_in_brackets(DATA, SPECIFICATION):
+    start = DATA.find(SPECIFICATION)
+    if start == -1:
+        return None
+    start_bracket = DATA.rfind('[', 0, start)
+    end_bracket = DATA.find(']', start_bracket)
+    if start_bracket == -1 or end_bracket == -1:
+        return None
+    return DATA[start_bracket+1:end_bracket]
+
+def remove_string(s, substring):
+    index = s.find(substring)
+    if index != -1:
+        s = s[:index-4] + s[index+len(substring)+1:]
+    return s
+
+def remove_strings_with_value(number, data):
+    chunks = re.split(r';', data)
+    modified_chunks = []
+    for chunk in chunks:
+        matches = re.findall(r'\((.*?)\)', chunk)
+        
+        found = False
+        for match in matches:
+            if str(number) in match:
+                found = True
+                break
+        
+        if not found:
+            modified_chunks.append(chunk)
+    
+    modified_data = ';'.join(modified_chunks)
+    
+    return modified_data
+
+def poachGoal(data,findString):
+    if findString in data and is_goal(data,findString):
+	    return remove_strings_with_value(find_number_in_brackets(data,findString),remove_string(data,findString))
+    
 if __name__ == '__main__':
 	app.run(debug=True)

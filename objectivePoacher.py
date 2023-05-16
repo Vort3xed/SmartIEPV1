@@ -1,4 +1,6 @@
-testString = "0[0]get better at english;1(0)study more;0(0)do more practice quizzes;1[1]get better at math;1(1)use khan academy;1(1)study multiplication;0(0)do a lot more reading;1(1)learn about exponents;"
+import re
+
+testString = "0[0]get better at english;1(0)study more;0(0)do more practice quizzes;1[1]get better at math;1(1)use khan academy;1(1)study multiplication;0(0)do a lot more reading;1(1)learn about exponents;1[2]learn about roots;"
 
 def is_goal(DATA, SPECIFICATION):
     start = DATA.find(SPECIFICATION)
@@ -25,41 +27,27 @@ def remove_string(s, substring):
         s = s[:index-4] + s[index+len(substring)+1:]
     return s
 
-def remove_task_by_number(data, number):
-    tasks = data.split(";")
-    new_data = ""
-    for task in tasks:
-        if f"({number})" in task:
-            task_index = data.index(task)
-            new_data = data[:task_index-4] + data[task_index+len(task):]
-            data = new_data
-    return new_data
-
-def remove_elements(data_string, number):
-    elements = data_string.split(';')  # Split the data string into individual elements
-    result = []
-
-    for element in elements:
-        if '(' in element:
-            element_number = int(element.split('(')[1].split(')')[0])
-            if element_number == number:
-                continue  # Skip elements with a number in parentheses matching the chosen number
-        result.append(element)
-
-    return ';'.join(result)
+def remove_strings_with_value(number, data):
+    chunks = re.split(r';', data)
+    modified_chunks = []
+    for chunk in chunks:
+        matches = re.findall(r'\((.*?)\)', chunk)
+        
+        found = False
+        for match in matches:
+            if str(number) in match:
+                found = True
+                break
+        
+        if not found:
+            modified_chunks.append(chunk)
+    
+    modified_data = ';'.join(modified_chunks)
+    
+    return modified_data
 
 def poachGoal(data,findString):
     if findString in data and is_goal(data,findString):
+        return remove_strings_with_value(find_number_in_brackets(data,findString),remove_string(data,findString))
 
-        print(data)
-        ownershipCodec = find_number_in_brackets(data,findString)
-        print("codec:")
-        print(ownershipCodec)
-        goalless = remove_string(data,findString)
-        print("goal removed")
-        print(goalless)
-        poached = remove_elements(goalless,ownershipCodec)
-        print("objectives removed:")
-        print(poached)
-
-poachGoal(testString,"get better at english")
+print(poachGoal(testString,"get better at english"))

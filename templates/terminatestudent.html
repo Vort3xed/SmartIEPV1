@@ -33,12 +33,22 @@
                     <button type="submit" class="btn btn-default border border-secondary border-3">TERMINATE</button>
                 </div>
             </form>
+            <form class="mt-2" style="text-align: center" method = "post" action="/debugstudent">
+                <div class="form-group">
+                    <label for="stuid">I.D.</label>
+                    <input class="form-control" name="debugid" id="debugid"
+                        placeholder="I.D.">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-default border border-secondary border-3">Debug</button>
+                </div>
+            </form>
         </div>
 
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 <div class="notification is-danger border border-secondary border-3" style="width: 50%; position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                    {{ messages[0] }}. Go to <a href="/createstudent">create student page</a>.
+                    {{ messages[0] }}
                 </div>
             {% endif %}
         {% endwith %}
