@@ -98,14 +98,15 @@
                                 </ul>
 
                                 <!-- HERE -->
-                                <form method="post" class="m-2">
+                                <form method="post" class="m-2" action="/addobjectives">
                                     <div class="input-group mb-3">
-                                      <input type="text" class="form-control" placeholder="Objectives">
-                                      <button class="btn btn-success" type="submit">+</button>
+                                      <input type="text" class="form-control" name="{{ student.student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives">
+                                      <button class="btn btn-success" type="submit" name="add_objective" value="{{ student.student_id }};{{ loop.index }}">+</button>      
                                     </div>
-                                </form>
-                        </ul>
+                                </form> 
+                        </ul>   
                     {% endfor %}
+
                 </div>
             {% endfor %}
         </div>

@@ -16,6 +16,8 @@ login_manager = LoginManager()
 login_manager.login_view = 'auth.signin'
 login_manager.init_app(app)
 
+MAX_GOALS = 100
+
 class Accounts(UserMixin, db.Model):
 	__tablename__ = 'accounts'
 	account_id = db.Column(db.Integer, primary_key=True)
@@ -139,39 +141,34 @@ def addGoals():
 			array_index = find_next_empty_array(parse_student_tasks(query_student.tasks))
 			formatted_task = "0" + "["+str(array_index + 1)+"]" + goal_to_append + ";"
 			query_student.tasks = query_student.tasks + formatted_task
-
 			db.session.commit()
 			return redirect(url_for('main.students'))
 		else:
 			flash("Cannot Modify Student!")
 
-# def remove_objectives_for_goal(data, goal):
-#     # Find the index of the goal in the data string
-#     goal_start = data.find(f"{goal}[")
-#     if goal_start == -1:
-#         return data
+@main.route("/addobjectives", methods=('GET', 'POST'))
+@login_required
+def addObjectives():
+	if request.method == 'POST':
+		button_value = request.form["add_objective"]
+		student_and_goal = button_value.split(";")
 
-#     # Find the value in the square bracket for the given goal
-#     goal_value = int(data[goal_start+len(goal):goal_start+len(goal)+1])
+		modify_student = student_and_goal[0]
+		goal_key = student_and_goal[1]
 
-#     # Find all objectives that belong to the given goal
-#     objectives = []
-#     i = goal_start + len(goal) + 2
-#     while i < len(data):
-#         if data[i] == ')':
-#             objective_value = int(data[i-2])
-#             if objective_value == goal_value:
-#                 objective_end = data.find(';', i)
-#                 objectives.append((i-4, objective_end))
-#             i = objective_end
-#         else:
-#             i += 1
+		objective_to_add = request.form[modify_student+"obj"+goal_key]
 
-#     # Remove all objectives belonging to the given goal
-#     for start, end in reversed(objectives):
-#         data = data[:start] + data[end+1:]
+		query_student = Students.query.filter_by(student_id=modify_student).first()
+		if query_student:
+			formatted_task = "0("+str(int(goal_key)-1)+")"+objective_to_add+";"
+			query_student.tasks = query_student.tasks + formatted_task
+			db.session.commit()
+			return redirect(url_for('main.students'))
+		else:
+			flash("Cannot remove goal!")
+			return redirect(url_for('main.students'))
 
-#     return data
+
 
 @main.route("/removegoal", methods=('GET', 'POST'))
 @login_required
@@ -184,13 +181,17 @@ def removeGoals():
 
 		query_student = Students.query.filter_by(student_id=modify_student).first()
 
-		if query_student:
-			clean_tasks = poachGoal(query_student.tasks,goal_to_remove)
-			query_student.tasks = clean_tasks
-			db.session.commit()
-			return redirect(url_for('main.students'))
+		if goal_to_remove in query_student.tasks and is_goal(query_student.tasks, goal_to_remove):
+			if query_student:
+				clean_tasks = poachGoal(query_student.tasks,goal_to_remove)
+				query_student.tasks = clean_tasks
+				db.session.commit()
+				return redirect(url_for('main.students'))
+			else:
+				flash("Cannot remove goal!")
 		else:
-			flash("Cannot remove goal!")
+			flash("Goal to remove does not exist!")
+			return redirect(url_for('main.students'))
 
 @main.route("/terminatestudent", methods=('GET', 'POST'))
 @login_required
@@ -214,6 +215,21 @@ def debugstudent():
 		student = Students.query.filter_by(student_id=student_id).first()
 		if student:
 			flash(student.tasks)
+		else:
+			flash("Student ID does not exist!")
+	return(render_template("terminatestudent.html"))
+
+@main.route("/wipedata", methods=('GET', 'POST'))
+@login_required
+def wipedata():
+	if request.method == 'POST':
+		student_id = request.form["wipeid"]
+		student = Students.query.filter_by(student_id=student_id).first()
+
+		if student:
+			student.tasks = ""
+			db.session.commit()
+			return(render_template("terminatestudent.html"))
 		else:
 			flash("Student ID does not exist!")
 	return(render_template("terminatestudent.html"))
@@ -280,8 +296,6 @@ def logout():
 
 app.register_blueprint(auth)
 app.register_blueprint(main)
-
-MAX_GOALS = 10
 
 @app.context_processor
 def utility_processor():
@@ -431,9 +445,12 @@ def remove_strings_with_value(number, data):
     
     return modified_data
 
+# def poachGoal(data,findString):
+#     if findString in data and is_goal(data,findString):
+# 	    return remove_strings_with_value(find_number_in_brackets(data,findString),remove_string(data,findString))
+
 def poachGoal(data,findString):
-    if findString in data and is_goal(data,findString):
-	    return remove_strings_with_value(find_number_in_brackets(data,findString),remove_string(data,findString))
+    return remove_strings_with_value(find_number_in_brackets(data,findString),remove_string(data,findString))
     
 if __name__ == '__main__':
 	app.run(debug=True)
