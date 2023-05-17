@@ -32,8 +32,37 @@
     </header>
 
     <body>
-        
         <div class="content">
+            
+        </div>
+        <div class="content">
+            <div class="m-4 border border-primary rounded">
+                <form class="m-4" method="post" action="/createstudent">
+                    <div class="form-group">
+                        <label for="stuname">Name</label>
+                        <input class="form-control" name="stuname" id="stuname"
+                            placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="stugrade">Grade</label>
+                        <input type="number" class="form-control" name="stugrade" id="stugrade"
+                            placeholder="Grade">
+                    </div>
+                    <div class="form-group">
+                        <label for="studob">Date of Birth</label>
+                        <input class="form-control" name="studob" id="studob"
+                            placeholder="Date of Birth">
+                    </div>
+                    <div class="form-group">
+                        <label for="stutasks">Tasks (Goals and Objectives)</label>
+                        <input class="form-control" name="stutasks" id="stutasks"
+                            placeholder="Tasks">
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-default border border-secondary border-3">Submit</button>
+                    </div>
+                </form>
+            </div>
             {% for student in students %}
                 <div class="m-4 border border-primary rounded">
                     <ul>

@@ -250,7 +250,7 @@ def createstudent():
 		created_student = Students(name=name,grade=grade,dateofbirth=dateofbirth,tasks=tasks)
 		db.session.add(created_student)
 		db.session.commit()
-	return(render_template("createstudent.html"))
+	return redirect(url_for('main.students'))
 
 
 @auth.route("/signin", methods=('GET', 'POST'))
