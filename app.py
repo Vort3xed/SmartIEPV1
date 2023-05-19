@@ -193,6 +193,25 @@ def removeGoals():
 			flash("Goal to remove does not exist!")
 			return redirect(url_for('main.students'))
 
+@main.route("/removeobjective", methods=('GET', 'POST'))
+@login_required
+def removeobjective():
+	if request.method == 'POST':
+		button_value = request.form["remove_obj"]
+		modify_student = re.sub("\D", "", button_value)
+		obj_to_remove = request.form["remove_goal"+modify_student]
+
+		query_student = Students.query.filter_by(student_id=modify_student).first()
+
+		if query_student and obj_to_remove in query_student.tasks and is_obj(query_student.tasks,obj_to_remove):
+			query_student.tasks = remove_string(query_student.tasks,obj_to_remove)
+			db.session.commit()
+			return redirect(url_for('main.students'))
+		else:
+			flash("Objective to remove does not exist!")
+			return redirect(url_for('main.students'))
+
+
 @main.route("/terminatestudent", methods=('GET', 'POST'))
 @login_required
 def terminatestudent():
@@ -409,6 +428,15 @@ def is_goal(DATA, SPECIFICATION):
         return False
     previous_char = DATA[start-1]
     return previous_char == ']'
+
+def is_obj(DATA, SPECIFICATION):
+    start = DATA.find(SPECIFICATION)
+    if start == -1:
+        return False
+    if start == 0:
+        return False
+    previous_char = DATA[start-1]
+    return previous_char == ')'
 
 def find_number_in_brackets(DATA, SPECIFICATION):
     start = DATA.find(SPECIFICATION)

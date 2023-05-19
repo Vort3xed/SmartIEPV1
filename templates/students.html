@@ -36,7 +36,7 @@
             
         </div>
         <div class="content">
-            <div class="m-4 border border-primary rounded">
+            <div class="m-4 border border-2 border-primary rounded">
                 <form class="m-4" method="post" action="/createstudent">
                     <div class="form-group">
                         <label for="stuname">Name</label>
@@ -64,7 +64,7 @@
                 </form>
             </div>
             {% for student in students %}
-                <div class="m-4 border border-primary rounded">
+                <div class="m-4 border border-2 border-primary rounded">
                     <ul>
                         <li>Student Database ID: #{{ student.student_id }}</li>
                         <li>Name: {{ student.name }}</li>
@@ -106,8 +106,9 @@
                     </form>
                     <form method="post" class="m-2" action="/removegoal">
                         <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="remove_goal{{ student.student_id }}" id="input_goal" placeholder="Remove Goals">
-                            <button type="submit" class="btn btn-danger" name="remove_goal" value="remove{{ student.student_id }}">-</button>
+                            <input type="text" class="form-control" name="remove_goal{{ student.student_id }}" id="remove_goal" placeholder="Remove Task">
+                            <button type="submit" class="btn btn-danger" name="remove_goal" value="remove{{ student.student_id }}">Goal</button>
+                            <button type="submit" class="btn btn-danger" name="remove_obj" formaction="/removeobjective" value="remove_obj{{ student.student_id }}">Obj</button>
                           </div>
                     </form>
                     {% for taskarr in parse_tasks(student.tasks) if not taskarr|length == 0%}
