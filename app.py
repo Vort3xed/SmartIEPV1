@@ -36,6 +36,8 @@ class Students(db.Model):
 	dateofbirth = db.Column(db.String(200),nullable=False)
 	tasks = db.Column(db.String(500),nullable=False)
 
+
+
 @login_manager.user_loader
 def load_user(account_id):
     return Accounts.query.get(int(account_id))
