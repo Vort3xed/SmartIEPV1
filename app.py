@@ -25,6 +25,10 @@ login_manager.init_app(app)
 MAX_GOALS = 100
 #Maximum possible amount of goals that can be created
 
+STUDENT_LOG_NAME = ""
+STUDENT_LOG_ID = 1
+#The ID of the student that is currently being logged
+
 class Accounts(UserMixin, db.Model):
 	__tablename__ = 'accounts'
 	account_id = db.Column(db.Integer, primary_key=True)
@@ -44,14 +48,15 @@ class Students(db.Model):
 	grade = db.Column(db.Integer)
 	dateofbirth = db.Column(db.String(200),nullable=False)
 	tasks = db.Column(db.String(500),nullable=False)
+	logs = db.Column(db.String(500),nullable=False)
 #Table of all students
 
-class Logs(db.Model):
-	__tablename__ = 'logs'
-	student_id = db.Column(db.Integer, primary_key=True)
-	date = db.Column(db.String(200),nullable=False)
-	log = db.Column(db.String(500),nullable=False)
-#Table of progress logs for each student
+# class Logs(db.Model):
+# 	__tablename__ = 'logs'
+# 	student_id = db.Column(db.Integer, primary_key=True)
+# 	date = db.Column(db.String(200),nullable=False)
+# 	log = db.Column(db.String(500),nullable=False)
+# #Table of progress logs for each student
 
 @login_manager.user_loader
 def load_user(account_id):
@@ -236,9 +241,21 @@ def removeobjective():
 @main.route("/logs", methods=('GET', 'POST'))
 @login_required
 def logs():
-	logs = Logs.query.all()
-	students = Students.query.all()
-	return(render_template("progresslogs.html", logs=logs, students=students))
+	if request.method == 'POST':
+		student_selected = request.form["selectstudent"]
+		global STUDENT_LOG_NAME
+		global STUDENT_LOG_ID
+		STUDENT_LOG_NAME = student_selected
+
+		student_selected_obj = Students.query.filter_by(name=student_selected).first()
+
+		STUDENT_LOG_ID = student_selected_obj.student_id
+
+		students = Students.query.all()
+		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID))
+	else:
+		students = Students.query.all()
+		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID))
 
 @main.route("/terminatestudent", methods=('GET', 'POST'))
 @login_required
@@ -297,7 +314,7 @@ def createstudent():
 		if user:
 			flash('Student already exists')
 			return(render_template("createstudent.html"))
-		created_student = Students(name=name,grade=grade,dateofbirth=dateofbirth,tasks=tasks)
+		created_student = Students(name=name,grade=grade,dateofbirth=dateofbirth,tasks=tasks,logs="")
 		db.session.add(created_student)
 		db.session.commit()
 	return redirect(url_for('main.students'))

@@ -1,6 +1,6 @@
 import json
 
-LOG_STRING = '{"ID": 3, "Date": "Feburary 2nd, 2002", "Log": "lil jimmy did some math practice"}|{"ID": 4, "Date": "January 1st, 2001", "Log": "field text"}'
+LOG_STRING = '{"ID": 1, "Date": "January 1st, 2001", "Log": "lil jimmy did some math practice"}|{"ID": 2, "Date": "Feburary 2nd, 2001", "Log": "field text"}|{"ID": 3, "Date": "March 3rd, 2001", "Log": "english practice done"}'
 
 LOGS = LOG_STRING.split("|")
 
