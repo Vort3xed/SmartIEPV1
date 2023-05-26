@@ -245,14 +245,17 @@ def logs():
 		student_selected = request.form["selectstudent"]
 		global STUDENT_LOG_NAME
 		global STUDENT_LOG_ID
+		#Get the student selected from the drop down menu and set the global variable STUDENT_LOG_NAME to the student selected
 		STUDENT_LOG_NAME = student_selected
 
 		student_selected_obj = Students.query.filter_by(name=student_selected).first()
+		#Query the student selected to get the student ID
 
 		STUDENT_LOG_ID = student_selected_obj.student_id
-
+		#Set the global variable STUDENT_LOG_ID to the student ID of the student selected
 		students = Students.query.all()
 		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID))
+		#Render the progress logs page with the student selected and the student ID of the student selected
 	else:
 		students = Students.query.all()
 		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID))
@@ -263,9 +266,12 @@ def terminatestudent():
 	if request.method == 'POST':
 		student_id = request.form["modid"]
 		student = Students.query.filter_by(student_id=student_id).first()
+		#Query the student to be terminated
+
 		if student:
 			db.session.delete(student)
 			db.session.commit()
+			#Delete the student from the database and commit the changes
 			return(render_template("terminatestudent.html"))
 		else:
 			flash("Student ID does not exist!")
@@ -278,8 +284,10 @@ def debugstudent():
 	if request.method == 'POST':
 		student_id = request.form["debugid"]
 		student = Students.query.filter_by(student_id=student_id).first()
+		#Query the student to be debugged
 		if student:
 			flash(student.tasks)
+			#Flash the student's tasks
 		else:
 			flash("Student ID does not exist!")
 	return(render_template("terminatestudent.html"))
@@ -291,10 +299,13 @@ def wipedata():
 	if request.method == 'POST':
 		student_id = request.form["wipeid"]
 		student = Students.query.filter_by(student_id=student_id).first()
+		#Query the student to have their data wiped
 
 		if student:
 			student.tasks = ""
 			db.session.commit()
+			#Set the student's tasks to an empty string and commit the changes
+
 			return(render_template("terminatestudent.html"))
 		else:
 			flash("Student ID does not exist!")
@@ -309,12 +320,17 @@ def createstudent():
 		grade = request.form["stugrade"]
 		dateofbirth = request.form["studob"]
 		tasks = request.form["stutasks"]
+		#Get the values from the form
 
 		user = Students.query.filter_by(name=name).first()
+		#Query the student to be created
 		if user:
 			flash('Student already exists')
+			#If the student already exists, flash a message and render the create student page again
 			return(render_template("createstudent.html"))
 		created_student = Students(name=name,grade=grade,dateofbirth=dateofbirth,tasks=tasks,logs="")
+		#Create the student
+
 		db.session.add(created_student)
 		db.session.commit()
 	return redirect(url_for('main.students'))
@@ -326,14 +342,18 @@ def signin():
 	if request.method == 'POST':
 		username = request.form["logusername"]
 		password = request.form["logpassword"]
+		#Get the values from the form
 
 		user = Accounts.query.filter_by(username=username).first()
+		#Query the user to be signed in
 
 		if not user or not check_password_hash(user.password, password):
+			#If the user does not exist or the password is incorrect, flash a message and render the login page again
 			flash('Please check your login details and try again.')
 			return render_template("login.html")
 		else:
 			login_user(user)
+			#If the user exists and the password is correct, log the user in and redirect them to the accounts page
 			return redirect(url_for('main.accounts'))
 
 	return render_template("login.html")
@@ -345,13 +365,16 @@ def register():
 		callname = request.form["regcallname"]
 		username = request.form["regusername"]
 		password = request.form["regpassword"]
+		#Get the values from the form
 
 		user = Accounts.query.filter_by(username=username).first()
+		#Query the user to be registered
 		
 		if user:
 			flash('Email address already exists')
 			return render_template("register.html")
 		account_user = Accounts(callname=callname, username=username, password=generate_password_hash(password, method='sha256'))
+		#Create the user using the values from the form
 
 		db.session.add(account_user)
 		db.session.commit()
@@ -362,6 +385,7 @@ def register():
 @login_required
 def logout():
     logout_user()
+    #Log the user out
     return redirect(url_for('main.home'))
 #Route 15: Logout. This method does not render its own page.
 
@@ -427,78 +451,6 @@ def parse_student_tasks(newData):
         return []
 #This is the same method as above, but it is used for the back end on the student page.
 
-# def find_next_empty_array(arr):
-#     for i in range(len(arr)):
-#         if not arr[i]:
-#             return i
-#     return -1
-
-# def remove_string(s, substring):
-#     index = s.find(substring)
-#     if index != -1:
-#         s = s[:index-4] + s[index+len(substring)+1:]
-#     return s
-
-# def is_goal(DATA, SPECIFICATION):
-#     start = DATA.find(SPECIFICATION)
-#     if start == -1:
-#         return False
-#     if start == 0:
-#         return False
-#     previous_char = DATA[start-1]
-#     return previous_char == ']'
-
-# def is_obj(DATA, SPECIFICATION):
-#     start = DATA.find(SPECIFICATION)
-#     if start == -1:
-#         return False
-#     if start == 0:
-#         return False
-#     previous_char = DATA[start-1]
-#     return previous_char == ')'
-
-# def find_number_in_brackets(DATA, SPECIFICATION):
-#     start = DATA.find(SPECIFICATION)
-#     if start == -1:
-#         return None
-#     start_bracket = DATA.rfind('[', 0, start)
-#     end_bracket = DATA.find(']', start_bracket)
-#     if start_bracket == -1 or end_bracket == -1:
-#         return None
-#     return DATA[start_bracket+1:end_bracket]
-
-# def remove_string(s, substring):
-#     index = s.find(substring)
-#     if index != -1:
-#         s = s[:index-4] + s[index+len(substring)+1:]
-#     return s
-
-# def remove_strings_with_value(number, data):
-#     chunks = re.split(r';', data)
-#     modified_chunks = []
-#     for chunk in chunks:
-#         matches = re.findall(r'\((.*?)\)', chunk)
-        
-#         found = False
-#         for match in matches:
-#             if str(number) in match:
-#                 found = True
-#                 break
-        
-#         if not found:
-#             modified_chunks.append(chunk)
-    
-#     modified_data = ';'.join(modified_chunks)
-    
-#     return modified_data
-
-# # def poachGoal(data,findString):
-# #     if findString in data and is_goal(data,findString):
-# # 	    return remove_strings_with_value(find_number_in_brackets(data,findString),remove_string(data,findString))
-
-# def poachGoal(data,findString):
-#     return remove_strings_with_value(find_number_in_brackets(data,findString),remove_string(data,findString))
-    
 if __name__ == '__main__':
 	app.run(debug=True)
 #Launch the app in debug mode
