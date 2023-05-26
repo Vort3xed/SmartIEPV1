@@ -1,4 +1,5 @@
 import re
+import json
 from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint, session
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -243,6 +244,7 @@ def removeobjective():
 def logs():
 	if request.method == 'POST':
 		student_selected = request.form["selectstudent"]
+
 		global STUDENT_LOG_NAME
 		global STUDENT_LOG_ID
 		#Get the student selected from the drop down menu and set the global variable STUDENT_LOG_NAME to the student selected
@@ -269,6 +271,9 @@ def terminatestudent():
 		#Query the student to be terminated
 
 		if student:
+			global STUDENT_LOG_ID
+			if (STUDENT_LOG_ID == student_id):
+				STUDENT_LOG_ID = 0
 			db.session.delete(student)
 			db.session.commit()
 			#Delete the student from the database and commit the changes
@@ -328,7 +333,7 @@ def createstudent():
 			flash('Student already exists')
 			#If the student already exists, flash a message and render the create student page again
 			return(render_template("createstudent.html"))
-		created_student = Students(name=name,grade=grade,dateofbirth=dateofbirth,tasks=tasks,logs="")
+		created_student = Students(name=name,grade=grade,dateofbirth=dateofbirth,tasks=tasks,logs='{"ID": 1, "Date": "Student Creation Date", "Log": "Initial Log"}|')
 		#Create the student
 
 		db.session.add(created_student)
@@ -426,6 +431,11 @@ def utility_processor():
 			return []
 	return dict(parse_tasks=parse_tasks)
 #This method is used to parse the tasks from the database into a format that can be used by the HTML page.
+
+@app.context_processor
+def add_imports():
+    # Note: we only define the top-level module names!
+    return dict(json=json)
 
 def parse_student_tasks(newData):
     if (newData != ""):
