@@ -1,5 +1,6 @@
 import re
 import json
+import ast
 from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint, session
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -261,6 +262,32 @@ def logs():
 	else:
 		students = Students.query.all()
 		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID))
+#Route 9: Progress logs. This method renders its own page.
+
+@main.route("/modifylogs", methods=('GET', 'POST'))
+@login_required
+def modifylogs():
+	if request.method == 'POST':
+		log_date = request.form["logdate"]
+		log_text = request.form["logtext"]
+
+		modify_student = Students.query.filter_by(student_id=STUDENT_LOG_ID).first()
+		#Query the student to be modified
+		
+		log_units = len(modify_student.logs[:-1].split("|"))
+		# json_parcel = {
+		# 	"ID": log_units + 1,
+		# 	"Date": log_date,
+		# 	"Log": log_text
+		# }
+		# print(ast.literal_eval(json_parcel))
+		json_parcel = '{"ID": ' + str(log_units + 1) + ', "Date": "' + log_date + '", "Log": "' + log_text + '"}'
+
+		modify_student.logs = modify_student.logs + json_parcel + "|"
+		print(modify_student.logs)
+		db.session.commit()
+		return(redirect(url_for("main.logs")))
+
 
 @main.route("/terminatestudent", methods=('GET', 'POST'))
 @login_required
@@ -291,7 +318,7 @@ def debugstudent():
 		student = Students.query.filter_by(student_id=student_id).first()
 		#Query the student to be debugged
 		if student:
-			flash(student.tasks)
+			flash(student.tasks + " LOGS:" + student.logs)
 			#Flash the student's tasks
 		else:
 			flash("Student ID does not exist!")
@@ -308,6 +335,7 @@ def wipedata():
 
 		if student:
 			student.tasks = ""
+			student.logs = '{"ID": 1, "Date": "Student Creation Date", "Log": "Initial Log"}|'
 			db.session.commit()
 			#Set the student's tasks to an empty string and commit the changes
 

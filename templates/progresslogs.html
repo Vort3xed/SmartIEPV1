@@ -33,18 +33,6 @@
           }
         }
     </script>
-    <script>
-        function toggleButtonVisibility() {
-          var dropdown = document.getElementById("selectstudent");
-          var submitButton = document.getElementById("submitButton");
-          
-          if (dropdown.value !== "") {
-            submitButton.style.display = "inline";
-          } else {
-            submitButton.style.display = "none";
-          }
-        }
-    </script>
 
     <body>
         <div class="content">
@@ -52,9 +40,9 @@
             <div style="text-align: center">
                 <h1 class="mt-5">Progress Logs</h1>
                 <form method = "post" action="/logs">
-                    <label for="selectstudent">Select a Student:</label>
+                    <label for="selectstudent">Filter Students:</label>
                     <input type="text" id="searchInput" onkeyup="filterOptions()" placeholder="Search...">
-                    <select id="selectstudent" name="selectstudent" onchange="toggleButtonVisibility()" required>
+                    <select id="selectstudent" name="selectstudent" onchange="this.form.submit()" required>
                         <option selected disabled hidden>Select a Student</option>
                         {% for student in students %}
                         <option>{{ student.name }}</option>
@@ -64,9 +52,11 @@
                 </form>
             </div>
             <div class="m-4">
+                <h3>Student Displayed: {{ students[student_log_id - 1].name }}</h3>
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th scope="col">Log ID</th>
                             <th scope="col">Date</th>
                             <th scope="col">Log</th>
                             <!-- <th scope="col">Goal</th>
@@ -77,19 +67,15 @@
                     <tbody>
                         {% for json_unit in students[student_log_id - 1].logs[:-1].split("|") %}
                         <tr>
+                            <td>{{ json.loads(json_unit)['ID'] }}</td>
                             <td>{{ json.loads(json_unit)['Date'] }}</td>
                             <td>{{ json.loads(json_unit)['Log'] }}</td>
                         </tr>
-                        <!-- <tr>
-                            <td>yesterday</td>
-                            <td>{{ students[student_log_id - 1].logs }}</td>
-                        </tr> -->
-                        <!-- {{ students[student_log_id - 1] }} -->
                         {% endfor %}
                         
                     </tbody>
                 </table>
-                <form action="/modifylogs">
+                <form action="/modifylogs" method="post">
                     <div class="input-group">
                         <input class="form-control" name="logdate" id="logdate" placeholder="Date">
                         <input class="form-control" name="logtext" id="logtext" placeholder="Log">
