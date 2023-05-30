@@ -275,19 +275,28 @@ def modifylogs():
 		#Query the student to be modified
 		
 		log_units = len(modify_student.logs[:-1].split("|"))
-		# json_parcel = {
-		# 	"ID": log_units + 1,
-		# 	"Date": log_date,
-		# 	"Log": log_text
-		# }
-		# print(ast.literal_eval(json_parcel))
+		#Get the amount of logs the student has
+
 		json_parcel = '{"ID": ' + str(log_units + 1) + ', "Date": "' + log_date + '", "Log": "' + log_text + '"}'
+		#Format the log to be added to the student's logs field
 
 		modify_student.logs = modify_student.logs + json_parcel + "|"
 		print(modify_student.logs)
 		db.session.commit()
 		return(redirect(url_for("main.logs")))
+	
+@main.route("/viewlogs", methods=('GET', 'POST'))
+@login_required
+def viewlogs():
+	if request.method == 'POST':
+		button_value = request.form["viewlog"]
+		student = re.sub("\D", "", button_value)
+		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
 
+		global STUDENT_LOG_ID
+		STUDENT_LOG_ID = int(student)
+
+		return(redirect(url_for("main.logs")))
 
 @main.route("/terminatestudent", methods=('GET', 'POST'))
 @login_required

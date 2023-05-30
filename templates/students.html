@@ -77,6 +77,11 @@
                             <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#dropDownForm{{ student.student_id }}" aria-expanded="false" aria-controls="dropDownForm">
                                 Modify Student
                             </button>
+                            <form class="m-2" method="post" action="/viewlogs">
+                                <button class="btn btn-primary" name="viewlog" value="viewlog{{ student.student_id }}" type="submit">
+                                    View Student Logs
+                                </button>
+                            </form>
                         </div>
                         <div class="collapse" id="dropDownForm{{ student.student_id }}">
                             <form method = "post" action="/students">
