@@ -15,12 +15,16 @@
             body {
                 padding-top: 60px;
             }
+            p {
+                margin-top: 0;
+                margin-bottom: 1rem;
+            }
             @media (max-width: 979px) {
                 body {
                     padding-top: 0px;
                 }
             }
-            </style>
+        </style>
 
         <title>SmartIEP</title>
         <link rel="icon" type="image/x-icon" href="static\smallsmartieplogo.png">
@@ -123,24 +127,34 @@
                     </div>
 
                     <!-- HERE -->
-                    <form method="post" class="m-2" action="/addgoal">
-                        <div class="input-group">
-                          <input type="text" class="form-control" name="add_goal{{ student.student_id }}" id="add_goal" placeholder="Add Goals">
-                          <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ student.student_id }}">+</button>
-                        </div>
-                    </form>
-                    <form method="post" class="m-2" action="/removegoal">
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control" name="remove_goal{{ student.student_id }}" id="remove_goal" placeholder="Remove Task">
-                            <button type="submit" class="btn btn-danger" name="remove_goal" value="remove{{ student.student_id }}">Goal</button>
-                            <button type="submit" class="btn btn-danger" name="remove_obj" formaction="/removeobjective" value="remove_obj{{ student.student_id }}">Obj</button>
-                          </div>
-                    </form>
+                    <div class="m-2">
+                        <form method="post" action="/addgoal">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" name="add_goal{{ student.student_id }}" id="add_goal" placeholder="Add Goals">
+                                <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ student.student_id }}">+</button>
+                            </div>
+                        </form>
+                        <form method="post" action="/removegoal">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" name="remove_goal{{ student.student_id }}" id="remove_goal" placeholder="Remove Task">
+                                <button type="submit" class="btn btn-danger" name="remove_goal" value="remove{{ student.student_id }}">Goal</button>
+                                <button type="submit" class="btn btn-danger" name="remove_obj" formaction="/removeobjective" value="remove_obj{{ student.student_id }}">Obj</button>
+                            </div>
+                        </form>
+                        <form method="post" action="/setprogress">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" name="set_progress{{ student.student_id }}" id="set_progress" placeholder="Update Task Progress">
+                                <button type="submit" class="btn btn-secondary" name="setnodata" formaction="/setnodata" value="setnodata{{ student.student_id }}">No Data</button>
+                                <button type="submit" class="btn btn-warning" name="setinprogress" formaction="/setinprogress" value="setinprogress{{ student.student_id }}">In Progress</button>
+                                <button type="submit" class="btn btn-success" name="setcomplete" formaction="/setcomplete" value="setcomplete{{ student.student_id }}">Complete</button>
+                            </div>
+                        </form>
+                    </div>
                     {% for taskarr in parse_tasks(student.tasks) if not taskarr|length == 0%}
                         <ul class="mt-1">
                             <!-- <li>{{ taskarr[0] }}</li> -->
                             <li>
-                                <p class="{% if taskarr[0][0] == '0' %}text-secondary{% elif taskarr[0][0] == '1' %}text-warning{% elif taskarr[0][0] == '2' %}text-success{% endif %}">{{ taskarr[0][1:] }}</p>
+                                <p style="margin-bottom: 0rem;" class="{% if taskarr[0][0] == '0' %}text-secondary{% elif taskarr[0][0] == '1' %}text-warning{% elif taskarr[0][0] == '2' %}text-success{% endif %}">{{ taskarr[0][1:] }}</p>
                             </li>
                                 <ul>
                                     {% set counter = 1%}
@@ -148,7 +162,7 @@
                                         <!-- <li>{{ taskarr[loop.index] }}</li> -->
                                         <li>
                                             <!-- <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[loop.index][1:] }}</input> -->
-                                            <p class="{% if taskarr[loop.index][0] == '0' %}text-secondary{% elif taskarr[loop.index][0] == '1' %}text-warning{% elif taskarr[loop.index][0] == '2' %}text-success{% endif %}">{{ taskarr[loop.index][1:] }}</p>
+                                            <p style="margin-bottom: 0rem;" class="{% if taskarr[loop.index][0] == '0' %}text-secondary{% elif taskarr[loop.index][0] == '1' %}text-warning{% elif taskarr[loop.index][0] == '2' %}text-success{% endif %}">{{ taskarr[loop.index][1:] }}</p>
                                         </li>
                                     {% endfor %}
                                 </ul>
