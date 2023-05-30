@@ -71,12 +71,12 @@
             {% for student in students %}
                 <div class="m-4 border border-2 border-primary rounded">
                     <ul>
-                        <li>Student Database ID: #{{ student.student_id }}</li>
-                        <li>MCPS ID: {{ student.school_id }}</li>
-                        <li>Name: {{ student.name }}</li>
-                        <li>Grade: {{ student.grade }}</li>
-                        <li>Date of Birth: {{ student.dateofbirth }}</li>
-                        <li>Case Manager: {{ student.casemanager }}</li>
+                        <li><b>Student Database ID:</b> #{{ student.student_id }}</li>
+                        <li><b>MCPS ID:</b> {{ student.school_id }}</li>
+                        <li><b>Name:</b> {{ student.name }}</li>
+                        <li><b>Grade:</b> {{ student.grade }}</li>
+                        <li><b>Date of Birth:</b> {{ student.dateofbirth }}</li>
+                        <li><b>Case Manager:</b> {{ student.casemanager }}</li>
                     </ul>
 
                     <div class="container">
@@ -89,7 +89,7 @@
                                     View Student Logs
                                 </button>
                             </form>
-                            <form class="m-2" method="post" action="/exportstudent">
+                            <form class="" method="post" action="/exportstudent">
                                 <button class="btn btn-primary" name="export_button" value="export_button{{ student.student_id }}" type="submit">
                                     Export Student
                                 </button>
