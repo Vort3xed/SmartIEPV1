@@ -140,14 +140,15 @@
                         <ul class="mt-1">
                             <!-- <li>{{ taskarr[0] }}</li> -->
                             <li>
-                                <input type="checkbox" {% if taskarr[0][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[0][1:] }}</input>
+                                <p class="{% if taskarr[0][0] == '0' %}text-secondary{% elif taskarr[0][0] == '1' %}text-warning{% elif taskarr[0][0] == '2' %}text-success{% endif %}">{{ taskarr[0][1:] }}</p>
                             </li>
                                 <ul>
                                     {% set counter = 1%}
                                     {% for objective in taskarr[1:] %}
                                         <!-- <li>{{ taskarr[loop.index] }}</li> -->
                                         <li>
-                                            <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[loop.index][1:] }}</input>
+                                            <!-- <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[loop.index][1:] }}</input> -->
+                                            <p class="{% if taskarr[loop.index][0] == '0' %}text-secondary{% elif taskarr[loop.index][0] == '1' %}text-warning{% elif taskarr[loop.index][0] == '2' %}text-success{% endif %}">{{ taskarr[loop.index][1:] }}</p>
                                         </li>
                                     {% endfor %}
                                 </ul>
