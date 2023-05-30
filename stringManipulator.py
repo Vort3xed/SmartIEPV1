@@ -25,4 +25,4 @@ def parse_student_tasks(newData):
         return goalArrays
     else:
         return []
-print(parse_student_tasks(noDataString))
+print(parse_student_tasks(newData))

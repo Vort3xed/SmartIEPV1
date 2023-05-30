@@ -7,6 +7,14 @@ def find_next_empty_array(arr):
     return -1
 # Returns the index of the first empty array in the array of arrays
 
+def find_empty_array(arr):
+    index = 0
+    for array in arr:
+        if array == []:
+            return index
+        index += 1
+    return -1
+
 def remove_string(s, substring):
     index = s.find(substring)
     if index != -1:

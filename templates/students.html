@@ -61,7 +61,7 @@
                     <div class="form-group">
                         <label for="stumanager">Case Manager</label>
                         <input class="form-control" name="stumanager" id="stumanager"
-                            placeholder="Tasks">
+                            placeholder="Case Manager">
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-default border border-secondary border-3">Submit</button>
@@ -87,6 +87,11 @@
                             <form class="m-2" method="post" action="/viewlogs">
                                 <button class="btn btn-primary" name="viewlog" value="viewlog{{ student.student_id }}" type="submit">
                                     View Student Logs
+                                </button>
+                            </form>
+                            <form class="m-2" method="post" action="/exportstudent">
+                                <button class="btn btn-primary" name="export_button" value="export_button{{ student.student_id }}" type="submit">
+                                    Export Student
                                 </button>
                             </form>
                         </div>

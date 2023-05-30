@@ -1,11 +1,12 @@
 import re
 import json
-import ast
-from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint, session
+from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint, send_file
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from utilities import *
+from openpyxl import Workbook
+from io import BytesIO
 #Import wastelands
 
 db = SQLAlchemy()
@@ -127,6 +128,61 @@ def students():
 	return render_template('students.html',students=students)
 #Route 4: Students page
 
+@main.route("/exportstudent", methods=('GET', 'POST'))
+@login_required
+def exportstudent():
+	if request.method == 'POST':
+		button_value = request.form["export_button"]
+		modify_student = re.sub("\D", "", button_value)
+		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
+
+		query_student = Students.query.filter_by(student_id=modify_student).first()
+		#Query the student to be modified
+
+		return generate_spreadsheet(query_student)
+
+def generate_spreadsheet(student):
+	workbook = Workbook()
+	sheet = workbook.active
+
+	sheet.title = "Student IEP Data"
+	sheet['A1'] = "Student IEP Data"
+	sheet['A2'] = "School ID: " + str(student.school_id)
+	sheet['A3'] = "Name: " + student.name
+	sheet['A4'] = "Grade: " + str(student.grade)
+	sheet['A5'] = "Date of Birth: " + student.dateofbirth
+	sheet['A6'] = "Case Manager: " + student.casemanager
+
+	sheet['B1'] = "Goals with Objectives:"
+	
+	opencell = 2
+	for array in parse_student_tasks(student.tasks):
+		if (array != []):
+			if (array[0][0] == "0"):
+				#index out of bounds error?
+				sheet['B' + str(opencell)] = "- Newly Added: " + array[0][1:]
+			elif (array[0][0] == "1"):
+				sheet['B' + str(opencell)] = "- In Progress: " + array[0][1:]
+			else:
+				sheet['B' + str(opencell)] = "- Complete: " + array[0][1:]
+			opencell = opencell + 1
+	
+			for task in array[1:]:
+				if (task != ""):
+					if (task[0] == "0"):
+						sheet['B' + str(opencell)] = "- - Newly Added: " + task[1:]
+					elif (task[0] == "1"):
+						sheet['B' + str(opencell)] = "- - In Progress: " + task[1:]
+					else:
+						sheet['B' + str(opencell)] = "- - Complete: " + task[1:]
+					opencell = opencell + 1
+	
+	student_iep = BytesIO()
+	workbook.save(student_iep)
+	student_iep.seek(0)
+	return send_file(student_iep, download_name="Student IEP Data.xlsx", as_attachment=True)
+#Route 5: Export student data. This method does not render its own page.
+
 @main.route("/addgoal", methods=('GET', 'POST'))
 @login_required
 def addGoals():
@@ -142,8 +198,8 @@ def addGoals():
 		#Query the student to be modified
 
 		if query_student:
-			array_index = find_next_empty_array(parse_student_tasks(query_student.tasks))
-			formatted_task = "0" + "["+str(array_index + 1)+"]" + goal_to_append + ";"
+			array_index = find_empty_array(parse_student_tasks(query_student.tasks))
+			formatted_task = "0" + "["+str(array_index)+"]" + goal_to_append + ";"
 			#Format the goal to be added to the student's tasks field
 
 			query_student.tasks = query_student.tasks + formatted_task
@@ -478,7 +534,7 @@ def utility_processor():
 
 @app.context_processor
 def add_imports():
-    # Note: we only define the top-level module names!
+    #Allowing JSON library to be used in the HTML page
     return dict(json=json)
 
 def parse_student_tasks(newData):
@@ -502,7 +558,7 @@ def parse_student_tasks(newData):
                 goalArrays[goalKey].append(part)            
         return goalArrays
     else:
-        return []
+        return [[]]
 #This is the same method as above, but it is used for the back end on the student page.
 
 if __name__ == '__main__':
