@@ -46,9 +46,11 @@ class Accounts(UserMixin, db.Model):
 class Students(db.Model):
 	__tablename__ = 'students'
 	student_id = db.Column(db.Integer, primary_key=True)
+	school_id = db.Column(db.Integer)
 	name = db.Column(db.String(200),nullable=False)
 	grade = db.Column(db.Integer)
 	dateofbirth = db.Column(db.String(200),nullable=False)
+	casemanager = db.Column(db.String(200),nullable=False)
 	tasks = db.Column(db.String(500),nullable=False)
 	logs = db.Column(db.String(500),nullable=False)
 #Table of all students
@@ -97,8 +99,10 @@ def students():
 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
 		
 		name = request.form["boxmodname"+modify_student]
+		school_id = request.form["boxmodschoolid"+modify_student]
 		grade = request.form["boxmodgrade"+modify_student]
 		dob = request.form["boxmoddob"+modify_student]
+		casemanager = request.form["boxmodmanager"+modify_student]
 		#Get the values in the text boxes for the student to be modified
 		
 		query_student = Students.query.filter_by(student_id=modify_student).first()
@@ -106,8 +110,10 @@ def students():
 
 		if query_student:
 			query_student.name = name
+			query_student.school_id = school_id
 			query_student.grade = grade
 			query_student.dateofbirth = dob
+			query_student.casemanager = casemanager
 			#Set the query_student's fields to the values in the text boxes
 
 			db.session.commit()
@@ -359,9 +365,10 @@ def wipedata():
 def createstudent():
 	if request.method == 'POST':
 		name = request.form["stuname"]
+		school_id = request.form["stuschoolid"]
 		grade = request.form["stugrade"]
 		dateofbirth = request.form["studob"]
-		tasks = request.form["stutasks"]
+		casemanager = request.form["stumanager"]
 		#Get the values from the form
 
 		user = Students.query.filter_by(name=name).first()
@@ -370,7 +377,7 @@ def createstudent():
 			flash('Student already exists')
 			#If the student already exists, flash a message and render the create student page again
 			return(render_template("createstudent.html"))
-		created_student = Students(name=name,grade=grade,dateofbirth=dateofbirth,tasks=tasks,logs='{"ID": 1, "Date": "Student Creation Date", "Log": "Initial Log"}|')
+		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,tasks="",logs='{"ID": 1, "Date": "Student Creation Date", "Log": "Student Created"}|')
 		#Create the student
 
 		db.session.add(created_student)
