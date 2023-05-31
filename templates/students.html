@@ -45,27 +45,27 @@
                     <div class="form-group">
                         <label for="stuname">Name</label>
                         <input class="form-control" name="stuname" id="stuname"
-                            placeholder="Name">
+                            placeholder="Name" required>
                     </div>
                     <div class="form-group">
                         <label for="stuschoolid">MCPS ID</label>
                         <input class="form-control" name="stuschoolid" id="stuschoolid"
-                            placeholder="Name">
+                            placeholder="Name" required>
                     </div>
                     <div class="form-group">
                         <label for="stugrade">Grade</label>
                         <input type="number" class="form-control" name="stugrade" id="stugrade"
-                            placeholder="Grade">
+                            placeholder="Grade" required>
                     </div>
                     <div class="form-group">
                         <label for="studob">Date of Birth</label>
                         <input class="form-control" name="studob" id="studob"
-                            placeholder="Date of Birth">
+                            placeholder="Date of Birth" required>
                     </div>
                     <div class="form-group">
                         <label for="stumanager">Case Manager</label>
                         <input class="form-control" name="stumanager" id="stumanager"
-                            placeholder="Case Manager">
+                            placeholder="Case Manager" required>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-default border border-secondary border-3">Submit</button>
@@ -103,23 +103,23 @@
                             <form method = "post" action="/students">
                                 <div class="form-group">
                                     <label for="boxmodname">Name</label>
-                                    <input type="text" class="form-control" name="boxmodname{{ student.student_id }}" id="boxmodname" placeholder="Enter name">
+                                    <input type="text" class="form-control" name="boxmodname{{ student.student_id }}" id="boxmodname" placeholder="Enter name" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmodschoolid">MCPS ID</label>
-                                    <input type="number" class="form-control" name="boxmodschoolid{{ student.student_id }}" id="boxmodschoolid" placeholder="Enter MCPS ID">
+                                    <input type="number" class="form-control" name="boxmodschoolid{{ student.student_id }}" id="boxmodschoolid" placeholder="Enter MCPS ID" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmodgrade">Grade</label>
-                                    <input type="number" class="form-control" name="boxmodgrade{{ student.student_id }}" id="boxmodgrade" placeholder="Enter grade">
+                                    <input type="number" class="form-control" name="boxmodgrade{{ student.student_id }}" id="boxmodgrade" placeholder="Enter grade" required> 
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmoddob">Date of Birth</label>
-                                    <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth">
+                                    <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmodmanager">Case Manager</label>
-                                    <input type="text" class="form-control" name="boxmodmanager{{ student.student_id }}" id="boxmodmanager" placeholder="Enter Case Manager">
+                                    <input type="text" class="form-control" name="boxmodmanager{{ student.student_id }}" id="boxmodmanager" placeholder="Enter Case Manager" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary mt-2" name="submit_button" value="submit{{ student.student_id }}">Submit</button>
                             </form>
@@ -130,20 +130,20 @@
                     <div class="m-2">
                         <form method="post" action="/addgoal">
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" name="add_goal{{ student.student_id }}" id="add_goal" placeholder="Add Goals">
+                                <input type="text" class="form-control" name="add_goal{{ student.student_id }}" id="add_goal" placeholder="Add Goals" required>
                                 <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ student.student_id }}">+</button>
                             </div>
                         </form>
                         <form method="post" action="/removegoal">
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" name="remove_goal{{ student.student_id }}" id="remove_goal" placeholder="Remove Task">
+                                <input type="text" class="form-control" name="remove_goal{{ student.student_id }}" id="remove_goal" placeholder="Remove Task" required>
                                 <button type="submit" class="btn btn-danger" name="remove_goal" value="remove{{ student.student_id }}">Goal</button>
                                 <button type="submit" class="btn btn-danger" name="remove_obj" formaction="/removeobjective" value="remove_obj{{ student.student_id }}">Obj</button>
                             </div>
                         </form>
                         <form method="post" action="/setprogress">
                             <div class="input-group mb-2">
-                                <input type="text" class="form-control" name="set_progress{{ student.student_id }}" id="set_progress" placeholder="Update Task Progress">
+                                <input type="text" class="form-control" name="set_progress{{ student.student_id }}" id="set_progress" placeholder="Update Task Progress" required>
                                 <button type="submit" class="btn btn-secondary" name="setnodata" formaction="/setnodata" value="setnodata{{ student.student_id }}">No Data</button>
                                 <button type="submit" class="btn btn-warning" name="setinprogress" formaction="/setinprogress" value="setinprogress{{ student.student_id }}">In Progress</button>
                                 <button type="submit" class="btn btn-success" name="setcomplete" formaction="/setcomplete" value="setcomplete{{ student.student_id }}">Complete</button>
@@ -170,7 +170,7 @@
                                 <!-- HERE -->
                                 <form method="post" class="m-2" action="/addobjectives">
                                     <div class="input-group mb-3">
-                                      <input type="text" class="form-control" name="{{ student.student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives">
+                                      <input type="text" class="form-control" name="{{ student.student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives" required>
                                       <button class="btn btn-success" type="submit" name="add_objective" value="{{ student.student_id }};{{ loop.index }}">+</button>      
                                     </div>
                                 </form> 

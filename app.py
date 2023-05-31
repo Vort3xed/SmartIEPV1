@@ -129,6 +129,57 @@ def students():
 	return render_template('students.html',students=students)
 #Route 4: Students page
 
+@main.route("/setnodata", methods=('GET','POST'))
+@login_required
+def setnodata():
+	if request.method == 'POST':
+		button_value = request.form["setnodata"]
+		modify_student = re.sub("\D", "", button_value)
+
+		user_input = request.form["set_progress" + modify_student]
+
+		query_student = Students.query.filter_by(student_id=modify_student).first()
+
+		set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "0" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
+		query_student.tasks = set_progress
+		db.session.commit()
+
+		return redirect(url_for('main.students'))
+
+@main.route("/setinprogress", methods=('GET','POST'))
+@login_required
+def setinprogress():
+	if request.method == 'POST':
+		button_value = request.form["setinprogress"]
+		modify_student = re.sub("\D", "", button_value)
+
+		user_input = request.form["set_progress" + modify_student]
+
+		query_student = Students.query.filter_by(student_id=modify_student).first()
+
+		set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "1" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
+		query_student.tasks = set_progress
+		db.session.commit()
+
+		return redirect(url_for('main.students'))
+	
+@main.route("/setcomplete", methods=('GET','POST'))
+@login_required
+def setcomplete():
+	if request.method == 'POST':
+		button_value = request.form["setcomplete"]
+		modify_student = re.sub("\D", "", button_value)
+
+		user_input = request.form["set_progress" + modify_student]
+
+		query_student = Students.query.filter_by(student_id=modify_student).first()
+
+		set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "2" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
+		query_student.tasks = set_progress
+		db.session.commit()
+
+		return redirect(url_for('main.students'))
+
 @main.route("/exportstudent", methods=('GET', 'POST'))
 @login_required
 def exportstudent():

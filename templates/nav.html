@@ -12,7 +12,7 @@
           <a class="nav-link" href="/register">Register</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/contactus">Contact Us</a>
+          <a class="nav-link" href="/contactus">Contact</a>
         </li>
         {% if current_user.is_authenticated %}
         <li class="nav-item">
@@ -22,15 +22,15 @@
           <a class="nav-link" href="/students">Students</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/logs">Student Progression</a>
+          <a class="nav-link" href="/logs">Progress Logs</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/terminatestudent">Debug a Student</a>
+          <a class="nav-link" href="/terminatestudent">Settings</a>
         </li>
-        <span class="navbar-text navbar-right">
-          <b>Signed in as {{ current_user.callname }}</b>
+        <span style="float: right" class="navbar-text navbar-right">
+          <b>{{ current_user.callname }}</b>
         </span>
-        <li class="nav-item">
+        <li style="float: right" class="nav-item">
           <a class="nav-link" href="/logout">Log out</a>
         </li> 
         
