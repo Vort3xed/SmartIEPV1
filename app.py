@@ -368,8 +368,10 @@ def viewlogs():
 		student = re.sub("\D", "", button_value)
 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
 
+		student = Students.query.filter_by(student_id=student).first()
+
 		global STUDENT_LOG_ID
-		STUDENT_LOG_ID = int(student)
+		STUDENT_LOG_ID = student.student_id
 
 		return(redirect(url_for("main.logs")))
 
@@ -382,9 +384,12 @@ def terminatestudent():
 		#Query the student to be terminated
 
 		if student:
+			all_students = Students.query.all()
 			global STUDENT_LOG_ID
-			if (STUDENT_LOG_ID == student_id):
-				STUDENT_LOG_ID = 0
+			STUDENT_LOG_ID = all_students[0].student_id
+			print(STUDENT_LOG_ID)
+			#BROKEN FOR LIFE
+
 			db.session.delete(student)
 			db.session.commit()
 			#Delete the student from the database and commit the changes
