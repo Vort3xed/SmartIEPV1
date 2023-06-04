@@ -66,7 +66,7 @@
                 </form>
             </div>
             <div class="m-4">
-                <h3>Student Displayed: {% if students|length > 0 %} {{ students[student_log_id].name }} {% endif %}</h3>
+                <h3>Student Displayed: {% if students|length > 0 and hasattr(retrieve_student(student_log_id),'name') %} {{ retrieve_student(student_log_id).name }} {% endif %}</h3>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -79,8 +79,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if students|length > 0 %}
-                        {% for json_unit in students[student_log_id].logs[:-1].split("|") %}
+                        {% if students|length > 0 and hasattr(retrieve_student(student_log_id),'name') %}
+                        {% for json_unit in retrieve_student(student_log_id).logs[:-1].split("|") %}
                         <tr>
                             <td>{{ json.loads(json_unit)['ID'] }}</td>
                             <td>{{ json.loads(json_unit)['Date'] }}</td>
@@ -91,7 +91,7 @@
                         
                     </tbody>
                 </table>
-                {% if students|length > 0 %}
+                {% if students|length > 0 and hasattr(retrieve_student(student_log_id),'name') %}
                 <form action="/modifylogs" method="post">
                     <div class="input-group">
                         <input class="form-control" name="logdate" id="logdate" placeholder="Date">

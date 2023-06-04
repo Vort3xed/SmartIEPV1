@@ -347,6 +347,7 @@ def logs():
 		#Render the progress logs page with the student selected and the student ID of the student selected
 	else:
 		students = Students.query.all()
+		# STUDENT_LOG_ID = students[0].student_id
 		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID))
 #Route 9: Progress logs. This method renders its own page.
 
@@ -396,14 +397,13 @@ def terminatestudent():
 		#Query the student to be terminated
 
 		if student:
-			all_students = Students.query.all()
-			global STUDENT_LOG_ID
-			STUDENT_LOG_ID = all_students[0].student_id
-			# print(STUDENT_LOG_ID)
-			#BROKEN FOR LIFE
-
 			db.session.delete(student)
 			db.session.commit()
+			
+			all_students = Students.query.all()
+			if len(all_students) > 0:
+				global STUDENT_LOG_ID
+				STUDENT_LOG_ID = all_students[0].student_id
 			#Delete the student from the database and commit the changes
 			return(render_template("terminatestudent.html"))
 		else:
@@ -478,6 +478,10 @@ def createstudent():
 
 		db.session.add(created_student)
 		db.session.commit()
+
+		# students = Students.query.all()
+		# global STUDENT_LOG_ID
+		# STUDENT_LOG_ID = students[0].student_id
 	return redirect(url_for('main.students'))
 #Route 12: Create student. This method renders its own page.
 
@@ -537,6 +541,17 @@ def logout():
 app.register_blueprint(auth)
 app.register_blueprint(main)
 #Register the blueprints
+
+@app.context_processor
+def student_retriever():
+	def retrieve_student(student_id):
+		student = Students.query.filter_by(student_id=student_id).first()
+		return student
+	return dict(retrieve_student=retrieve_student)
+
+@app.context_processor
+def attribute_identifier():
+	return dict(hasattr=hasattr)
 
 @app.context_processor
 def utility_processor():

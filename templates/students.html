@@ -35,6 +35,21 @@
       {% include 'nav.html' %}
     </header>
 
+    <script>
+        function validateInput() {
+          var input = document.getElementById("myInput");
+          var value = input.value;
+    
+          // Check if the input contains any restricted characters
+          if (/[()\[\];]/.test(value)) {
+            alert("Input contains restricted characters. Please remove them.");
+            return false;
+          }
+    
+          return true;
+        }
+    </script>
+
     <body>
         <div class="content">
             
@@ -128,7 +143,7 @@
 
                     <!-- HERE -->
                     <div class="m-2">
-                        <form method="post" action="/addgoal">
+                        <form method="post" action="/addgoal" onsubmit="return validateInput();">
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" name="add_goal{{ student.student_id }}" id="add_goal" placeholder="Add Goals" required>
                                 <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ student.student_id }}">+</button>
