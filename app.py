@@ -9,6 +9,7 @@ from openpyxl import Workbook
 from io import BytesIO
 from openpyxl.styles import Alignment, Font
 import psycopg2
+import os
 #Import wastelands
 
 db = SQLAlchemy()
@@ -17,7 +18,8 @@ db = SQLAlchemy()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'fa1(0nwar3'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///people.db'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgressql://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgressql://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn'
+SQLALCHEMY_DATABASE_URI = os.environ.get('postgres://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn').replace("://", "ql://", 1)
 
 #Create and configure flask app
 
