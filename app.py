@@ -151,9 +151,12 @@ def setnodata():
 
 		query_student = Students.query.filter_by(student_id=modify_student).first()
 
-		set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "0" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
-		query_student.tasks = set_progress
-		db.session.commit()
+		if (query_student.tasks.find(user_input) > -1):
+			set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "0" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
+			query_student.tasks = set_progress
+			db.session.commit()
+		else:
+			flash("Task does not exist!")
 
 		return redirect(url_for('main.students'))
 
@@ -168,9 +171,12 @@ def setinprogress():
 
 		query_student = Students.query.filter_by(student_id=modify_student).first()
 
-		set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "1" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
-		query_student.tasks = set_progress
-		db.session.commit()
+		if (query_student.tasks.find(user_input) > -1):
+			set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "1" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
+			query_student.tasks = set_progress
+			db.session.commit()
+		else:
+			flash("Task does not exist!")
 
 		return redirect(url_for('main.students'))
 	
@@ -185,9 +191,12 @@ def setcomplete():
 
 		query_student = Students.query.filter_by(student_id=modify_student).first()
 
-		set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "2" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
-		query_student.tasks = set_progress
-		db.session.commit()
+		if (query_student.tasks.find(user_input) > -1):
+			set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "2" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
+			query_student.tasks = set_progress
+			db.session.commit()
+		else:
+			flash("Task does not exist!")
 
 		return redirect(url_for('main.students'))
 
@@ -514,6 +523,7 @@ def signin():
 #Route 13: Sign in. This method renders its own page.
 
 @auth.route("/register", methods=('GET', 'POST'))
+@login_required
 def register():
 	if request.method == 'POST':
 		callname = request.form["regcallname"]

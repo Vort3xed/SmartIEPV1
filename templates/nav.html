@@ -55,12 +55,12 @@
             <a class="nav-link" href="/signin">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/register">Register</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="/contactus">Contact</a>
           </li>
           {% if current_user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="/register">Register</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" href="/accounts">Accounts</a>
           </li>
