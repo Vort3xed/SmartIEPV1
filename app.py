@@ -129,13 +129,15 @@ def students():
 
 			db.session.commit()
 			students = Students.query.all()
-			return render_template('students.html',students=students)
+			accounts = Accounts.query.all()
+			return render_template('students.html',students=students,accounts=accounts)
 			#Commit the changes to the database and render the students page
 		else:
 			flash("Cannot Modify Student!")
 
+	accounts = Accounts.query.all()
 	students = Students.query.all()
-	return render_template('students.html',students=students)
+	return render_template('students.html',students=students,accounts=accounts)
 #Route 4: Students page
 
 @main.route("/setnodata", methods=('GET','POST'))
@@ -287,14 +289,17 @@ def removeGoals():
 
 				db.session.commit()
 				#return redirect(url_for('main.students'))
-				return render_template('students.html',students=Students.query.all())
+				accounts = Accounts.query.all()
+				return render_template('students.html',students=Students.query.all(),accounts=accounts)
 				#Commit the changes to the database and render the students page
 			else:
 				flash("Cannot remove goal!")
 		else:
 			flash("Goal to remove does not exist!")
 			return redirect(url_for('main.students'))
-	return render_template('students.html',students=Students.query.all())
+		
+	accounts = Accounts.query.all()
+	return render_template('students.html',students=Students.query.all(),accounts=accounts)
 #Route 7: Remove goal from student. This method does not render its own page.
 
 @main.route("/removeobjective", methods=('GET', 'POST'))
