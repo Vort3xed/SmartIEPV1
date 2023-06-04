@@ -8,6 +8,7 @@ from utilities import *
 from openpyxl import Workbook
 from io import BytesIO
 from openpyxl.styles import Alignment, Font
+import psycopg2
 #Import wastelands
 
 db = SQLAlchemy()
