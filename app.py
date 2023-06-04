@@ -15,7 +15,9 @@ db = SQLAlchemy()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'fa1(0nwar3'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///people.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///people.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgressql://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn'
+
 #Create and configure flask app
 
 db.init_app(app)
@@ -330,6 +332,8 @@ def logs():
 		#Query the student selected to get the student ID
 
 		STUDENT_LOG_ID = student_selected_obj.student_id
+		# print(STUDENT_LOG_ID)
+
 		#Set the global variable STUDENT_LOG_ID to the student ID of the student selected
 		students = Students.query.all()
 		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID))
@@ -356,7 +360,7 @@ def modifylogs():
 		#Format the log to be added to the student's logs field
 
 		modify_student.logs = modify_student.logs + json_parcel + "|"
-		print(modify_student.logs)
+		# print(modify_student.logs)
 		db.session.commit()
 		return(redirect(url_for("main.logs")))
 	
@@ -365,13 +369,14 @@ def modifylogs():
 def viewlogs():
 	if request.method == 'POST':
 		button_value = request.form["viewlog"]
-		student = re.sub("\D", "", button_value)
+		student_key = re.sub("\D", "", button_value)
 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
 
-		student = Students.query.filter_by(student_id=student).first()
+		student = Students.query.filter_by(student_id=student_key).first()
 
 		global STUDENT_LOG_ID
 		STUDENT_LOG_ID = student.student_id
+		# print(STUDENT_LOG_ID)
 
 		return(redirect(url_for("main.logs")))
 
@@ -387,7 +392,7 @@ def terminatestudent():
 			all_students = Students.query.all()
 			global STUDENT_LOG_ID
 			STUDENT_LOG_ID = all_students[0].student_id
-			print(STUDENT_LOG_ID)
+			# print(STUDENT_LOG_ID)
 			#BROKEN FOR LIFE
 
 			db.session.delete(student)
@@ -398,6 +403,16 @@ def terminatestudent():
 			flash("Student ID does not exist!")
 	return(render_template("terminatestudent.html"))
 #Route 9: Terminate student. This method renders its own page.
+
+@main.route("/determineavaliablestudent", methods=('GET', 'POST'))
+@login_required
+def determineavaliablestudent():
+	# print("determineavaliablestudent")
+	all_students = Students.query.all()
+	global STUDENT_LOG_ID
+	STUDENT_LOG_ID = all_students[0].student_id
+	flash(STUDENT_LOG_ID)
+	return(redirect(url_for("main.terminatestudent")))
 
 @main.route("/debugstudent", methods=('GET', 'POST'))
 @login_required
