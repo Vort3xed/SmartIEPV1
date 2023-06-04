@@ -32,6 +32,9 @@ login_manager.login_view = 'auth.signin'
 login_manager.init_app(app)
 #Create a login manager and set the login view to the sign in page. Then initialize the flask app with the login manager
 
+with app.app_context():
+    db.create_all()
+
 MAX_GOALS = 100
 #Maximum possible amount of goals that can be created
 
