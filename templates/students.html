@@ -37,17 +37,28 @@
     </header>
 
     <script>
-        function validateInput() {
-          var input = document.getElementById("myInput");
+        function validateGoalInput() {
+          var input = document.getElementById("add_goal");
           var value = input.value;
     
           // Check if the input contains any restricted characters
           if (/[()\[\];]/.test(value)) {
-            alert("Input contains restricted characters. Please remove them.");
             return false;
           }
-    
           return true;
+        }
+    </script>
+
+    <script>
+        function validateObjectiveInput() {
+            var input = document.getElementById("add_objective");
+            var value = input.value;
+
+            // Check if the input contains any restricted characters
+            if (/[()\[\];]/.test(value)) {
+                return false;
+            }
+            return true;
         }
     </script>
 
@@ -97,10 +108,11 @@
             </div>
             {% for student in students %}
                 <div class="m-4 border border-2 border-primary rounded">
+                    <h2 class="p-2" style="text-align: center">{{ student.name }}</h2>
                     <ul>
                         <li><b>Student Database ID:</b> #{{ student.student_id }}</li>
                         <li><b>MCPS ID:</b> {{ student.school_id }}</li>
-                        <li><b>Name:</b> {{ student.name }}</li>
+                        <!-- <li><b>Name:</b> {{ student.name }}</li> -->
                         <li><b>Grade:</b> {{ student.grade }}</li>
                         <li><b>Date of Birth:</b> {{ student.dateofbirth }}</li>
                         <li><b>Case Manager:</b> {{ student.casemanager }}</li>
@@ -157,7 +169,7 @@
 
                     <!-- HERE -->
                     <div class="m-2">
-                        <form method="post" action="/addgoal" onsubmit="return validateInput();">
+                        <form method="post" action="/addgoal" onsubmit="return validateGoalInput();">
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" name="add_goal{{ student.student_id }}" id="add_goal" placeholder="Add Goals" required>
                                 <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ student.student_id }}">+</button>
@@ -197,7 +209,7 @@
                                 </ul>
 
                                 <!-- HERE -->
-                                <form method="post" class="m-2" action="/addobjectives">
+                                <form method="post" class="m-2" action="/addobjectives" onsubmit="return validateObjectiveInput();">
                                     <div class="input-group mb-3">
                                       <input type="text" class="form-control" name="{{ student.student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives" required>
                                       <button class="btn btn-success" type="submit" name="add_objective" value="{{ student.student_id }};{{ loop.index }}">+</button>      
