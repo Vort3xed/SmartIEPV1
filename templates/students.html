@@ -3,7 +3,7 @@
     <head>
         <style>
             .form-group { 
-                margin-top:15px;
+                margin-top:12px;
             }
             .content {
                 margin: 5px;
@@ -15,15 +15,16 @@
             body {
                 padding-top: 60px;
             }
-            p {
-                margin-top: 0;
-                margin-bottom: 1rem;
-            }
             @media (max-width: 979px) {
                 body {
                     padding-top: 0px;
                 }
             }
+            p {
+                margin-top: 0;
+                margin-bottom: 1rem;
+            }
+            
         </style>
 
         <title>SmartIEP</title>
@@ -74,8 +75,9 @@
                     </div>
                     <div class="form-group">
                         <label for="studob">Date of Birth</label>
-                        <input class="form-control" name="studob" id="studob"
-                            placeholder="Date of Birth" required>
+                        <!-- <input class="form-control" name="studob" id="studob"
+                            placeholder="Date of Birth" required> -->
+                        <input type="date" value="2007-01-01" class="form-control" name="studob" id="studob" required>
                     </div>
                     <div class="form-group">
                         <label for="stumanager">Case Manager</label>
@@ -136,7 +138,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmoddob">Date of Birth</label>
-                                    <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required>
+                                    <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
+                                    <input type="date" value="2007-01-01" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmodmanager">Case Manager</label>

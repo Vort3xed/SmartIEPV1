@@ -3,10 +3,10 @@
     <head>
 
         <style>
-            .form-group { 
+            /* .form-group { 
                 margin-top:15px;
-            }
-            </style>
+            } */
+        </style>
 
         <title>SmartIEP</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -48,7 +48,7 @@
 
     <body>
         <div class="content">
-            &nbsp;
+            <!-- &nbsp; -->
             <div style="text-align: center">
                 <h1 class="mt-5">Progress Logs</h1>
                 <form method = "post" action="/logs">
@@ -93,7 +93,8 @@
                 {% if students|length > 0 and hasattr(retrieve_student(student_log_id),'name') %}
                 <form action="/modifylogs" method="post">
                     <div class="input-group">
-                        <input class="form-control" name="logdate" id="logdate" placeholder="Date">
+                        <!-- <input class="form-control" name="logdate" id="logdate" placeholder="Date"> -->
+                        <input type="date" value="2023-01-01" class="form-control" name="logdate" id="logdate" required>
                         <input class="form-control" name="logtext" id="logtext" placeholder="Log">
                         <button class="btn btn-primary" type="submit">+</button>
                     </div>
