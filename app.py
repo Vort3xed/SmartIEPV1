@@ -281,10 +281,17 @@ def addObjectives():
 def removeGoals():
 	if request.method == 'POST':
 		button_value = request.form["remove_goal"]
-		modify_student = re.sub("\D", "", button_value)
+		data = button_value.split("remove")
+		element_id = data[0]
+		modify_student = data[1]
+		# modify_student = re.sub("\D", "", button_value)
 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
 
-		goal_to_remove = request.form["remove_goal"+modify_student]
+		# goal_to_remove = request.form["remove_goal"+modify_student]
+		# goal_to_remove = request.form.get(element_id+"remove_goal"+modify_student)
+		goal_to_remove = request.form.get(str(1)+"remove_goal"+str(31))
+		print(element_id+"remove_goal"+modify_student)
+		print(goal_to_remove)
 		#Get the value in the text box for the goal to be removed. Each text box is linked to each student by the student ID.
 
 		query_student = Students.query.filter_by(student_id=modify_student).first()
@@ -319,10 +326,16 @@ def removeGoals():
 def removeobjective():
 	if request.method == 'POST':
 		button_value = request.form["remove_obj"]
-		modify_student = re.sub("\D", "", button_value)
+
+		data = button_value.split("remove")
+		print(data)
+		modify_student = data[1]
+		student_key = data[0]
+		goal_key = data[2]
+		# modify_student = re.sub("\D", "", button_value)
 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
 
-		obj_to_remove = request.form["remove_goal"+modify_student]
+		obj_to_remove = request.form[student_key+"remove_obj"+modify_student+"remove_obj"+goal_key]
 		#Get the value in the text box for the objective to be removed. Each text box is linked to each student by the student ID.
 
 		query_student = Students.query.filter_by(student_id=modify_student).first()

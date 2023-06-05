@@ -199,13 +199,13 @@
                                 <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ student.student_id }}">+</button>
                             </div>
                         </form>
-                        <form method="post" action="/removegoal">
+                        <!-- <form method="post" action="/removegoal">
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" name="remove_goal{{ student.student_id }}" id="remove_goal" placeholder="Remove Task" required>
                                 <button type="submit" class="btn btn-danger" name="remove_goal" value="remove{{ student.student_id }}">Goal</button>
                                 <button type="submit" class="btn btn-danger" name="remove_obj" formaction="/removeobjective" value="remove_obj{{ student.student_id }}">Obj</button>
                             </div>
-                        </form>
+                        </form> -->
                         <form method="post" action="/setprogress">
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" name="set_progress{{ student.student_id }}" id="set_progress" placeholder="Update Task Progress" required>
@@ -217,9 +217,14 @@
                     </div>
                     {% for taskarr in parse_tasks(student.tasks) if not taskarr|length == 0%}
                         <ul class="mt-1">
-                            <!-- <li>{{ taskarr[0] }}</li> -->
                             <li>
-                                <p style="margin-bottom: 0rem;" class="{% if taskarr[0][0] == '0' %}text-secondary{% elif taskarr[0][0] == '1' %}text-warning{% elif taskarr[0][0] == '2' %}text-success{% endif %}">{{ taskarr[0][1:] }}</p>
+                                <p id="remove_goal_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[0][0] == '0' %}text-secondary{% elif taskarr[0][0] == '1' %}text-warning{% elif taskarr[0][0] == '2' %}text-success{% endif %}">{{ taskarr[0][1:] }}</p>
+                                <form method="post" action="/removegoal">
+                                    <div class="mb-2">
+                                        <input type="hidden" value="{{taskarr[0][1:]}}" name="{{loop.index}}remove_goal{{ student.student_id }}" required>
+                                        <button type="submit" class="btn btn-sm btn-danger" name="remove_goal" value="{{loop.index}}remove{{ student.student_id }}">X</button>
+                                    </div>
+                                </form>
                             </li>
                                 <ul>
                                     {% set counter = 1%}
@@ -227,9 +232,17 @@
                                         <!-- <li>{{ taskarr[loop.index] }}</li> -->
                                         <li>
                                             <!-- <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[loop.index][1:] }}</input> -->
-                                            <p style="margin-bottom: 0rem;" class="{% if taskarr[loop.index][0] == '0' %}text-secondary{% elif taskarr[loop.index][0] == '1' %}text-warning{% elif taskarr[loop.index][0] == '2' %}text-success{% endif %}">{{ taskarr[loop.index][1:] }}</p>
+                                            <p id="remove_obj_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[loop.index][0] == '0' %}text-secondary{% elif taskarr[loop.index][0] == '1' %}text-warning{% elif taskarr[loop.index][0] == '2' %}text-success{% endif %}">{{ taskarr[loop.index][1:] }}</p>
+                                            <form method="post" action="/removeobjective">
+                                                <div class="mb-2">
+                                                    <input type="hidden" value="{{taskarr[loop.index][1:]}}" name="{{loop.index}}remove_obj{{ student.student_id }}remove_obj{{counter}}" id="{{loop.index}}remove_obj{{ student.student_id }}" required>
+                                                    <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ student.student_id }}remove{{counter}}">X</button>
+                                                </div>
+                                            </form>
                                         </li>
+                                        
                                     {% endfor %}
+                                    {% set counter = counter + 1%}
                                 </ul>
 
                                 <!-- HERE -->
