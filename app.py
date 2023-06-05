@@ -8,6 +8,7 @@ from utilities import *
 from openpyxl import Workbook
 from io import BytesIO
 from openpyxl.styles import Alignment, Font
+from flask_toastr import Toastr
 import psycopg2
 import os
 #Import wastelands
@@ -32,8 +33,25 @@ login_manager.login_view = 'auth.signin'
 login_manager.init_app(app)
 #Create a login manager and set the login view to the sign in page. Then initialize the flask app with the login manager
 
-with app.app_context():
-    db.create_all()
+toastr = Toastr(app)
+
+# toastr.options = {
+#   "closeButton": True,
+#   "debug": False,
+#   "newestOnTop": False,
+#   "progressBar": True,
+#   "positionClass": "toast-top-right",
+#   "preventDuplicates": False,
+#   "onclick": None,
+#   "showDuration": "300",
+#   "hideDuration": "1000",
+#   "timeOut": "5000",
+#   "extendedTimeOut": "1000",
+#   "showEasing": "swing",
+#   "hideEasing": "linear",
+#   "showMethod": "fadeIn",
+#   "hideMethod": "fadeOut"
+# }
 
 MAX_GOALS = 100
 #Maximum possible amount of goals that can be created
@@ -133,7 +151,8 @@ def students():
 			return render_template('students.html',students=students,accounts=accounts)
 			#Commit the changes to the database and render the students page
 		else:
-			flash("Cannot Modify Student!")
+			# flash("Cannot Modify Student!")
+			flash({'title': "SmartIEP:", 'message': "Cannot modify student!"}, 'error')
 
 	accounts = Accounts.query.all()
 	students = Students.query.all()
@@ -156,7 +175,8 @@ def setnodata():
 			query_student.tasks = set_progress
 			db.session.commit()
 		else:
-			flash("Task does not exist!")
+			flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
+
 
 		return redirect(url_for('main.students'))
 
@@ -176,7 +196,7 @@ def setinprogress():
 			query_student.tasks = set_progress
 			db.session.commit()
 		else:
-			flash("Task does not exist!")
+			flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
 
 		return redirect(url_for('main.students'))
 	
@@ -196,7 +216,7 @@ def setcomplete():
 			query_student.tasks = set_progress
 			db.session.commit()
 		else:
-			flash("Task does not exist!")
+			flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
 
 		return redirect(url_for('main.students'))
 
@@ -239,7 +259,7 @@ def addGoals():
 
 			return redirect(url_for('main.students'))
 		else:
-			flash("Cannot Modify Student!")
+			flash({'title': "SmartIEP:", 'message': "Cannot modify student!"}, 'error')
 #Route 5: Add goal to student. This method does not render its own page. 
 
 @main.route("/addobjectives", methods=('GET', 'POST'))
@@ -269,7 +289,7 @@ def addObjectives():
 			return redirect(url_for('main.students'))
 			#Add the formatted objective to the student's tasks and commit the changes to the database
 		else:
-			flash("Cannot remove goal!")
+			flash({'title': "SmartIEP:", 'message': "Cannot remove goal!"}, 'error')
 			return redirect(url_for('main.students'))
 #Route 6: Add objective to goal. This method does not render its own page.
 
@@ -302,9 +322,9 @@ def removeGoals():
 				return render_template('students.html',students=Students.query.all(),accounts=accounts)
 				#Commit the changes to the database and render the students page
 			else:
-				flash("Cannot remove goal!")
+				flash({'title': "SmartIEP:", 'message': "Cannot remove goal!"}, 'error')
 		else:
-			flash("Goal to remove does not exist!")
+			flash({'title': "SmartIEP:", 'message': "Goal to remove does not exist!"}, 'error')
 			return redirect(url_for('main.students'))
 		
 	accounts = Accounts.query.all()
@@ -334,7 +354,7 @@ def removeobjective():
 			return redirect(url_for('main.students'))
 			#Commit the changes to the database and render the students page
 		else:
-			flash("Objective to remove does not exist!")
+			flash({'title': "SmartIEP:", 'message': "Objective to remove does not exist!"}, 'error')
 			return redirect(url_for('main.students'))
 #Route 8: Remove objective from student. This method does not render its own page.
 
@@ -421,7 +441,7 @@ def terminatestudent():
 			#Delete the student from the database and commit the changes
 			return(render_template("terminatestudent.html"))
 		else:
-			flash("Student ID does not exist!")
+			flash({'title': "SmartIEP:", 'message': "Student ID does not exist!"}, 'error')
 	return(render_template("terminatestudent.html"))
 #Route 9: Terminate student. This method renders its own page.
 
@@ -432,7 +452,8 @@ def determineavaliablestudent():
 	all_students = Students.query.all()
 	global STUDENT_LOG_ID
 	STUDENT_LOG_ID = all_students[0].student_id
-	flash(STUDENT_LOG_ID)
+	# flash(STUDENT_LOG_ID)
+	flash({'title': "SmartIEP:", 'message': STUDENT_LOG_ID}, 'error')
 	return(redirect(url_for("main.terminatestudent")))
 
 @main.route("/debugstudent", methods=('GET', 'POST'))
@@ -443,10 +464,12 @@ def debugstudent():
 		student = Students.query.filter_by(student_id=student_id).first()
 		#Query the student to be debugged
 		if student:
-			flash(student.tasks + " LOGS:" + student.logs)
+			# flash(student.tasks + " LOGS:" + student.logs)
+			flash({'title': "SmartIEP:", 'message': student.tasks + " LOGS:" + student.logs}, 'error')
+
 			#Flash the student's tasks
 		else:
-			flash("Student ID does not exist!")
+			flash({'title': "SmartIEP:", 'message': "Student ID does not exist!"}, 'error')
 	return(render_template("terminatestudent.html"))
 #Route 10: Debug student. This method renders its own page.
 
@@ -466,7 +489,7 @@ def wipedata():
 
 			return(render_template("terminatestudent.html"))
 		else:
-			flash("Student ID does not exist!")
+			flash({'title': "SmartIEP:", 'message': "Student ID does not exist!"}, 'error')
 	return(render_template("terminatestudent.html"))
 #Route 11: Wipe student data. This method renders its own page.
 
@@ -484,7 +507,7 @@ def createstudent():
 		user = Students.query.filter_by(name=name).first()
 		#Query the student to be created
 		if user:
-			flash('Student already exists')
+			flash({'title': "SmartIEP:", 'message': "Student already exists!"}, 'error')
 			#If the student already exists, flash a message and render the create student page again
 			return(render_template("createstudent.html"))
 		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,tasks="",logs='{"ID": 1, "Date": "Student Creation Date", "Log": "Student Created"}|')
@@ -512,7 +535,7 @@ def signin():
 
 		if not user or not check_password_hash(user.password, password):
 			#If the user does not exist or the password is incorrect, flash a message and render the login page again
-			flash('Please check your login details and try again.')
+			flash({'title': "SmartIEP:", 'message': "Please check your login credentials and try again!"}, 'error')
 			return render_template("login.html")
 		else:
 			login_user(user)
@@ -535,7 +558,7 @@ def register():
 		#Query the user to be registered
 		
 		if user:
-			flash('Email address already exists')
+			flash({'title': "SmartIEP:", 'message': "Email already exists!"}, 'error')
 			return render_template("register.html")
 		account_user = Accounts(callname=callname, username=username, password=generate_password_hash(password, method='sha256'))
 		#Create the user using the values from the form
