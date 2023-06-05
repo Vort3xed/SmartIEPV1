@@ -3,9 +3,9 @@
     <head>
 
         <style>
-            /* .form-group { 
+            .form-group { 
                 margin-top:15px;
-            } */
+            }
         </style>
 
         <title>SmartIEP</title>
@@ -48,11 +48,23 @@
             });
         });
     </script>
+    <script>
+        function validateLogAdditionInput() {
+            var input = document.getElementById("logtext");
+            var value = input.value;
+
+            // Check if the input contains the restricted character "|"
+            if (value.includes("|")) {
+                return false;
+            }
+            return true;
+        }
+    </script>
 
     <body>
         {{ toastr.include_toastr_js() }}
         <div class="content">
-            <!-- &nbsp; -->
+            &nbsp;
             <div style="text-align: center">
                 <h1 class="mt-5">Progress Logs</h1>
                 <form method = "post" action="/logs">
@@ -95,7 +107,7 @@
                     </tbody>
                 </table>
                 {% if students|length > 0 and hasattr(retrieve_student(student_log_id),'name') %}
-                <form action="/modifylogs" method="post">
+                <form action="/modifylogs" method="post" onsubmit="return validateLogAdditionInput();">
                     <div class="input-group">
                         <!-- <input class="form-control" name="logdate" id="logdate" placeholder="Date"> -->
                         <input type="date" value="2023-01-01" class="form-control" name="logdate" id="logdate" required>

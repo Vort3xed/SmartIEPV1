@@ -34,24 +34,7 @@ login_manager.init_app(app)
 #Create a login manager and set the login view to the sign in page. Then initialize the flask app with the login manager
 
 toastr = Toastr(app)
-
-# toastr.options = {
-#   "closeButton": True,
-#   "debug": False,
-#   "newestOnTop": False,
-#   "progressBar": True,
-#   "positionClass": "toast-top-right",
-#   "preventDuplicates": False,
-#   "onclick": None,
-#   "showDuration": "300",
-#   "hideDuration": "1000",
-#   "timeOut": "5000",
-#   "extendedTimeOut": "1000",
-#   "showEasing": "swing",
-#   "hideEasing": "linear",
-#   "showMethod": "fadeIn",
-#   "hideMethod": "fadeOut"
-# }
+#Create a toastr object and initialize the flask app with it
 
 MAX_GOALS = 100
 #Maximum possible amount of goals that can be created
