@@ -121,6 +121,12 @@
                                 <input type="date" value="2007-01-01" class="form-control" name="studob" id="studob" required>
                             </div>
                             <div class="form-group">
+                                <label for="studisability">Disability</label>
+                                <!-- <input class="form-control" name="studob" id="studob"
+                                    placeholder="Date of Birth" required> -->
+                                <input class="form-control" name="studisability" id="studisability" placeholder="Disability" required>
+                            </div>
+                            <div class="form-group"> 
                                 <label for="stumanager">Case Manager</label>
                                 <!-- <input class="form-control" name="stumanager" id="stumanager"
                                     placeholder="Case Manager" required> -->
@@ -129,6 +135,12 @@
                                     <option>{{ account.callname }}</option>
                                     {% endfor %}
                                 </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="stulastreview">Last Annual Review</label>
+                                <!-- <input class="form-control" name="studob" id="studob"
+                                    placeholder="Date of Birth" required> -->
+                                <input type="date" value="2023-01-01" class="form-control" name="stulastreview" id="stulastreview" required>
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-default border border-secondary border-3">Submit</button>
@@ -182,14 +194,48 @@
             {% for student in students %}
                 <div style="height: 500px; overflow-y: scroll;" class="m-4 border border-2 border-primary rounded">
                     <h2 class="p-2" style="text-align: center">{{ student.name }}</h2>
-                    <ul>
+                    <!-- <ul>
                         <li><b>Student Database ID:</b> #{{ student.student_id }}</li>
                         <li><b>MCPS ID:</b> {{ student.school_id }}</li>
-                        <!-- <li><b>Name:</b> {{ student.name }}</li> -->
                         <li><b>Grade:</b> {{ student.grade }}</li>
                         <li><b>Date of Birth:</b> {{ student.dateofbirth }}</li>
                         <li><b>Case Manager:</b> {{ student.casemanager }}</li>
-                    </ul>
+                    </ul> -->
+                    <!-- <div class="container">
+                        <div class="col">
+                            
+                                <b class="row">Student Database ID:</b> #{{ student.student_id }}
+                                <b class="row">MCPS ID:</b> {{ student.school_id }}
+                                <b class="row">Grade:</b> {{ student.grade }}
+                                <b class="row">Date of Birth:</b> {{ student.dateofbirth }}
+                            
+                            <div class="col">
+                                <b class="col">Case Manager:</b> {{ student.casemanager }}
+                                <b class="col">Disability:</b> {{ student.disability }}
+                                <b class="col">Last Annual Review:</b> {{ student.last_annual_review }}
+                            </div>
+                        </div>
+                    </div> -->
+                    <table class="table table-borderless table-sm m-3 w-auto">
+                        <tbody>
+                            <tr>
+                                <td><b>Student Database ID:</b> #{{ student.student_id }}</td>
+                                <td><b>MCPS ID:</b> {{ student.school_id }}</td> 
+                            </tr>
+                            <tr>
+                                <td><b>Grade:</b> {{ student.grade }}</td>
+                                <td><b>Date of Birth:</b> {{ student.dateofbirth }}</td>
+                            </tr>
+                            <tr>
+                                <td><b>Case Manager:</b> {{ student.casemanager }}</td>
+                                <td><b>Disability:</b> {{ student.disability }}</td>
+                        
+                            </tr>
+                            <tr>
+                                <td><b>Last Review:</b> {{ student.last_annual_review }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
 
                     <div class="container">
                         <div class="d-flex justify-content-center align-items-center">
@@ -227,6 +273,11 @@
                                     <input type="date" value="2007-01-01" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" required>
                                 </div>
                                 <div class="form-group">
+                                    <label for="boxmoddisability">Disability</label>
+                                    <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
+                                    <input type="text" class="form-control" name="boxmoddisability{{ student.student_id }}" id="boxmoddisability" required>
+                                </div>
+                                <div class="form-group">
                                     <label for="boxmodmanager">Case Manager</label>
                                     <!-- <input type="text" class="form-control" name="boxmodmanager{{ student.student_id }}" id="boxmodmanager" placeholder="Enter Case Manager" required> -->
                                     <select class="form-control" id="boxmodmanager" name="boxmodmanager{{ student.student_id }}" required>
@@ -234,6 +285,11 @@
                                         <option>{{ account.callname }}</option>
                                         {% endfor %}
                                     </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="boxmodlastreview">Last Review</label>
+                                    <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
+                                    <input type="date" value="2023-01-01" class="form-control" name="boxmodlastreview{{ student.student_id }}" id="boxmodlastreview" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary mt-2" name="submit_button" value="submit{{ student.student_id }}">Submit</button>
                             </form>

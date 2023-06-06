@@ -121,7 +121,9 @@ def students():
 		school_id = request.form["boxmodschoolid"+modify_student]
 		grade = request.form["boxmodgrade"+modify_student]
 		dob = request.form["boxmoddob"+modify_student]
+		disability = request.form["boxmoddisability"+modify_student]
 		casemanager = request.form["boxmodmanager"+modify_student]
+		last_annual_review = request.form["boxmodlastreview"+modify_student]
 		#Get the values in the text boxes for the student to be modified
 		
 		query_student = Students.query.filter_by(student_id=modify_student).first()
@@ -132,7 +134,9 @@ def students():
 			query_student.school_id = school_id
 			query_student.grade = grade
 			query_student.dateofbirth = dob
+			query_student.disability = disability
 			query_student.casemanager = casemanager
+			query_student.last_annual_review = last_annual_review
 			#Set the query_student's fields to the values in the text boxes
 
 			db.session.commit()
@@ -578,7 +582,10 @@ def createstudent():
 		school_id = request.form["stuschoolid"]
 		grade = request.form["stugrade"]
 		dateofbirth = request.form["studob"]
+		disability = request.form["studisability"]
 		casemanager = request.form["stumanager"]
+		last_annual_review = request.form["stulastreview"]
+
 		#Get the values from the form
 
 		user = Students.query.filter_by(name=name).first()
@@ -587,7 +594,7 @@ def createstudent():
 			flash({'title': "SmartIEP:", 'message': "Student already exists!"}, 'error')
 			#If the student already exists, flash a message and render the create student page again
 			return(render_template("createstudent.html"))
-		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,tasks="",logs='{"ID": 1, "Date": "Student Creation Date", "Log": "Student Created"}|')
+		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,disability=disability,last_annual_review=last_annual_review,tasks="",logs='{"ID": 1, "Date": "Student Creation Date", "Log": "Student Created"}|')
 		#Create the student
 
 		db.session.add(created_student)
@@ -749,7 +756,9 @@ def generate_spreadsheet(student):
 	sheet['A3'] = "Name: " + student.name
 	sheet['A4'] = "Grade: " + str(student.grade)
 	sheet['A5'] = "Date of Birth: " + student.dateofbirth
-	sheet['A6'] = "Case Manager: " + student.casemanager
+	sheet['A6'] = "Disability: " + student.disability
+	sheet['A7'] = "Case Manager: " + student.casemanager
+	sheet['A8'] = "Last Annual Review: " + student.last_annual_review
 
 	sheet['B2'] = "Goals with Objectives:"
 	sheet['B2'].font = Font(bold=True)
