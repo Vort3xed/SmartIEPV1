@@ -43,6 +43,9 @@ STUDENT_LOG_NAME = ""
 STUDENT_LOG_ID = 1
 #The ID of the student that is currently being logged
 
+CASE_MANAGER_FILTER = "NO FILTER"
+GRADE_LEVEL_FILTER = "NO FILTER"
+
 class Accounts(UserMixin, db.Model):
 	__tablename__ = 'accounts'
 	account_id = db.Column(db.Integer, primary_key=True)
@@ -141,8 +144,43 @@ def students():
 	accounts = Accounts.query.all()
 	students = Students.query.all()
 	# print(parse_student_tasks(students[0].tasks))
-	return render_template('students.html',students=students,accounts=accounts)
+	return render_template('students.html',students=studentsByFilter(),accounts=accounts)
 #Route 4: Students page
+
+@main.route("/setfilter", methods=('GET', 'POST'))
+@login_required
+def setfilter():
+	if request.method == 'POST':
+		case_manager = request.form["case_manager"]
+		global CASE_MANAGER_FILTER
+		CASE_MANAGER_FILTER = case_manager
+
+		grade_level = request.form["grade_level"]
+		global GRADE_LEVEL_FILTER
+		GRADE_LEVEL_FILTER = grade_level
+
+		return redirect(url_for('main.students'))
+	return redirect(url_for('main.students'))
+
+def studentsByFilter():
+	all_students = Students.query.all()
+	students_to_display = []
+	if (CASE_MANAGER_FILTER != "NO FILTER" and GRADE_LEVEL_FILTER == "NO FILTER"):
+		for student in all_students:
+			if student.casemanager == CASE_MANAGER_FILTER:
+				students_to_display.append(student)
+	elif (GRADE_LEVEL_FILTER != "NO FILTER" and CASE_MANAGER_FILTER == "NO FILTER"):
+		for student in all_students:
+			if student.grade == int(GRADE_LEVEL_FILTER):
+				students_to_display.append(student)
+	elif (CASE_MANAGER_FILTER != "NO FILTER" and GRADE_LEVEL_FILTER != "NO FILTER"):
+		for student in all_students:
+			if student.casemanager == CASE_MANAGER_FILTER and student.grade == int(GRADE_LEVEL_FILTER):
+				students_to_display.append(student)
+	elif (CASE_MANAGER_FILTER == "NO FILTER" and GRADE_LEVEL_FILTER == "NO FILTER"):
+		students_to_display = all_students
+
+	return students_to_display
 
 @main.route("/alternateprogress", methods=('GET', 'POST'))
 @login_required
