@@ -20,7 +20,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'fa1(0nwar3'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///people.db'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgressql://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://wzfngjfstkfzln:e38ae9c20d8874b1022fdf58b53afed4de288636a274b641a0e89452064ba7b7@ec2-44-215-40-87.compute-1.amazonaws.com:5432/d3749ss0lqr8hm'
 # SQLALCHEMY_DATABASE_URI = os.environ.get('postgres://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn').replace("://", "ql://", 1)
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('postgres://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn').replace("://", "ql://", 1)
 #Create and configure flask app
@@ -66,8 +66,12 @@ class Students(db.Model):
 	grade = db.Column(db.Integer)
 	dateofbirth = db.Column(db.String(200),nullable=False)
 	casemanager = db.Column(db.String(200),nullable=False)
-	tasks = db.Column(db.String(500),nullable=False)
-	logs = db.Column(db.String(500),nullable=False)
+
+	disability = db.Column(db.String(200),nullable=False)
+	last_annual_review = db.Column(db.String(200),nullable=False)
+
+	tasks = db.Column(db.String(50000),nullable=False)
+	logs = db.Column(db.String(50000),nullable=False)
 #Table of all students
 
 # class Logs(db.Model):

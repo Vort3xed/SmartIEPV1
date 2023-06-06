@@ -36,13 +36,16 @@
 
     <body>
         {{ toastr.include_toastr_js() }}
+        &nbsp;
+        <h1 class="mt-5" style="text-align: center">
+            Accounts
+        </h1>
         <div class="content p-4">
             {% for account in accounts %}
                 <div class="mt-3 p-2 border border-primary rounded">
                     <p><b>#{{ account.account_id }}</b></p>
                     <p><b>{{ account.callname }}</b></p>
                     <p><b>{{ account.username }}</b></p>
-                    <p><b>{{ account.password }}</b></p>
                 </div>
             {% endfor %}
         </div>
