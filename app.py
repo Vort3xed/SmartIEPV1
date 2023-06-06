@@ -131,7 +131,8 @@ def students():
 			db.session.commit()
 			students = Students.query.all()
 			accounts = Accounts.query.all()
-			return render_template('students.html',students=students,accounts=accounts)
+			# return render_template('students.html',students=students,accounts=accounts)
+			return redirect(url_for("main.students"))
 			#Commit the changes to the database and render the students page
 		else:
 			# flash("Cannot Modify Student!")
@@ -139,8 +140,17 @@ def students():
 
 	accounts = Accounts.query.all()
 	students = Students.query.all()
+	# print(parse_student_tasks(students[0].tasks))
 	return render_template('students.html',students=students,accounts=accounts)
 #Route 4: Students page
+
+# @main.route("/alternateprogress", methods=('GET', 'POST'))
+# @login_required
+# def alternateprogress():
+# 	if request.method == 'POST':
+# 		button_value = request.form["alternate_button"]
+# 		data = button_value.split("alternate")
+
 
 @main.route("/setnodata", methods=('GET','POST'))
 @login_required
@@ -272,7 +282,7 @@ def addObjectives():
 			return redirect(url_for('main.students'))
 			#Add the formatted objective to the student's tasks and commit the changes to the database
 		else:
-			flash({'title': "SmartIEP:", 'message': "Cannot remove goal!"}, 'error')
+			flash({'title': "SmartIEP:", 'message': "Cannot remove objective!"}, 'error')
 			return redirect(url_for('main.students'))
 #Route 6: Add objective to goal. This method does not render its own page.
 
@@ -287,9 +297,10 @@ def removeGoals():
 		# modify_student = re.sub("\D", "", button_value)
 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
 
+
+
 		# goal_to_remove = request.form["remove_goal"+modify_student]
-		# goal_to_remove = request.form.get(element_id+"remove_goal"+modify_student)
-		goal_to_remove = request.form.get(str(1)+"remove_goal"+str(31))
+		goal_to_remove = request.form.get(element_id+"remove_goal"+modify_student)
 		print(element_id+"remove_goal"+modify_student)
 		print(goal_to_remove)
 		#Get the value in the text box for the goal to be removed. Each text box is linked to each student by the student ID.
@@ -328,7 +339,7 @@ def removeobjective():
 		button_value = request.form["remove_obj"]
 
 		data = button_value.split("remove")
-		print(data)
+		
 		modify_student = data[1]
 		student_key = data[0]
 		goal_key = data[2]
@@ -603,9 +614,11 @@ def utility_processor():
 			counter = 0
 			for part in parts:
 				if part[1] == "[":
+					goalKey2 = int(part[part.find("[")+1:part.find("]")])
 					part = re.sub("\[.*?\]","[]",part)
 					part = part.replace("[","").replace("]","")
-					goalArrays[counter].append(part)
+					# goalArrays[counter].append(part)
+					goalArrays[goalKey2].append(part)
 					counter = counter + 1
 				#Check if each part in the string is a goal, and if it is, add it to the first index of every goal array.
 			for part in parts:
@@ -635,9 +648,11 @@ def parse_student_tasks(newData):
         counter = 0
         for part in parts:
             if part[1] == "[":
+                goalKey2 = int(part[part.find("[")+1:part.find("]")])
                 part = re.sub("\[.*?\]","[]",part)
                 part = part.replace("[","").replace("]","")
-                goalArrays[counter].append(part)
+                goalArrays[goalKey2].append(part)
+				# goalArrays[counter].append(part)
                 counter = counter + 1
         for part in parts:
             if part[1] == "(":
