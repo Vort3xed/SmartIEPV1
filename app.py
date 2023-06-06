@@ -144,12 +144,41 @@ def students():
 	return render_template('students.html',students=students,accounts=accounts)
 #Route 4: Students page
 
-# @main.route("/alternateprogress", methods=('GET', 'POST'))
-# @login_required
-# def alternateprogress():
-# 	if request.method == 'POST':
-# 		button_value = request.form["alternate_button"]
-# 		data = button_value.split("alternate")
+@main.route("/alternateprogress", methods=('GET', 'POST'))
+@login_required
+def alternateprogress():
+	if request.method == 'POST':
+		button_value = request.form["alternate_button"]
+		data = button_value.split("alternate")
+		element_id = data[0]
+		modify_student = data[1]
+
+		task_to_alternate = request.form.get(element_id+"alternate"+modify_student)
+		print(task_to_alternate)
+		query_student = Students.query.filter_by(student_id=modify_student).first()
+
+		if (query_student.tasks.find(task_to_alternate[1:]) > -1):
+			print(task_to_alternate[0])
+			match task_to_alternate[0]:
+				case "0":
+					print("case entered")
+					set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "1" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
+					query_student.tasks = set_progress
+					db.session.commit()
+					return redirect(url_for('main.students'))
+				case "1":
+					set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "2" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
+					query_student.tasks = set_progress
+					db.session.commit()
+					return redirect(url_for('main.students'))
+				case "2":
+					set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "0" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
+					query_student.tasks = set_progress
+					db.session.commit()
+					return redirect(url_for('main.students'))
+				case _:
+					flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
+	return redirect(url_for('main.students'))
 
 
 @main.route("/setnodata", methods=('GET','POST'))
@@ -169,7 +198,6 @@ def setnodata():
 			db.session.commit()
 		else:
 			flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
-
 
 		return redirect(url_for('main.students'))
 
