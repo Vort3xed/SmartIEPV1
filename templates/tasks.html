@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            .form-group { 
+                margin-top:12px;
+            }
+            .form-group .btn {
+                margin-right: 5px;
+            }
+            .content {
+                margin: 5px;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            body {
+                padding-top: 60px;
+            }
+            @media (max-width: 979px) {
+                body {
+                    padding-top: 0px;
+                }
+            }
+            p {
+                margin-top: 0;
+                margin-bottom: 1rem;
+            }
+            
+        </style>
+
+        <title>SmartIEP</title>
+        <link rel="icon" type="image/x-icon" href="static\smallsmartieplogo.png">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        {{ toastr.include_jquery() }}
+        {{ toastr.include_toastr_css() }}
+        {{ toastr.message() }}
+    </head>
+
+    <header>
+      {% include 'nav.html' %}
+    </header>
+
+    <script>
+        function validateGoalInput() {
+          var input = document.getElementById("add_goal");
+          var value = input.value;
+    
+          // Check if the input contains any restricted characters
+          if (/[()\[\];]/.test(value)) {
+            return false;
+          }
+          return true;
+        }
+    </script>
+
+    <script>
+        function validateObjectiveInput() {
+            var input = document.getElementById("add_objective");
+            var value = input.value;
+
+            // Check if the input contains any restricted characters
+            if (/[()\[\];]/.test(value)) {
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+    <body>
+
+        {{ toastr.include_toastr_js() }}
+                <div>
+                    <h2 class="p-2" style="text-align: center">{{ retrieve_student(student_task_id).name }}</h2>
+
+                    <!-- HERE -->
+                    <div class="m-2">
+                        <form method="post" action="/addgoal" onsubmit="return validateGoalInput();">
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" name="add_goal{{ retrieve_student(student_task_id).student_id }}" id="add_goal" placeholder="Add Goals" required>
+                                <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ retrieve_student(student_task_id).student_id }}">+</button>
+                            </div>
+                        </form>
+                    </div>
+                    {% set taskcounter = 1 %}
+                    {% for taskarr in parse_tasks(retrieve_student(student_task_id).tasks) if not taskarr|length == 0%}
+                        <ul class="mt-1">
+                            <li>
+                                {% set taskcounter = taskcounter + 1 %}
+                                <p id="remove_goal_text{{ retrieve_student(student_task_id).student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[0][0] == '0' %}text-secondary{% elif taskarr[0][0] == '1' %}text-warning{% elif taskarr[0][0] == '2' %}text-success{% endif %}">{{ taskarr[0][1:] }}</p>
+                                <form method="post" action="/removegoal">
+                                    <input type="hidden" value="{{taskarr[0][1:]}}" name="{{loop.index}}remove_goal{{ retrieve_student(student_task_id).student_id }}" required>
+                                    <input type="hidden" value="{{taskarr[0]}}" name="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}" required>
+                                    <div class="input-group">
+                                        <button type="submit" class="btn btn-sm btn-danger" name="remove_goal" value="{{loop.index}}remove{{ retrieve_student(student_task_id).student_id }}">X</button>
+                                        <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}">A</button>
+                                    </div>
+                                </form>
+                            </li>
+                                <ul>
+                                    {% set counter = 1%}
+                                    {% for objective in taskarr[1:] %}
+                                        <!-- <li>{{ taskarr[loop.index] }}</li> -->
+                                        {% set taskcounter = taskcounter + 1 %}
+                                        <li>
+                                            <!-- <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[loop.index][1:] }}</input> -->
+                                            <p id="remove_obj_text{{ retrieve_student(student_task_id).student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[loop.index][0] == '0' %}text-secondary{% elif taskarr[loop.index][0] == '1' %}text-warning{% elif taskarr[loop.index][0] == '2' %}text-success{% endif %}">{{ taskarr[loop.index][1:] }}</p>
+                                            <form method="post" action="/removeobjective">
+                                                <input type="hidden" value="{{taskarr[loop.index][1:]}}" name="{{loop.index}}remove_obj{{ retrieve_student(student_task_id).student_id }}remove_obj{{counter}}" id="{{loop.index}}remove_obj{{ retrieve_student(student_task_id).student_id }}" required>
+                                                <input type="hidden" value="{{taskarr[loop.index]}}" name="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}" required>
+                                                <div class="input-group">
+                                                    <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ retrieve_student(student_task_id).student_id }}remove{{counter}}">X</button>
+                                                    <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}">A</button>
+                                                </div>
+                                            </form>
+                                            
+                                        </li>
+                                        
+                                    {% endfor %}
+                                    {% set counter = counter + 1%}
+                                </ul>
+
+                                <!-- HERE -->
+                                <form method="post" class="m-2" action="/addobjectives" onsubmit="return validateObjectiveInput();">
+                                    <div class="input-group mb-3">
+                                      <input type="text" class="form-control" name="{{ retrieve_student(student_task_id).student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives" required>
+                                      <button class="btn btn-success" type="submit" name="add_objective" value="{{ retrieve_student(student_task_id).student_id }};{{ loop.index }}">+</button>      
+                                    </div>
+                                </form> 
+                        </ul>   
+                    {% endfor %}
+
+                </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.slim.min.js"></script>
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    </body>
+</html>

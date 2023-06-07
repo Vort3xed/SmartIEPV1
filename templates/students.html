@@ -239,17 +239,24 @@
 
                     <div class="container">
                         <div class="d-flex justify-content-center align-items-center">
-                            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#dropDownForm{{ student.student_id }}" aria-expanded="false" aria-controls="dropDownForm">
+                            <button class="btn btn-primary m-1" type="button" data-toggle="collapse" data-target="#dropDownForm{{ student.student_id }}" aria-expanded="false" aria-controls="dropDownForm">
                                 Modify Student
                             </button>
-                            <form class="m-2" method="post" action="/viewlogs">
+                            <form class="m-1" method="post" action="/exportstudent">
+                                <button class="btn btn-primary" name="export_button" value="export_button{{ student.student_id }}" type="submit">
+                                    Export Student
+                                </button>
+                            </form>
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <form class="m-1" method="post" action="/viewlogs">
                                 <button class="btn btn-primary" name="viewlog" value="viewlog{{ student.student_id }}" type="submit">
                                     View Student Logs
                                 </button>
                             </form>
-                            <form class="" method="post" action="/exportstudent">
-                                <button class="btn btn-primary" name="export_button" value="export_button{{ student.student_id }}" type="submit">
-                                    Export Student
+                            <form class="m-1" method="post" action="/expandtasks">
+                                <button class="btn btn-primary" name="expandtasks" value="expandtasks{{ student.student_id }}" type="submit">
+                                    Expand Tasks
                                 </button>
                             </form>
                         </div>
@@ -275,7 +282,7 @@
                                 <div class="form-group">
                                     <label for="boxmoddisability">Disability</label>
                                     <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
-                                    <input type="text" class="form-control" name="boxmoddisability{{ student.student_id }}" id="boxmoddisability" required>
+                                    <input type="text" class="form-control" name="boxmoddisability{{ student.student_id }}" id="boxmoddisability" placeholder="Enter disability" required>
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmodmanager">Case Manager</label>
