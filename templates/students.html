@@ -335,12 +335,12 @@
                                 <p id="remove_goal_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[0][0] == '0' %}text-secondary{% elif taskarr[0][0] == '1' %}text-warning{% elif taskarr[0][0] == '2' %}text-success{% endif %}">{{ taskarr[0][1:] }}</p>
                                 <!-- <div class="row">
                                     <div class="col-md-6"> -->
-                                        <form method="post" action="/removegoal">
+                                        <form method="post" action="/removegoal" onsubmit="return validateObjectiveInput();">
                                             <input type="hidden" value="{{taskarr[0][1:]}}" name="{{loop.index}}remove_goal{{ student.student_id }}" required>
                                             <input type="hidden" value="{{taskarr[0]}}" name="{{ taskcounter }}alternate{{ student.student_id }}" required>
                                             <div class="input-group">
-                                                <button type="submit" class="btn btn-sm btn-danger" name="remove_goal" value="{{loop.index}}remove{{ student.student_id }}">X</button>
-                                                <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ student.student_id }}">A</button>
+                                                <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ student.student_id }}">Progress</button>
+                                                <button type="submit" class="btn btn-sm btn-danger" name="remove_goal" value="{{loop.index}}remove{{ student.student_id }}">Remove</button>
                                             </div>
                                         </form>
                                     <!-- </div> -->
@@ -366,8 +366,9 @@
                                                 <input type="hidden" value="{{taskarr[loop.index][1:]}}" name="{{loop.index}}remove_obj{{ student.student_id }}remove_obj{{counter}}" id="{{loop.index}}remove_obj{{ student.student_id }}" required>
                                                 <input type="hidden" value="{{taskarr[loop.index]}}" name="{{ taskcounter }}alternate{{ student.student_id }}" required>
                                                 <div class="input-group">
-                                                    <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ student.student_id }}remove{{counter}}">X</button>
-                                                    <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ student.student_id }}">A</button>
+                                                    <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ student.student_id }}">Progress</button>
+                                                    <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ student.student_id }}remove{{counter}}">Remove</button>
+                                                    
                                                 </div>
                                             </form>
                                             

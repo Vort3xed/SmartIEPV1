@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <style>
+            .form-group { 
+                margin-top:15px;
+            }
+        </style>
+
+        <title>SmartIEP</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="icon" type="image/x-icon" href="static\smallsmartieplogo.png">
+        {{ toastr.include_jquery() }}
+        {{ toastr.include_toastr_css() }}
+        {{ toastr.message() }}
+    </head>
+
+    <header>
+      {% include 'nav.html' %}
+    </header>
+
+    <script>
+        function filterOptions() {
+          var input, filter, options, i;
+          input = document.getElementById("searchInput");
+          filter = input.value.toUpperCase();
+          options = document.getElementById("selectstudent").options;
+        
+          for (i = 0; i < options.length; i++) {
+            if (options[i].text.toUpperCase().indexOf(filter) > -1) {
+              options[i].style.display = "";
+            } else {
+              options[i].style.display = "none";
+            }
+          }
+        }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var inputField = document.getElementById("searchInput");
+    
+            // Disable form submission on Enter key press
+            inputField.addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+    <script>
+        function validateLogAdditionInput() {
+            var input = document.getElementById("logtext");
+            var value = input.value;
+
+            // Check if the input contains the restricted character "|"
+            if (value.includes("|")) {
+                return false;
+            }
+            return true;
+        }
+    </script>
+
+    <body>
+        {{ toastr.include_toastr_js() }}
+        <div class="content">
+            &nbsp;
+            <h1 class="mt-5" style="text-align: center">Student Information</h1>
+            <!-- <div style="text-align: center">
+                
+                <form method = "post" action="/logs">
+                    <label for="selectstudent">Filter Students:</label>
+                    <input type="text" id="searchInput" onkeyup="filterOptions()" placeholder="Search...">
+                    <select id="selectstudent" name="selectstudent" onchange="this.form.submit()" required>
+                        <option selected disabled hidden>Select a Student</option>
+                        {% for student in students %}
+                        {% if students|length > 0 %}
+                        <option>{{ student.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                </form>
+            </div> -->
+            {% if students|length > 0 %}
+            <div class="m-4">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">Controls</th>
+                            <th scope="col">DB I.D</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">MCPS I.D</th>
+                            <th scope="col">Grade</th>
+                            <th scope="col">Date of Birth</th>
+                            <th scope="col">Disability</th>
+                            <th scope="col">Case Manager</th>
+                            <th scope="col">Last Review</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>
+                                <form method = "post" action="/logs">
+                                    <input type="hidden" name="selectstudent" value="{{ student.name }}">
+                                    <div class="input-group">
+                                        <button type="submit" class="btn btn-sm btn-light">Logs</button>
+                                        <button type="button" class="btn btn-sm btn-light" data-toggle="collapse" data-target="#dropDownForm{{ student.student_id }}" aria-expanded="false" aria-controls="dropDownForm">
+                                            Modify
+                                        </button>
+                                        <button class="btn btn-sm btn-light" name="expandtasks" value="expandtasks{{ student.student_id }}" formaction="/expandtasks" type="submit">
+                                            Expand Tasks
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                            <td>{{ student.student_id }}</td>
+                            <td>{{ student.name }}</td>
+                            <td>{{ student.school_id }}</td>
+                            <td>{{ student.grade }}</td>
+                            <td>{{ student.dateofbirth }}</td>
+                            <td>{{ student.disability }}</td>
+                            <td>{{ student.casemanager }}</td>
+                            <td>{{ student.last_annual_review }}</td>
+                            
+                        </tr>
+                        <tr>
+                            <td colspan="9">
+                            
+                                <div class="collapse" id="dropDownForm{{ student.student_id }}">
+                                    <form method = "post" action="/students">
+                                        <div style="display: flex;">
+                                            <div class="form-group">
+                                                <label for="boxmodname">Name</label>
+                                                <input type="text" class="form-control" name="boxmodname{{ student.student_id }}" id="boxmodname" placeholder="Enter name" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="boxmodschoolid">MCPS ID</label>
+                                                <input type="number" class="form-control" name="boxmodschoolid{{ student.student_id }}" id="boxmodschoolid" placeholder="Enter MCPS ID" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="boxmodgrade">Grade</label>
+                                                <input type="number" class="form-control" name="boxmodgrade{{ student.student_id }}" id="boxmodgrade" placeholder="Enter grade" required> 
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="boxmoddob">Date of Birth</label>
+                                                <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
+                                                <input type="date" value="2007-01-01" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="boxmoddisability">Disability</label>
+                                                <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
+                                                <input type="text" class="form-control" name="boxmoddisability{{ student.student_id }}" id="boxmoddisability" placeholder="Enter disability" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="boxmodmanager">Case Manager</label>
+                                                <!-- <input type="text" class="form-control" name="boxmodmanager{{ student.student_id }}" id="boxmodmanager" placeholder="Enter Case Manager" required> -->
+                                                <select class="form-control" id="boxmodmanager" name="boxmodmanager{{ student.student_id }}" required>
+                                                    {% for account in accounts %}
+                                                    <option>{{ account.callname }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="boxmodlastreview">Last Review</label>
+                                                <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
+                                                <input type="date" value="2023-01-01" class="form-control" name="boxmodlastreview{{ student.student_id }}" id="boxmodlastreview" required>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-2" name="submit_button" value="submit{{ student.student_id }}">Submit</button>
+                                    </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+        <!-- {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="notification is-danger border border-secondary border-3" 
+            style="width: 50%; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); 
+            text-align: center;">
+            {{ messages[0] }}. Go to <a href="/">login page</a>.
+        </div>
+        {% endif %}
+        {% endwith %} -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    </body>
+</html>

@@ -54,7 +54,7 @@
             var value = input.value;
 
             // Check if the input contains the restricted character "|"
-            if (value.includes("|")) {
+            if (value.includes("|") || value.includes(";")) {
                 return false;
             }
             return true;

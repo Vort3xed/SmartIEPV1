@@ -82,13 +82,25 @@
             }
           }
         }
-    </script>    
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var inputField = document.getElementById("searchInput");
+    
+            // Disable form submission on Enter key press
+            inputField.addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>     
 
     <body>
         {{ toastr.include_toastr_js() }}
                 <div>
                     <div style="text-align: center;">
-                        <h2 class="p-2">{{ retrieve_student(student_task_id).name }}</h2>
+                        <h1 class="p-2">Expanded Tasks for Student: {% if students|length > 0 and hasattr(retrieve_student(student_task_id),'name') %} {{ retrieve_student(student_task_id).name }} {% endif %}</h1>
                         <form method = "post" action="/settaskstudentid">
                             <label for="selectstudent">Filter Students:</label>
                             <input type="text" id="searchInput" onkeyup="filterOptions()" placeholder="Search...">
@@ -102,7 +114,8 @@
                             </select>
                         </form>
                     </div>
-                    <!-- HERE -->
+                    &nbsp;
+                    {% if students|length > 0 and hasattr(retrieve_student(student_task_id),'name') %}
                     <div>
                         <div class="m-2">
                             <form method="post" action="/addgoal" onsubmit="return validateGoalInput();">
@@ -161,6 +174,7 @@
                             </ul>   
                         {% endfor %}
                     </div>
+                    {% endif %}
 
                 </div>
         </div>

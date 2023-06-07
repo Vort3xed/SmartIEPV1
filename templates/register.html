@@ -20,6 +20,17 @@
         {% include 'nav.html' %}
     </header>
 
+    <script>
+        function myFunction() {
+            var x = document.getElementById("regpassword");
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+
     <body>
         {{ toastr.include_toastr_js() }}
         &nbsp;
@@ -41,8 +52,10 @@
                 </div>
                 <div class="form-group">
                     <label for="regpassword">Password</label>
-                    <input type="password" class="form-control"
-                        name="regpassword" id="regpassword" placeholder="Password">
+                    <div class="input-group">
+                        <input type="password" class="form-control" name="regpassword" id="regpassword" placeholder="Password">
+                    <input class="btn btn-sm btn-light border border-2" value="Show Password" type="button" onclick="myFunction()">
+                    </div>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-default border border-secondary border-3">Submit</button>

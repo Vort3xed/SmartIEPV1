@@ -3,7 +3,6 @@ import json
 from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint, send_file
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.local import LocalProxy
 from flask_sqlalchemy import SQLAlchemy
 from utilities import *
 from openpyxl import Workbook
@@ -161,6 +160,14 @@ def students():
 	students = Students.query.all()
 	return render_template('students.html',students=studentsByFilter(),accounts=accounts)
 #Route 4: Students page
+
+@main.route("/studentinfo", methods=('GET', 'POST'))
+@login_required
+def studentinfo():
+	students = Students.query.all()
+	accounts = Accounts.query.all()
+	return(render_template("studentinfo.html",students=students,accounts=accounts))
+
 
 @main.route("/setfilter", methods=('GET', 'POST'))
 @login_required
@@ -654,7 +661,7 @@ def wipedata():
 
 		if student:
 			student.tasks = ""
-			student.logs = '{"ID": 1, "Date": "Student Creation Date", "Log": "Initial Log"}|'
+			student.logs = '{"ID": 1, "Date": "Year-Month-Date", "Log": "Initial Log"}|'
 			db.session.commit()
 			#Set the student's tasks to an empty string and commit the changes
 
@@ -684,7 +691,7 @@ def createstudent():
 			flash({'title': "SmartIEP:", 'message': "Student already exists!"}, 'error')
 			#If the student already exists, flash a message and render the create student page again
 			return(render_template("createstudent.html"))
-		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,disability=disability,last_annual_review=last_annual_review,tasks="",logs='{"ID": 1, "Date": "Student Creation Date", "Log": "Student Created"}|')
+		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,disability=disability,last_annual_review=last_annual_review,tasks="",logs='{"ID": 1, "Date": "Year-Month-Date", "Log": "Student Created"}|')
 		#Create the student
 
 		db.session.add(created_student)
