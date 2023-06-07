@@ -67,69 +67,100 @@
             return true;
         }
     </script>
+    <script>
+        function filterOptions() {
+          var input, filter, options, i;
+          input = document.getElementById("searchInput");
+          filter = input.value.toUpperCase();
+          options = document.getElementById("selectstudent").options;
+        
+          for (i = 0; i < options.length; i++) {
+            if (options[i].text.toUpperCase().indexOf(filter) > -1) {
+              options[i].style.display = "";
+            } else {
+              options[i].style.display = "none";
+            }
+          }
+        }
+    </script>    
 
     <body>
-
         {{ toastr.include_toastr_js() }}
                 <div>
-                    <h2 class="p-2" style="text-align: center">{{ retrieve_student(student_task_id).name }}</h2>
-
-                    <!-- HERE -->
-                    <div class="m-2">
-                        <form method="post" action="/addgoal" onsubmit="return validateGoalInput();">
-                            <div class="input-group mb-2">
-                                <input type="text" class="form-control" name="add_goal{{ retrieve_student(student_task_id).student_id }}" id="add_goal" placeholder="Add Goals" required>
-                                <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ retrieve_student(student_task_id).student_id }}">+</button>
-                            </div>
+                    <div style="text-align: center;">
+                        <h2 class="p-2">{{ retrieve_student(student_task_id).name }}</h2>
+                        <form method = "post" action="/settaskstudentid">
+                            <label for="selectstudent">Filter Students:</label>
+                            <input type="text" id="searchInput" onkeyup="filterOptions()" placeholder="Search...">
+                            <select id="selectstudent" name="selectstudent" onchange="this.form.submit()" required>
+                                <option selected disabled hidden>Select a Student</option>
+                                {% for student in students %}
+                                {% if students|length > 0 %}
+                                <option>{{ student.name }}</option>
+                                {% endif %}
+                                {% endfor %}
+                            </select>
                         </form>
                     </div>
-                    {% set taskcounter = 1 %}
-                    {% for taskarr in parse_tasks(retrieve_student(student_task_id).tasks) if not taskarr|length == 0%}
-                        <ul class="mt-1">
-                            <li>
-                                {% set taskcounter = taskcounter + 1 %}
-                                <p id="remove_goal_text{{ retrieve_student(student_task_id).student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[0][0] == '0' %}text-secondary{% elif taskarr[0][0] == '1' %}text-warning{% elif taskarr[0][0] == '2' %}text-success{% endif %}">{{ taskarr[0][1:] }}</p>
-                                <form method="post" action="/removegoal">
-                                    <input type="hidden" value="{{taskarr[0][1:]}}" name="{{loop.index}}remove_goal{{ retrieve_student(student_task_id).student_id }}" required>
-                                    <input type="hidden" value="{{taskarr[0]}}" name="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}" required>
-                                    <div class="input-group">
-                                        <button type="submit" class="btn btn-sm btn-danger" name="remove_goal" value="{{loop.index}}remove{{ retrieve_student(student_task_id).student_id }}">X</button>
-                                        <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}">A</button>
-                                    </div>
-                                </form>
-                            </li>
-                                <ul>
-                                    {% set counter = 1%}
-                                    {% for objective in taskarr[1:] %}
-                                        <!-- <li>{{ taskarr[loop.index] }}</li> -->
-                                        {% set taskcounter = taskcounter + 1 %}
-                                        <li>
-                                            <!-- <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[loop.index][1:] }}</input> -->
-                                            <p id="remove_obj_text{{ retrieve_student(student_task_id).student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[loop.index][0] == '0' %}text-secondary{% elif taskarr[loop.index][0] == '1' %}text-warning{% elif taskarr[loop.index][0] == '2' %}text-success{% endif %}">{{ taskarr[loop.index][1:] }}</p>
-                                            <form method="post" action="/removeobjective">
-                                                <input type="hidden" value="{{taskarr[loop.index][1:]}}" name="{{loop.index}}remove_obj{{ retrieve_student(student_task_id).student_id }}remove_obj{{counter}}" id="{{loop.index}}remove_obj{{ retrieve_student(student_task_id).student_id }}" required>
-                                                <input type="hidden" value="{{taskarr[loop.index]}}" name="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}" required>
-                                                <div class="input-group">
-                                                    <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ retrieve_student(student_task_id).student_id }}remove{{counter}}">X</button>
-                                                    <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}">A</button>
-                                                </div>
-                                            </form>
-                                            
-                                        </li>
-                                        
-                                    {% endfor %}
-                                    {% set counter = counter + 1%}
-                                </ul>
+                    <!-- HERE -->
+                    <div>
+                        <div class="m-2">
+                            <form method="post" action="/addgoal" onsubmit="return validateGoalInput();">
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control" name="add_goal{{ retrieve_student(student_task_id).student_id }}" id="add_goal" placeholder="Add Goals" required>
+                                    <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ retrieve_student(student_task_id).student_id }}">+</button>
+                                </div>
+                            </form>
 
-                                <!-- HERE -->
-                                <form method="post" class="m-2" action="/addobjectives" onsubmit="return validateObjectiveInput();">
-                                    <div class="input-group mb-3">
-                                      <input type="text" class="form-control" name="{{ retrieve_student(student_task_id).student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives" required>
-                                      <button class="btn btn-success" type="submit" name="add_objective" value="{{ retrieve_student(student_task_id).student_id }};{{ loop.index }}">+</button>      
-                                    </div>
-                                </form> 
-                        </ul>   
-                    {% endfor %}
+                        </div>
+                        {% set taskcounter = 1 %}
+                        {% for taskarr in parse_tasks(retrieve_student(student_task_id).tasks) if not taskarr|length == 0%}
+                            <ul class="mt-1">
+                                <li>
+                                    {% set taskcounter = taskcounter + 1 %}
+                                    <p id="remove_goal_text{{ retrieve_student(student_task_id).student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[0][0] == '0' %}text-secondary{% elif taskarr[0][0] == '1' %}text-warning{% elif taskarr[0][0] == '2' %}text-success{% endif %}">{{ taskarr[0][1:] }}</p>
+                                    <form method="post" action="/removegoal">
+                                        <input type="hidden" value="{{taskarr[0][1:]}}" name="{{loop.index}}remove_goal{{ retrieve_student(student_task_id).student_id }}" required>
+                                        <input type="hidden" value="{{taskarr[0]}}" name="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}" required>
+                                        <div class="input-group">
+                                            <button type="submit" class="btn btn-sm btn-danger" name="remove_goal" value="{{loop.index}}remove{{ retrieve_student(student_task_id).student_id }}">X</button>
+                                            <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}">A</button>
+                                        </div>
+                                    </form>
+                                </li>
+                                    <ul>
+                                        {% set counter = 1%}
+                                        {% for objective in taskarr[1:] %}
+                                            <!-- <li>{{ taskarr[loop.index] }}</li> -->
+                                            {% set taskcounter = taskcounter + 1 %}
+                                            <li>
+                                                <!-- <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[loop.index][1:] }}</input> -->
+                                                <p id="remove_obj_text{{ retrieve_student(student_task_id).student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[loop.index][0] == '0' %}text-secondary{% elif taskarr[loop.index][0] == '1' %}text-warning{% elif taskarr[loop.index][0] == '2' %}text-success{% endif %}">{{ taskarr[loop.index][1:] }}</p>
+                                                <form method="post" action="/removeobjective">
+                                                    <input type="hidden" value="{{taskarr[loop.index][1:]}}" name="{{loop.index}}remove_obj{{ retrieve_student(student_task_id).student_id }}remove_obj{{counter}}" id="{{loop.index}}remove_obj{{ retrieve_student(student_task_id).student_id }}" required>
+                                                    <input type="hidden" value="{{taskarr[loop.index]}}" name="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}" required>
+                                                    <div class="input-group">
+                                                        <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ retrieve_student(student_task_id).student_id }}remove{{counter}}">X</button>
+                                                        <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}">A</button>
+                                                    </div>
+                                                </form>
+                                                
+                                            </li>
+                                            
+                                        {% endfor %}
+                                        {% set counter = counter + 1%}
+                                    </ul>
+    
+                                    <!-- HERE -->
+                                    <form method="post" class="m-2" action="/addobjectives" onsubmit="return validateObjectiveInput();">
+                                        <div class="input-group mb-3">
+                                          <input type="text" class="form-control" name="{{ retrieve_student(student_task_id).student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives" required>
+                                          <button class="btn btn-success" type="submit" name="add_objective" value="{{ retrieve_student(student_task_id).student_id }};{{ loop.index }}">+</button>      
+                                        </div>
+                                    </form> 
+                            </ul>   
+                        {% endfor %}
+                    </div>
 
                 </div>
         </div>

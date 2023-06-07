@@ -543,6 +543,19 @@ def expandtasks():
 	students = Students.query.all()
 	return(render_template("tasks.html", students=students, student_task_id=STUDENT_TASK_ID))
 
+@main.route("/settaskstudentid", methods=('GET', 'POST'))
+@login_required
+def settaskstudentid():
+	if request.method == 'POST':
+		button_value = request.form["selectstudent"]
+		
+		student = Students.query.filter_by(name=button_value).first()
+
+		global STUDENT_TASK_ID
+		STUDENT_TASK_ID = student.student_id
+
+		return redirect(url_for('main.expandtasks'))
+
 @main.route("/modifylogs", methods=('GET', 'POST'))
 @login_required
 def modifylogs():
