@@ -512,13 +512,30 @@ def logs():
 
 		#Set the global variable STUDENT_LOG_ID to the student ID of the student selected
 		students = Students.query.all()
-		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID))
+		data = genGraphParams(STUDENT_LOG_ID)
+		labels = [row[0] for row in data]
+		values = [row[1] for row in data]
+		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID, labels=labels, values=values))
 		#Render the progress logs page with the student selected and the student ID of the student selected
 	else:
 		students = Students.query.all()
 		# STUDENT_LOG_ID = students[0].student_id
-		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID))
+		data = genGraphParams(STUDENT_LOG_ID)
+		labels = [row[0] for row in data]
+		values = [row[1] for row in data]
+		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID, labels=labels, values=values))
 #Route 9: Progress logs. This method renders its own page.
+
+def genGraphParams(student_log_id):
+	student = Students.query.filter_by(student_id=student_log_id).first()
+	data = []
+	if (student):
+		json_parcels = student.logs[:-1].split("|")
+		for json_unit in json_parcels:
+			if (json.loads(json_unit)['Data'] != ""):
+				data.append((json.loads(json_unit)['Date'],json.loads(json_unit)['Data']))
+	return data
+	#generate labels and data then parse that to logs page and render graphs 
 
 @main.route("/expandtasks", methods=('GET', 'POST'))
 @login_required
@@ -569,6 +586,7 @@ def modifylogs():
 	if request.method == 'POST':
 		log_date = request.form["logdate"]
 		log_text = request.form["logtext"]
+		log_data = request.form["logdata"]
 
 		modify_student = Students.query.filter_by(student_id=STUDENT_LOG_ID).first()
 		#Query the student to be modified
@@ -576,7 +594,7 @@ def modifylogs():
 		log_units = len(modify_student.logs[:-1].split("|"))
 		#Get the amount of logs the student has
 
-		json_parcel = '{"ID": ' + str(log_units + 1) + ', "Date": "' + log_date + '", "Log": "' + log_text + '"}'
+		json_parcel = '{"ID": ' + str(log_units + 1) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
 		#Format the log to be added to the student's logs field
 
 		modify_student.logs = modify_student.logs + json_parcel + "|"
@@ -671,6 +689,23 @@ def wipedata():
 	return(render_template("terminatestudent.html"))
 #Route 11: Wipe student data. This method renders its own page.
 
+@main.route("/graph")
+def graph():
+    # data = [
+    #     ("2023-01-01", 30/100),
+    #     ("2023-01-02", 36/46),
+    #     ("2023-01-03", 2/5),
+    #     ("2023-01-04", 4/5),
+    #     ("2023-02-02", 5/5),
+    #     ("2023-03-01", 5/5),
+    #     ("2024-01-07", 8/10),
+    #     # ("08-01-2019", 9/10),
+    # ]
+	data = genGraphParams(STUDENT_LOG_ID)
+	labels = [row[0] for row in data]
+	values = [row[1] for row in data]
+	return render_template("graph.html", labels=labels,values=values)
+
 @main.route("/createstudent", methods=('GET', 'POST'))
 @login_required
 def createstudent():
@@ -691,7 +726,7 @@ def createstudent():
 			flash({'title': "SmartIEP:", 'message': "Student already exists!"}, 'error')
 			#If the student already exists, flash a message and render the create student page again
 			return(render_template("createstudent.html"))
-		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,disability=disability,last_annual_review=last_annual_review,tasks="",logs='{"ID": 1, "Date": "Year-Month-Date", "Log": "Student Created"}|')
+		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,disability=disability,last_annual_review=last_annual_review,tasks="",logs='{"ID": 1, "Date": "Year-Month-Date", "Log": "Student Created", "Data": ""}|')
 		#Create the student
 
 		db.session.add(created_student)

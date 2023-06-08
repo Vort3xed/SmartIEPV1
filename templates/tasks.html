@@ -136,8 +136,8 @@
                                         <input type="hidden" value="{{taskarr[0][1:]}}" name="{{loop.index}}remove_goal{{ retrieve_student(student_task_id).student_id }}" required>
                                         <input type="hidden" value="{{taskarr[0]}}" name="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}" required>
                                         <div class="input-group">
-                                            <button type="submit" class="btn btn-sm btn-danger" name="remove_goal" value="{{loop.index}}remove{{ retrieve_student(student_task_id).student_id }}">X</button>
-                                            <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}">A</button>
+                                            <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}">Progress</button>
+                                            <button type="submit" class="btn btn-sm btn-danger" name="remove_goal" value="{{loop.index}}remove{{ retrieve_student(student_task_id).student_id }}">Remove</button>
                                         </div>
                                     </form>
                                 </li>
@@ -153,8 +153,9 @@
                                                     <input type="hidden" value="{{taskarr[loop.index][1:]}}" name="{{loop.index}}remove_obj{{ retrieve_student(student_task_id).student_id }}remove_obj{{counter}}" id="{{loop.index}}remove_obj{{ retrieve_student(student_task_id).student_id }}" required>
                                                     <input type="hidden" value="{{taskarr[loop.index]}}" name="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}" required>
                                                     <div class="input-group">
-                                                        <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ retrieve_student(student_task_id).student_id }}remove{{counter}}">X</button>
-                                                        <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}">A</button>
+                                                        <button type="submit" class="btn btn-sm btn-warning" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}">Progress</button>
+                                                        <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ retrieve_student(student_task_id).student_id }}remove{{counter}}">Remove</button>
+                                                        
                                                     </div>
                                                 </form>
                                                 
