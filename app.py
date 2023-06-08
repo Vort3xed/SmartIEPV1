@@ -579,10 +579,13 @@ def settaskstudentid():
 		STUDENT_TASK_ID = student.student_id
 
 		return redirect(url_for('main.expandtasks'))
+	
+PERMANENT_COUNTER = 0
 
 @main.route("/modifylogs", methods=('GET', 'POST'))
 @login_required
 def modifylogs():
+	global PERMANENT_COUNTER
 	if request.method == 'POST':
 		log_date = request.form["logdate"]
 		log_text = request.form["logtext"]
@@ -594,13 +597,42 @@ def modifylogs():
 		log_units = len(modify_student.logs[:-1].split("|"))
 		#Get the amount of logs the student has
 
-		json_parcel = '{"ID": ' + str(log_units + 1) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
+		# json_parcel = '{"ID": ' + str(log_units + 1) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
+		json_parcel = '{"ID": ' + str(PERMANENT_COUNTER) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
+
 		#Format the log to be added to the student's logs field
 
 		modify_student.logs = modify_student.logs + json_parcel + "|"
 		# print(modify_student.logs)
 		db.session.commit()
+		
+		PERMANENT_COUNTER = PERMANENT_COUNTER + 1
 		return(redirect(url_for("main.logs")))
+
+@main.route("/removelogs", methods=('GET', 'POST'))
+@login_required
+def removelogs():
+	if request.method == 'POST':
+		button_value = request.form["removelog"]
+		log_id = re.sub("\D", "", button_value)
+		# data = button_value.split("removelog")
+		# specific_log_id = data[0]
+		# log_id = data[1]
+		#Remove all non-numeric characters from the button value to get the log ID. Log ID is linked to the number found in the button value.
+
+		#log_text = request.form["removelogtext" + log_id]
+		modify_student = Students.query.filter_by(student_id=STUDENT_LOG_ID).first()
+		#Query the student to be modified
+
+		if modify_student:
+			modify_student.logs = remove_log(modify_student.logs, log_id)
+			#Remove the log from the student's logs field
+
+			db.session.commit()
+			return(redirect(url_for("main.logs")))
+		else:
+			flash({'title': "SmartIEP:", 'message': "Cannot remove log!"}, 'error')
+			return(redirect(url_for("main.logs")))
 	
 @main.route("/viewlogs", methods=('GET', 'POST'))
 @login_required
@@ -725,7 +757,7 @@ def createstudent():
 		if user:
 			flash({'title': "SmartIEP:", 'message': "Student already exists!"}, 'error')
 			#If the student already exists, flash a message and render the create student page again
-			return(render_template("createstudent.html"))
+			return redirect(url_for('main.students'))
 		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,disability=disability,last_annual_review=last_annual_review,tasks="",logs='{"ID": 1, "Date": "Year-Month-Date", "Log": "Student Created", "Data": ""}|')
 		#Create the student
 

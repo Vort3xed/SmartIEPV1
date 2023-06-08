@@ -6,9 +6,10 @@
             .form-group { 
                 margin-top:15px;
             }
-            .canvas{
-                margin: 0 auto;
-            }   
+            .chart-container {
+      width: 80%; /* Adjust the width as needed */
+      margin: 0 auto; /* Centers the container horizontally */
+    } 
         </style>
 
         <title>SmartIEP</title>
@@ -89,6 +90,7 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th scope="col">Controls</th>
                             <th scope="col">Log ID</th>
                             <th scope="col">Date</th>
                             <th scope="col">Log</th>
@@ -100,9 +102,18 @@
                     </thead>
                     <tbody>
                         {% if students|length > 0 and hasattr(retrieve_student(student_log_id),'name') %}
-                        {% for json_unit in retrieve_student(student_log_id).logs[:-1].split("|") %}
+                        {% for json_unit in retrieve_student(student_log_id).logs[:-1].split("|")[1:] %}
                         <tr>
-                            <td>{{ json.loads(json_unit)['ID'] }}</td>
+                        
+                            <td>
+                                <form action="/removelogs" method="post">
+                                    <!-- <input type="hidden" name="removelogtext{{ loop.index }}" value="{{ json.loads(json_unit)['ID'] }}"> -->
+                                    <button class="btn btn-primary" name="removelog" value="removelog{{ json.loads(json_unit)['ID'] }}" type="submit">Remove</button>
+                                </form>
+                            </td>
+                            <!-- <td>{{ json.loads(json_unit)['ID'] }}</td> -->
+                            <!-- finish this! -->
+                            <td>{{ loop.index }} but acc {{ json.loads(json_unit)['ID'] }}</td>
                             <td>{{ json.loads(json_unit)['Date'] }}</td>
                             <td>{{ json.loads(json_unit)['Log'] }}</td>
                             <td>{{ json.loads(json_unit)['Data'] }}{% if json.loads(json_unit)['Data'] != "" %}%{% endif %}</td>
@@ -135,11 +146,8 @@
         {% endif %}
         {% endwith %} -->
 
-        <div style="text-align: center;">
-            <div class="container" style="display: inline-block;">
-                
-                <canvas id="lineChart" width="1000" height="400">what if i put sum</canvas>
-            </div>
+        <div class="chart-container">
+            <canvas id="lineChart" width="1000" height="400"></canvas>
         </div>
         <script>
             var ctx = document.getElementById('lineChart').getContext('2d');

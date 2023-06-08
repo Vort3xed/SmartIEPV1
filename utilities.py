@@ -1,4 +1,5 @@
 import re
+import json
 
 def find_next_empty_array(arr):
     for i in range(len(arr)):
@@ -79,4 +80,12 @@ def remove_strings_with_value(number, data):
 
 def poachGoal(data,findString):
     return remove_strings_with_value(find_number_in_brackets(data,findString),remove_string(data,findString))
+
+def remove_log(alllogs,specific_log_id):
+	logs = alllogs[:-1].split("|")
+	new_logs = ""
+	for log in logs:
+		if (json.loads(log)['ID'] != int(specific_log_id)):
+			new_logs = new_logs + log + "|"
+	return new_logs
 # Removes a goal from a string 
