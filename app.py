@@ -1,6 +1,6 @@
 import re
 import json
-from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint, send_file
+from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint, send_file, session
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -46,7 +46,7 @@ STUDENT_LOG_ID = 1
 
 STUDENT_TASK_NAME = ""
 STUDENT_TASK_ID = 1
-CURRENT_PAGE = 'students'
+# CURRENT_PAGE = 'students'
 
 CASE_MANAGER_FILTER = "NO FILTER"
 GRADE_LEVEL_FILTER = "NO FILTER"
@@ -158,7 +158,6 @@ def changepasswd():
 @main.route("/students", methods=('GET', 'POST'))
 @login_required
 def students():
-	global CURRENT_PAGE
 	if request.method == 'POST':
 		# global CURRENT_PAGE
 		# CURRENT_PAGE = 'students'
@@ -200,15 +199,15 @@ def students():
 			students = Students.query.all()
 			accounts = Accounts.query.all()
 			# return render_template('students.html',students=students,accounts=accounts)
-			if CURRENT_PAGE == 'students':
+			if session['page'] == 'students':
 				return redirect(url_for("main.students"))
-			elif CURRENT_PAGE == 'studentinfo':
+			elif session['page'] == 'studentinfo':
 				return redirect(url_for("main.studentinfo"))
 			#Commit the changes to the database and render the students page
 		else:
 			# flash("Cannot Modify Student!")
 			flash({'title': "SmartIEP:", 'message': "Cannot modify student!"}, 'error')
-	CURRENT_PAGE = 'students'
+	session['page'] = 'students'
 	accounts = Accounts.query.all()
 	students = Students.query.all()
 	return render_template('students.html',students=studentsByFilter(),accounts=accounts)
@@ -217,11 +216,9 @@ def students():
 @main.route("/studentinfo", methods=('GET', 'POST'))
 @login_required
 def studentinfo():
-	global CURRENT_PAGE
-	CURRENT_PAGE = 'studentinfo'
+	session['page'] = 'studentinfo'
 	students = Students.query.all()
 	accounts = Accounts.query.all()
-	print(CURRENT_PAGE)
 	return(render_template("studentinfo.html",students=students,accounts=accounts))
 
 
@@ -281,34 +278,34 @@ def alternateprogress():
 					set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "1" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
 					query_student.tasks = set_progress
 					db.session.commit()
-					if (CURRENT_PAGE == 'students'):
+					if (session['page'] == 'students'):
 						return redirect(url_for('main.students'))
-					elif (CURRENT_PAGE == 'tasks'):
+					elif (session['page'] == 'tasks'):
 						return redirect(url_for('main.expandtasks'))
 					return redirect(url_for('main.students'))
 				case "1":
 					set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "2" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
 					query_student.tasks = set_progress
 					db.session.commit()
-					if (CURRENT_PAGE == 'students'):
+					if (session['page'] == 'students'):
 						return redirect(url_for('main.students'))
-					elif (CURRENT_PAGE == 'tasks'):
+					elif (session['page'] == 'tasks'):
 						return redirect(url_for('main.expandtasks'))
 					return redirect(url_for('main.students'))
 				case "2":
 					set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "0" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
 					query_student.tasks = set_progress
 					db.session.commit()
-					if (CURRENT_PAGE == 'students'):
+					if (session['page'] == 'students'):
 						return redirect(url_for('main.students'))
-					elif (CURRENT_PAGE == 'tasks'):
+					elif (session['page'] == 'tasks'):
 						return redirect(url_for('main.expandtasks'))
 					return redirect(url_for('main.students'))
 				case _:
 					flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
-	if (CURRENT_PAGE == 'students'):
+	if (session['page'] == 'students'):
 		return redirect(url_for('main.students'))
-	elif (CURRENT_PAGE == 'tasks'):
+	elif (session['page'] == 'tasks'):
 		return redirect(url_for('main.expandtasks'))
 	return redirect(url_for('main.students'))
 
@@ -410,9 +407,9 @@ def addGoals():
 			db.session.commit()
 			#Add the formatted task to the student's tasks and commit the changes to the database
 
-			if (CURRENT_PAGE == 'students'):
+			if (session['page'] == 'students'):
 				return redirect(url_for('main.students'))
-			elif (CURRENT_PAGE == 'tasks'):
+			elif (session['page'] == 'tasks'):
 				return redirect(url_for('main.expandtasks'))
 			return redirect(url_for('main.students'))
 		else:
@@ -443,17 +440,17 @@ def addObjectives():
 			#Format the objective to be added to the student's tasks field
 
 			db.session.commit()
-			if (CURRENT_PAGE == 'students'):
+			if (session['page'] == 'students'):
 				return redirect(url_for('main.students'))
-			elif (CURRENT_PAGE == 'tasks'):
+			elif (session['page'] == 'tasks'):
 				return redirect(url_for('main.expandtasks'))
 			return redirect(url_for('main.students'))
 			#Add the formatted objective to the student's tasks and commit the changes to the database
 		else:
 			flash({'title': "SmartIEP:", 'message': "Cannot remove objective!"}, 'error')
-			if (CURRENT_PAGE == 'students'):
+			if (session['page'] == 'students'):
 				return redirect(url_for('main.students'))
-			elif (CURRENT_PAGE == 'tasks'):
+			elif (session['page'] == 'tasks'):
 				return redirect(url_for('main.expandtasks'))
 			return redirect(url_for('main.students'))
 #Route 6: Add objective to goal. This method does not render its own page.
@@ -492,9 +489,9 @@ def removeGoals():
 				accounts = Accounts.query.all()
 				# return render_template('students.html',students=Students.query.all(),accounts=accounts)
 
-				if (CURRENT_PAGE == 'students'):
+				if (session['page'] == 'students'):
 					return redirect(url_for('main.students'))
-				elif (CURRENT_PAGE == 'tasks'):
+				elif (session['page'] == 'tasks'):
 					return redirect(url_for('main.expandtasks'))
 				return redirect(url_for('main.students'))	
 				#Commit the changes to the database and render the students page
@@ -534,17 +531,17 @@ def removeobjective():
 
 			#Remove the objective from the student's tasks
 			db.session.commit()
-			if (CURRENT_PAGE == 'students'):
+			if (session['page'] == 'students'):
 				return redirect(url_for('main.students'))
-			elif (CURRENT_PAGE == 'tasks'):
+			elif (session['page'] == 'tasks'):
 				return redirect(url_for('main.expandtasks'))
 			return redirect(url_for('main.students'))
 			#Commit the changes to the database and render the students page
 		else:
 			flash({'title': "SmartIEP:", 'message': "Objective to remove does not exist!"}, 'error')
-			if (CURRENT_PAGE == 'students'):
+			if (session['page'] == 'students'):
 				return redirect(url_for('main.students'))
-			elif (CURRENT_PAGE == 'tasks'):
+			elif (session['page'] == 'tasks'):
 				return redirect(url_for('main.expandtasks'))
 			return redirect(url_for('main.students'))
 #Route 8: Remove objective from student. This method does not render its own page.
@@ -596,10 +593,9 @@ def genGraphParams(student_log_id):
 @main.route("/expandtasks", methods=('GET', 'POST'))
 @login_required
 def expandtasks():
-	global CURRENT_PAGE
-	CURRENT_PAGE = 'tasks'
+	session['page'] = 'tasks'
 	if request.method == 'POST':
-		CURRENT_PAGE = 'tasks'
+		session['page'] = 'tasks'
 		button_value = request.form["expandtasks"]
 		modify_student = re.sub("\D", "", button_value)
 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
@@ -612,14 +608,12 @@ def expandtasks():
 			STUDENT_TASK_ID = query_student.student_id
 
 			students = Students.query.all()
-			CURRENT_PAGE = 'tasks'
-			print(CURRENT_PAGE)
+			session['page'] = 'tasks'
 			return(render_template("tasks.html", students=students, student_task_id=STUDENT_TASK_ID))
 		else:
 			flash({'title': "SmartIEP:", 'message': "Cannot expand tasks!"}, 'error')
-			CURRENT_PAGE = 'students'
+			session['page'] = 'students'
 			return redirect(url_for('main.students'))
-	print(CURRENT_PAGE)
 	students = Students.query.all()
 	return(render_template("tasks.html", students=students, student_task_id=STUDENT_TASK_ID))
 
