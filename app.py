@@ -40,8 +40,8 @@ toastr = Toastr(app)
 MAX_GOALS = 100
 #Maximum possible amount of goals that can be created
 
-STUDENT_LOG_NAME = ""
-STUDENT_LOG_ID = 1
+# STUDENT_LOG_NAME = ""
+# STUDENT_LOG_ID = 1
 #The ID of the student that is currently being logged
 
 STUDENT_TASK_NAME = ""
@@ -552,31 +552,29 @@ def logs():
 	if request.method == 'POST':
 		student_selected = request.form["selectstudent"]
 
-		global STUDENT_LOG_NAME
-		global STUDENT_LOG_ID
+		
 		#Get the student selected from the drop down menu and set the global variable STUDENT_LOG_NAME to the student selected
-		STUDENT_LOG_NAME = student_selected
+		session['log_name'] = student_selected
 
 		student_selected_obj = Students.query.filter_by(name=student_selected).first()
 		#Query the student selected to get the student ID
 
-		STUDENT_LOG_ID = student_selected_obj.student_id
-		# print(STUDENT_LOG_ID)
+		session['log_id'] = student_selected_obj.student_id
 
 		#Set the global variable STUDENT_LOG_ID to the student ID of the student selected
 		students = Students.query.all()
-		data = genGraphParams(STUDENT_LOG_ID)
+		data = genGraphParams(session.get('log_id'))
 		labels = [row[0] for row in data]
 		values = [row[1] for row in data]
-		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID, labels=labels, values=values))
+		return(render_template("progresslogs.html", students=students, student_log_id=session.get('log_id'), labels=labels, values=values))
 		#Render the progress logs page with the student selected and the student ID of the student selected
 	else:
 		students = Students.query.all()
 		# STUDENT_LOG_ID = students[0].student_id
-		data = genGraphParams(STUDENT_LOG_ID)
+		data = genGraphParams(session.get('log_id'))
 		labels = [row[0] for row in data]
 		values = [row[1] for row in data]
-		return(render_template("progresslogs.html", students=students, student_log_id=STUDENT_LOG_ID, labels=labels, values=values))
+		return(render_template("progresslogs.html", students=students, student_log_id=session.get('log_id'), labels=labels, values=values))
 #Route 9: Progress logs. This method renders its own page.
 
 def genGraphParams(student_log_id):
@@ -642,7 +640,7 @@ def modifylogs():
 		log_future = request.form["logfuture"]
 		log_data = request.form["logdata"]
 
-		modify_student = Students.query.filter_by(student_id=STUDENT_LOG_ID).first()
+		modify_student = Students.query.filter_by(student_id=session.get('log_id')).first()
 		#Query the student to be modified
 		
 		log_units = len(modify_student.logs[:-1].split("|"))
@@ -673,7 +671,7 @@ def removelogs():
 		#Remove all non-numeric characters from the button value to get the log ID. Log ID is linked to the number found in the button value.
 
 		#log_text = request.form["removelogtext" + log_id]
-		modify_student = Students.query.filter_by(student_id=STUDENT_LOG_ID).first()
+		modify_student = Students.query.filter_by(student_id=session.get('log_id')).first()
 		#Query the student to be modified
 
 		if modify_student:
@@ -699,7 +697,7 @@ def editlogs():
 		log_future = request.form["logmodfuture" + log_id]
 		log_data = request.form["logmoddata" + log_id]
 
-		modify_student = Students.query.filter_by(student_id=STUDENT_LOG_ID).first()
+		modify_student = Students.query.filter_by(student_id=session.get('log_id')).first()
 		#Query the student to be modified
 
 		if modify_student:
@@ -743,9 +741,7 @@ def viewlogs():
 
 		student = Students.query.filter_by(student_id=student_key).first()
 
-		global STUDENT_LOG_ID
-		STUDENT_LOG_ID = student.student_id
-		# print(STUDENT_LOG_ID)
+		session['log_id'] = student.student_id
 
 		return(redirect(url_for("main.logs")))
 
@@ -763,8 +759,7 @@ def settings():
 			
 			all_students = Students.query.all()
 			if len(all_students) > 0:
-				global STUDENT_LOG_ID
-				STUDENT_LOG_ID = all_students[0].student_id
+				session['log_id'] = all_students[0].student_id
 			#Delete the student from the database and commit the changes
 			return(render_template("terminatestudent.html"))
 		else:
@@ -777,10 +772,8 @@ def settings():
 def determineavaliablestudent():
 	# print("determineavaliablestudent")
 	all_students = Students.query.all()
-	global STUDENT_LOG_ID
-	STUDENT_LOG_ID = all_students[0].student_id
-	# flash(STUDENT_LOG_ID)
-	flash({'title': "SmartIEP:", 'message': STUDENT_LOG_ID}, 'error')
+	session['log_id'] = all_students[0].student_id
+	flash({'title': "SmartIEP:", 'message': session.get('log_id')}, 'error')
 	return(redirect(url_for("main.terminatestudent")))
 
 @main.route("/debugstudent", methods=('GET', 'POST'))
@@ -832,7 +825,7 @@ def graph():
     #     ("2024-01-07", 8/10),
     #     # ("08-01-2019", 9/10),
     # ]
-	data = genGraphParams(STUDENT_LOG_ID)
+	data = genGraphParams(session.get('log_id'))
 	labels = [row[0] for row in data]
 	values = [row[1] for row in data]
 	return render_template("graph.html", labels=labels,values=values)
@@ -863,9 +856,6 @@ def createstudent():
 		db.session.add(created_student)
 		db.session.commit()
 
-		# students = Students.query.all()
-		# global STUDENT_LOG_ID
-		# STUDENT_LOG_ID = students[0].student_id
 	return redirect(url_for('main.students'))
 #Route 12: Create student. This method renders its own page.
 
