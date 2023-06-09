@@ -135,30 +135,30 @@
                                         <div style="display: flex;">
                                             <div class="form-group">
                                                 <label for="boxmodname">Name</label>
-                                                <input type="text" class="form-control" name="boxmodname{{ student.student_id }}" id="boxmodname" placeholder="Enter name">
+                                                <input type="text" class="form-control" value="{{ student.name }}" name="boxmodname{{ student.student_id }}" id="boxmodname" placeholder="Enter name">
                                             </div>
                                             <div class="form-group">
                                                 <label for="boxmodschoolid">MCPS ID</label>
-                                                <input type="number" class="form-control" name="boxmodschoolid{{ student.student_id }}" id="boxmodschoolid" placeholder="Enter MCPS ID">
+                                                <input type="number" class="form-control" value="{{ student.school_id }}" name="boxmodschoolid{{ student.student_id }}" id="boxmodschoolid" placeholder="Enter MCPS ID">
                                             </div>
                                             <div class="form-group">
                                                 <label for="boxmodgrade">Grade</label>
-                                                <input type="number" class="form-control" name="boxmodgrade{{ student.student_id }}" id="boxmodgrade" placeholder="Enter grade"> 
+                                                <input type="number" class="form-control" value="{{ student.grade }}" name="boxmodgrade{{ student.student_id }}" id="boxmodgrade" placeholder="Enter grade"> 
                                             </div>
                                             <div class="form-group">
                                                 <label for="boxmoddob">Date of Birth</label>
                                                 <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
-                                                <input type="date" value="2007-01-01" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob">
+                                                <input type="date" value="2007-01-01" class="form-control" value="{{ student.dateofbirth }}" name="boxmoddob{{ student.student_id }}" id="boxmoddob">
                                             </div>
                                             <div class="form-group">
                                                 <label for="boxmoddisability">Disability</label>
                                                 <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
-                                                <input type="text" class="form-control" name="boxmoddisability{{ student.student_id }}" id="boxmoddisability" placeholder="Enter disability">
+                                                <input type="text" class="form-control" value="{{ student.disability }}" name="boxmoddisability{{ student.student_id }}" id="boxmoddisability" placeholder="Enter disability">
                                             </div>
                                             <div class="form-group">
                                                 <label for="boxmodmanager">Case Manager</label>
                                                 <!-- <input type="text" class="form-control" name="boxmodmanager{{ student.student_id }}" id="boxmodmanager" placeholder="Enter Case Manager" required> -->
-                                                <select class="form-control" id="boxmodmanager" name="boxmodmanager{{ student.student_id }}">
+                                                <select class="form-control" id="boxmodmanager" value="{{ student.casemanager }}" name="boxmodmanager{{ student.student_id }}">
                                                     {% for account in accounts %}
                                                     <option>{{ account.callname }}</option>
                                                     {% endfor %}
@@ -167,7 +167,7 @@
                                             <div class="form-group">
                                                 <label for="boxmodlastreview">Last Review</label>
                                                 <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
-                                                <input type="date" value="2023-01-01" class="form-control" name="boxmodlastreview{{ student.student_id }}" id="boxmodlastreview" required>
+                                                <input type="date" value="2023-01-01" class="form-control" value="{{ student.last_annual_review }}" name="boxmodlastreview{{ student.student_id }}" id="boxmodlastreview" required>
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-primary mt-2" name="submit_button" value="submit{{ student.student_id }}">Submit</button>
