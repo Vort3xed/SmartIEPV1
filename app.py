@@ -633,6 +633,51 @@ def removelogs():
 		else:
 			flash({'title': "SmartIEP:", 'message': "Cannot remove log!"}, 'error')
 			return(redirect(url_for("main.logs")))
+		
+@main.route("/editlogs", methods=('GET', 'POST'))
+@login_required
+def editlogs():
+	if request.method == 'POST':
+		button_value = request.form["editlog"]
+		log_id = re.sub("\D", "", button_value)
+		#Remove all non-numeric characters from the button value to get the log ID. Log ID is linked to the number found in the button value.
+
+		log_text = request.form["logmodlog" + log_id]
+		log_date = request.form["logmoddob" + log_id]
+		log_data = request.form["logmoddata" + log_id]
+
+		modify_student = Students.query.filter_by(student_id=STUDENT_LOG_ID).first()
+		#Query the student to be modified
+
+		if modify_student:
+			modify_student.logs = edit_log(modify_student.logs, log_id, log_date, log_text, log_data)
+			#Edit the log in the student's logs field
+
+			db.session.commit()
+			return(redirect(url_for("main.logs")))
+		else:
+			flash({'title': "SmartIEP:", 'message': "Cannot edit log!"}, 'error')
+			return(redirect(url_for("main.logs")))
+
+def edit_log(logs, log_id, log_date, log_text, log_data):
+	logs = logs[:-1].split("|")
+	#Split the logs into an array of logs
+	newlogs = []
+	for log in logs:
+		if json.loads(log)['ID'] == int(log_id):
+			new_log = '{"ID": ' + str(log_id) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
+			newlogs.append(new_log)
+		else:
+			newlogs.append(log)
+			
+	logs[int(log_id) - 1] = '{"ID": ' + str(log_id) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
+	#Edit the log in the array of logs
+
+	logs = "|".join(newlogs) + "|"
+	#Join the array of logs into a string of logs
+	return logs
+	
+	#Return the string of logs
 	
 @main.route("/viewlogs", methods=('GET', 'POST'))
 @login_required
