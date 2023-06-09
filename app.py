@@ -116,10 +116,9 @@ def accounts():
 @login_required
 def students():
 	global CURRENT_PAGE
-	CURRENT_PAGE = 'students'
 	if request.method == 'POST':
 		# global CURRENT_PAGE
-		CURRENT_PAGE = 'students'
+		# CURRENT_PAGE = 'students'
 		button_value = request.form["submit_button"]
 		#Get the value of the button that was pressed
 		modify_student = re.sub("\D", "", button_value)
@@ -138,24 +137,35 @@ def students():
 		#Query the student to be modified
 
 		if query_student:
-			query_student.name = name
-			query_student.school_id = school_id
-			query_student.grade = grade
-			query_student.dateofbirth = dob
-			query_student.disability = disability
-			query_student.casemanager = casemanager
-			query_student.last_annual_review = last_annual_review
+			if name:
+				query_student.name = name
+			if school_id:
+				query_student.school_id = school_id
+			if grade:
+				query_student.grade = grade
+			if dob:
+				query_student.dateofbirth = dob
+			if disability:
+				query_student.disability = disability
+			if casemanager:
+				query_student.casemanager = casemanager
+			if last_annual_review:
+				query_student.last_annual_review = last_annual_review
 			#Set the query_student's fields to the values in the text boxes
 
 			db.session.commit()
 			students = Students.query.all()
 			accounts = Accounts.query.all()
 			# return render_template('students.html',students=students,accounts=accounts)
-			return redirect(url_for("main.students"))
+			if CURRENT_PAGE == 'students':
+				return redirect(url_for("main.students"))
+			elif CURRENT_PAGE == 'studentinfo':
+				return redirect(url_for("main.studentinfo"))
 			#Commit the changes to the database and render the students page
 		else:
 			# flash("Cannot Modify Student!")
 			flash({'title': "SmartIEP:", 'message': "Cannot modify student!"}, 'error')
+	CURRENT_PAGE = 'students'
 	accounts = Accounts.query.all()
 	students = Students.query.all()
 	return render_template('students.html',students=studentsByFilter(),accounts=accounts)
@@ -164,8 +174,11 @@ def students():
 @main.route("/studentinfo", methods=('GET', 'POST'))
 @login_required
 def studentinfo():
+	global CURRENT_PAGE
+	CURRENT_PAGE = 'studentinfo'
 	students = Students.query.all()
 	accounts = Accounts.query.all()
+	print(CURRENT_PAGE)
 	return(render_template("studentinfo.html",students=students,accounts=accounts))
 
 
