@@ -6,10 +6,10 @@
             .form-group { 
                 margin-top:15px;
             }
-            .chart-container {
+            /* .chart-container {
                 margin: 0 auto;
                 width: 50%;
-            } 
+            }  */
         </style>
 
         <title>SmartIEP</title>
@@ -75,15 +75,17 @@
                 <h1 class="mt-5">Progress Logs</h1>
                 <form method = "post" action="/logs">
                     <label for="selectstudent">Filter Students:</label>
-                    <input type="text" id="searchInput" onkeyup="filterOptions()" placeholder="Search...">
-                    <select id="selectstudent" name="selectstudent" onchange="this.form.submit()" required>
-                        <option selected disabled hidden>Select a Student</option>
-                        {% for student in students %}
-                        {% if students|length > 0 %}
-                        <option>{{ student.name }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
+                    <div style="text-align: center">
+                        <input type="text" id="searchInput" onkeyup="filterOptions()" placeholder="Search...">
+                        <select id="selectstudent" name="selectstudent" onchange="this.form.submit()" required>
+                            <option selected disabled hidden>Select a Student</option>
+                            {% for student in students %}
+                            {% if students|length > 0 %}
+                            <option>{{ student.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
                 </form>
             </div>
             <div class="m-4">
@@ -95,6 +97,7 @@
                             <th scope="col">Log ID</th>
                             <th scope="col">Date (Year-Month-Date)</th>
                             <th scope="col">Log</th>
+                            <th scope="col">Future Actions</th>
                             <th scope="col">Data</th>
                             <!-- <th scope="col">Goal</th>
                             <th scope="col">Progress</th>
@@ -110,18 +113,19 @@
                                 <form action="/removelogs" method="post">
                                     <!-- <input type="hidden" name="removelogtext{{ loop.index }}" value="{{ json.loads(json_unit)['ID'] }}"> -->
                                     <div class="input-group">
-                                        <button class="btn btn-danger" name="removelog" value="removelog{{ json.loads(json_unit)['ID'] }}" type="submit">Remove</button>
+                                        <button class="btn btn-sm btn-danger" name="removelog" value="removelog{{ json.loads(json_unit)['ID'] }}" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg></button>
                                         <button type="button" class="btn btn-sm btn-light" data-toggle="collapse" data-target="#dropDownForm{{ loop.index }}" aria-expanded="false" aria-controls="dropDownForm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7.127 22.562l-7.127 1.438 1.438-7.128 5.689 5.69zm1.414-1.414l11.228-11.225-5.69-5.692-11.227 11.227 5.689 5.69zm9.768-21.148l-2.816 2.817 5.691 5.691 2.816-2.819-5.691-5.689z"/></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16"> <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/> </svg>
                                         </button>
                                     </div>
                                 </form>
                             </td>
                             <!-- <td>{{ json.loads(json_unit)['ID'] }}</td> -->
                             <!-- finish this! -->
-                            <td>{{ loop.index }} but acc {{ json.loads(json_unit)['ID'] }}</td>
+                            <td>{{ loop.index }}</td>
                             <td>{{ json.loads(json_unit)['Date'] }}</td>
                             <td>{{ json.loads(json_unit)['Log'] }}</td>
+                            <td>{{ json.loads(json_unit)['Future'] }}</td>
                             <td>{{ json.loads(json_unit)['Data'] }}{% if json.loads(json_unit)['Data'] != "" %}%{% endif %}</td>
                         </tr>
                         <tr>
@@ -130,15 +134,19 @@
                                     <form method = "post" action="/editlogs" onsubmit="return validateLogEditInput();">
                                         <div style="display: flex;">
                                             <div class="form-group">
-                                                <label for="boxmoddob">Date</label>
+                                                <label for="logmoddob">Date</label>
                                                 <input type="date" value="2007-01-01" class="form-control" name="logmoddob{{ json.loads(json_unit)['ID'] }}" id="logmoddob" required>
                                             </div>
                                             <div class="form-group">
-                                                <label for="boxmoddisability">Log</label>
+                                                <label for="logmodlog">Log</label>
                                                 <input type="text" class="form-control" name="logmodlog{{ json.loads(json_unit)['ID'] }}" id="logmodlog" placeholder="Enter Log" required>
                                             </div>
                                             <div class="form-group">
-                                                <label for="boxmodlastreview">Data</label>
+                                                <label for="logmodfuture">Future Actions</label>
+                                                <input type="text" class="form-control" name="logmodfuture{{ json.loads(json_unit)['ID'] }}" id="logmodfuture" placeholder="Enter Future Actions" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="logmoddata">Data</label>
                                                 <input type="number" class="form-control" name="logmoddata{{ json.loads(json_unit)['ID'] }}" id="logmoddata" placeholder="Percent Grade/Qualitative Data (optional)">
                                             </div>
                                         </div>
@@ -167,9 +175,10 @@
                 <form action="/modifylogs" method="post" onsubmit="return validateLogAdditionInput();">
                     <div class="input-group">
                         <!-- <input class="form-control" name="logdate" id="logdate" placeholder="Date"> -->
-                        <input type="date" value="2023-01-01" class="form-control" name="logdate" id="logdate" required>
+                        <input type="date" value="{{ get_date() }}" class="form-control" name="logdate" id="logdate" required>
                         <input class="form-control" name="logtext" id="logtext" placeholder="Log" required>
-                        <input type="number" class="form-control" name="logdata" id="logdata" step="0.01" placeholder="Percent Grade/Qualitative Data (optional)">
+                        <input class="form-control" name="logfuture" id="logfuture" placeholder="Future Actions">
+                        <input type="number" class="form-control" name="logdata" id="logdata" step="0.01" placeholder="Percent Qualitative Data (optional)">
                         <button class="btn btn-primary" type="submit">+</button>
                     </div>
                 </form>
@@ -187,7 +196,7 @@
         {% endwith %} -->
 
         <div class="chart-container">
-            <canvas id="lineChart" width="1000" height="400"></canvas>
+            <canvas id="lineChart" width="1300" height="400"></canvas>
         </div>
         <script>
             var ctx = document.getElementById('lineChart').getContext('2d');

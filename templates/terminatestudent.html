@@ -24,52 +24,30 @@
         {{ toastr.include_toastr_js() }}
         &nbsp;
         <h1 class="mt-5" style="text-align: center">
-            Debug a Student
+            Settings
         </h1>
         <div class="m-4">
-            <form class="mt-2" style="text-align: center" method = "post" action="/terminatestudent">
-                <div class="form-group">
-                    <label for="stuid">I.D.</label>
-                    <input type="number" class="form-control" name="modid" id="modid"
-                        placeholder="I.D.">
+            <form class="mt-2" style="text-align: center" method = "post" action="/settings">
+                <label for="stuid">Student Database I.D</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" name="modid" id="modid" placeholder="I.D." required>
+                    <button type="submit" class="btn btn-primary form-control">Remove Student</button>
+                    <button class="btn btn-primary form-control" formaction="/debugstudent">Debug (Developer Tool)</button>
+                    <button class="btn btn-primary form-control" formaction="/wipedata">Wipe Student Data (all logs and tasks)</button>
                 </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-default border border-secondary border-3">TERMINATE</button>
-                </div>
-            </form>
-            <form class="mt-2" style="text-align: center" method = "post" action="/debugstudent">
-                <div class="form-group">
-                    <label for="stuid">I.D.</label>
-                    <input type="number" class="form-control" name="debugid" id="debugid"
-                        placeholder="I.D.">
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-default border border-secondary border-3">Debug</button>
-                </div>
-            </form>
-            <form class="mt-2" style="text-align: center" method = "post" action="/wipedata">
-                <div class="form-group">
-                    <label for="stuid">I.D.</label>
-                    <input type="number" class="form-control" name="wipeid" id="wipeid"
-                        placeholder="I.D.">
-                </div>
-                <div class="form-group">
-                    <button type="submit" class="btn btn-default border border-secondary border-3">Wipe</button>
-                </div>
-            </form>
-
-            <form class="mt-2" style="text-align: center;" method = "post" action="/determineavaliablestudent">
-                <button type="button" class="btn btn-default border border-secondary border-3">flash useable student</button>
             </form>
         </div>
-
-        <!-- {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="notification is-danger border border-secondary border-3" style="width: 50%; position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                    {{ messages[0] }}
+        <div class="m-4">
+            <form class="mt-2" style="text-align: center" method = "post" action="/accountmods">
+                <label for="stuid">Account Management</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" name="account_id" id="account_id" placeholder="I.D." required>
+                    <button type="submit" class="btn btn-primary form-control">Remove Account</button>
+                    <input class="form-control" name="accountpass" id="accountpass" placeholder="Account Password (new password)">
+                    <button class="btn btn-primary form-control" formaction="/changepasswd">Change Account Password</button>
                 </div>
-            {% endif %}
-        {% endwith %} -->
+            </form>
+        </div>
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>

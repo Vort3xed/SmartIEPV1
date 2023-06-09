@@ -11,6 +11,7 @@ from openpyxl.styles import Alignment, Font
 from flask_toastr import Toastr
 import psycopg2
 import os
+from datetime import date
 #Import wastelands
 
 db = SQLAlchemy()
@@ -111,6 +112,48 @@ def accounts():
 	return render_template('accounts.html',accounts=accounts)
 	#Query all students and render the accounts page with the accounts queried
 #Route 3: Accounts page
+
+@main.route("/accountmods", methods=('GET', 'POST'))
+@login_required
+def accountmods():
+	if request.method == 'POST':
+		account_id = request.form["account_id"]
+		#Get the account ID of the account to be modified
+
+		account = Accounts.query.filter_by(account_id=account_id).first()
+		#Query the account to be modified
+		
+		if account:
+			db.session.delete(account)
+			db.session.commit()
+			return redirect(url_for('main.settings'))
+		else:
+			flash({'title': "SmartIEP:", 'message': "Cannot delete account!"}, 'error')
+			return redirect(url_for('main.settings'))
+	return redirect(url_for('main.settings'))
+
+@main.route("/changepasswd", methods=('GET', 'POST'))
+@login_required
+def changepasswd():
+	if request.method == 'POST':
+		account_id = request.form["account_id"]
+		#Get the account ID of the account to be modified
+
+		account = Accounts.query.filter_by(account_id=account_id).first()
+		#Query the account to be modified
+
+		if account:
+			new_password = request.form["accountpass"]
+			#Get the new password to be set for the account
+
+			account.password = generate_password_hash(new_password, method='sha256')
+			db.session.commit()
+			#Set the account's password to the new password and commit the changes to the database
+
+			return redirect(url_for('main.settings'))
+		else:
+			flash({'title': "SmartIEP:", 'message': "Cannot change password!"}, 'error')
+			return redirect(url_for('main.settings'))
 
 @main.route("/students", methods=('GET', 'POST'))
 @login_required
@@ -602,6 +645,7 @@ def modifylogs():
 	if request.method == 'POST':
 		log_date = request.form["logdate"]
 		log_text = request.form["logtext"]
+		log_future = request.form["logfuture"]
 		log_data = request.form["logdata"]
 
 		modify_student = Students.query.filter_by(student_id=STUDENT_LOG_ID).first()
@@ -611,7 +655,8 @@ def modifylogs():
 		#Get the amount of logs the student has
 
 		# json_parcel = '{"ID": ' + str(log_units + 1) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
-		json_parcel = '{"ID": ' + str(PERMANENT_COUNTER) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
+		# json_parcel = '{"ID": ' + str(PERMANENT_COUNTER) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
+		json_parcel = '{"ID": ' + str(PERMANENT_COUNTER) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Future": "' + log_future + '", "Data": "' + log_data + '"}'
 
 		#Format the log to be added to the student's logs field
 
@@ -657,13 +702,14 @@ def editlogs():
 
 		log_text = request.form["logmodlog" + log_id]
 		log_date = request.form["logmoddob" + log_id]
+		log_future = request.form["logmodfuture" + log_id]
 		log_data = request.form["logmoddata" + log_id]
 
 		modify_student = Students.query.filter_by(student_id=STUDENT_LOG_ID).first()
 		#Query the student to be modified
 
 		if modify_student:
-			modify_student.logs = edit_log(modify_student.logs, log_id, log_date, log_text, log_data)
+			modify_student.logs = edit_log(modify_student.logs, log_id, log_date, log_text, log_future, log_data)
 			#Edit the log in the student's logs field
 
 			db.session.commit()
@@ -672,18 +718,19 @@ def editlogs():
 			flash({'title': "SmartIEP:", 'message': "Cannot edit log!"}, 'error')
 			return(redirect(url_for("main.logs")))
 
-def edit_log(logs, log_id, log_date, log_text, log_data):
+def edit_log(logs, log_id, log_date, log_text, log_future, log_data):
 	logs = logs[:-1].split("|")
 	#Split the logs into an array of logs
 	newlogs = []
 	for log in logs:
 		if json.loads(log)['ID'] == int(log_id):
-			new_log = '{"ID": ' + str(log_id) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
+			# new_log = '{"ID": ' + str(log_id) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
+			new_log = '{"ID": ' + str(log_id) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Future": "' + log_future + '", "Data": "' + log_data + '"}'
 			newlogs.append(new_log)
 		else:
 			newlogs.append(log)
 			
-	logs[int(log_id) - 1] = '{"ID": ' + str(log_id) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Data": "' + log_data + '"}'
+	# logs[int(log_id) - 1] = '{"ID": ' + str(log_id) + ', "Date": "' + log_date + '", "Log": "' + log_text + '", "Future": "' + log_future + '", "Data": "' + log_data + '"}'
 	#Edit the log in the array of logs
 
 	logs = "|".join(newlogs) + "|"
@@ -708,9 +755,9 @@ def viewlogs():
 
 		return(redirect(url_for("main.logs")))
 
-@main.route("/terminatestudent", methods=('GET', 'POST'))
+@main.route("/settings", methods=('GET', 'POST'))
 @login_required
-def terminatestudent():
+def settings():
 	if request.method == 'POST':
 		student_id = request.form["modid"]
 		student = Students.query.filter_by(student_id=student_id).first()
@@ -746,7 +793,7 @@ def determineavaliablestudent():
 @login_required
 def debugstudent():
 	if request.method == 'POST':
-		student_id = request.form["debugid"]
+		student_id = request.form["modid"]
 		student = Students.query.filter_by(student_id=student_id).first()
 		#Query the student to be debugged
 		if student:
@@ -763,7 +810,7 @@ def debugstudent():
 @login_required
 def wipedata():
 	if request.method == 'POST':
-		student_id = request.form["wipeid"]
+		student_id = request.form["modid"]
 		student = Students.query.filter_by(student_id=student_id).first()
 		#Query the student to have their data wiped
 
@@ -816,7 +863,7 @@ def createstudent():
 			flash({'title': "SmartIEP:", 'message': "Student already exists!"}, 'error')
 			#If the student already exists, flash a message and render the create student page again
 			return redirect(url_for('main.students'))
-		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,disability=disability,last_annual_review=last_annual_review,tasks="",logs='{"ID": 1, "Date": "Year-Month-Date", "Log": "Student Created", "Data": ""}|')
+		created_student = Students(name=name,school_id=school_id,grade=grade,dateofbirth=dateofbirth,casemanager=casemanager,disability=disability,last_annual_review=last_annual_review,tasks="",logs='{"ID": 1, "Date": "Year-Month-Date", "Log": "Student Created", "Future": "", "Data": ""}|')
 		#Create the student
 
 		db.session.add(created_student)
@@ -937,6 +984,12 @@ def utility_processor():
 def add_imports():
     #Allowing JSON library to be used in the HTML page
     return dict(json=json)
+
+@app.context_processor
+def auto_date():
+	def get_date():
+		return date.today()
+	return dict(get_date=get_date)
 
 def parse_student_tasks(newData):
     if (newData != ""):
