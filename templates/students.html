@@ -329,65 +329,55 @@
                         </form> -->
                     </div>
                     {% set taskcounter = 1 %}
-                    {% for taskarr in parse_tasks(student.tasks) if not taskarr|length == 0%}
-                        <ul class="mt-1">
-                            <li>
-                                {% set taskcounter = taskcounter + 1 %}
-                                <p id="remove_goal_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[0][0] == '0' %}text-secondary{% elif taskarr[0][0] == '1' %}text-warning{% elif taskarr[0][0] == '2' %}text-success{% endif %}">{{ taskarr[0][1:] }}</p>
-                                <!-- <div class="row">
-                                    <div class="col-md-6"> -->
-                                        <form method="post" action="/removegoal" onsubmit="return validateObjectiveInput();">
-                                            <input type="hidden" value="{{taskarr[0][1:]}}" name="{{loop.index}}remove_goal{{ student.student_id }}" required>
-                                            <input type="hidden" value="{{taskarr[0]}}" name="{{ taskcounter }}alternate{{ student.student_id }}" required>
-                                            <div class="input-group">
-                                                <button type="submit" class="btn btn-sm {% if taskarr[0][0] == '0' %}btn-secondary{% elif taskarr[0][0] == '1' %}btn-warning{% elif taskarr[0][0] == '2' %}btn-success{% endif %}" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ student.student_id }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16"> <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2z"/> </svg></button>
-                                                <button type="submit" class="btn btn-sm btn-danger" name="remove_goal" value="{{loop.index}}remove{{ student.student_id }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg></button>
-                                            </div>
-                                        </form>
-                                    <!-- </div> -->
-                                    <!-- <div class="col-md-6">
-                                        <form method="post" action="/alternateprogress">
-                                            <div class="form-group">
-                                                <input type="hidden" value="{{taskarr[0][1:]}}" name="{{ taskcounter }}alternate{{ student.student_id }}" required>
-                                                <button type="submit" class="btn btn-sm btn-warning" name="alternate" value="{{ taskcounter }}alternate{{ student.student_id }}">A</button>
-                                            </div>
-                                        </form>
-                                    </div> -->
-                                <!-- </div> -->
-                            </li>
-                                <ul>
-                                    {% set counter = 1%}
-                                    {% for objective in taskarr[1:] %}
-                                        <!-- <li>{{ taskarr[loop.index] }}</li> -->
-                                        {% set taskcounter = taskcounter + 1 %}
-                                        <li>
-                                            <!-- <input type="checkbox" {% if taskarr[loop.index][0] == "1" %} checked="checked"{% endif %}> {{ taskarr[loop.index][1:] }}</input> -->
-                                            <p id="remove_obj_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if taskarr[loop.index][0] == '0' %}text-secondary{% elif taskarr[loop.index][0] == '1' %}text-warning{% elif taskarr[loop.index][0] == '2' %}text-success{% endif %}">{{ taskarr[loop.index][1:] }}</p>
-                                            <form method="post" action="/removeobjective">
-                                                <input type="hidden" value="{{taskarr[loop.index][1:]}}" name="{{loop.index}}remove_obj{{ student.student_id }}remove_obj{{counter}}" id="{{loop.index}}remove_obj{{ student.student_id }}" required>
-                                                <input type="hidden" value="{{taskarr[loop.index]}}" name="{{ taskcounter }}alternate{{ student.student_id }}" required>
-                                                <div class="input-group">
-                                                    <button type="submit" class="btn btn-sm {% if taskarr[loop.index][0] == '0' %}btn-secondary{% elif taskarr[loop.index][0] == '1' %}btn-warning{% elif taskarr[loop.index][0] == '2' %}btn-success{% endif %}" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ student.student_id }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16"> <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2z"/> </svg></button>
-                                                    <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ student.student_id }}remove{{counter}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg></button>
-                                                    
-                                                </div>
-                                            </form>
-                                            
-                                        </li>
-                                        
-                                    {% endfor %}
-                                    {% set counter = counter + 1%}
-                                </ul>
+                        {% for taskarr in parse_student_tasksv2(student.tasks) if not taskarr|length == 0%}
+                            <ul class="mt-1">
+                                <li>
+                                    {% set taskcounter = taskcounter + 1 %}
+                                    <p id="remove_goal_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if json.loads(taskarr[0])["Progress"] == 0 %}text-secondary{% elif json.loads(taskarr[0])["Progress"] == 1 %}text-warning{% elif json.loads(taskarr[0])["Progress"] == 2 %}text-success{% endif %}">{{ json.loads(taskarr[0])["Task"] }}</p>
+                                    <form method="post" action="/removegoal">
+                                        <input type="hidden" value="{{ json.loads(taskarr[0])["Task"] }}" name="{{loop.index}}remove_goal{{ student.student_id }}" required>
+                                        <input type="hidden" value="{{ json.loads(taskarr[0])["Progress"] }}{{ json.loads(taskarr[0])["Task"] }}" name="{{ taskcounter }}alternate{{ student.student_id }}" required>
+                                        <div class="input-group">
+                                            <button type="submit" class="btn btn-sm {% if json.loads(taskarr[0])["Progress"] == 0 %}btn-secondary{% elif json.loads(taskarr[0])["Progress"] == 1 %}btn-warning{% elif json.loads(taskarr[0])["Progress"] == 2 %}btn-success{% endif %}" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ student.student_id }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16"> <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2z"/> </svg></button>
+                                            <button type="submit" class="btn btn-sm btn-danger" name="remove_goal" value="{{loop.index}}remove{{ student.student_id }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg></button>
+                                        </div>
+                                    </form>
+                                </li>
+                                    <ul>
+                                        {% set counter = 1%}
+                                        {% for objective in taskarr[1:] %}
+                                            <!-- <li>{{ taskarr[loop.index] }}</li> -->
+                                            {% set taskcounter = taskcounter + 1 %}
+                                            <li>
+                                                <p id="remove_obj_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if json.loads(taskarr[loop.index])["Progress"] == 0 %}text-secondary{% elif json.loads(taskarr[loop.index])["Progress"] == 1 %}text-warning{% elif json.loads(taskarr[loop.index])["Progress"] == 2 %}text-success{% endif %}">{{ json.loads(taskarr[loop.index])["Task"] }}</p>
 
-                                <!-- HERE -->
-                                <form method="post" class="m-2" action="/addobjectives" onsubmit="return validateObjectiveInput();">
-                                    <div class="input-group mb-3">
-                                      <input type="text" class="form-control" name="{{ student.student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives" required>
-                                      <button class="btn btn-success" type="submit" name="add_objective" value="{{ student.student_id }};{{ loop.index }}">+</button>      
-                                    </div>
-                                </form> 
-                        </ul>   
-                    {% endfor %}
+                                                <div>
+                                                    <form method="post" action="/removeobjective">
+                                                        <input type="hidden" value="{{ json.loads(taskarr[loop.index])["Task"] }}" name="{{loop.index}}remove_obj{{ student.student_id }}remove_obj{{counter}}" id="{{loop.index}}remove_obj{{ student.student_id }}" required>
+                                                        <input type="hidden" value="{{ json.loads(taskarr[loop.index])["Progress"] }}{{ json.loads(taskarr[loop.index])["Task"] }}" name="{{ taskcounter }}alternate{{ student.student_id }}" required>
+                                                        <div class="input-group">
+                                                            <button type="submit" class="btn btn-sm {% if json.loads(taskarr[loop.index])["Progress"] == 0 %}btn-secondary{% elif json.loads(taskarr[loop.index])["Progress"] == 1 %}btn-warning{% elif json.loads(taskarr[loop.index])["Progress"] == 2 %}btn-success{% endif %}" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ student.student_id }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16"> <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2z"/> </svg></button>
+                                                            <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ student.student_id }}remove{{counter}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg></button>
+                                                            
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                
+                                            </li>
+                                            
+                                        {% endfor %}
+                                        {% set counter = counter + 1%}
+                                    </ul>
+    
+                                    <!-- HERE -->
+                                    <form method="post" class="m-2" action="/addobjectives" onsubmit="return validateObjectiveInput();">
+                                        <div class="input-group mb-3">
+                                          <input type="text" class="form-control" name="{{ student.student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives" required>
+                                          <button class="btn btn-success" type="submit" name="add_objective" value="{{ student.student_id }};{{ loop.index }}">+</button>      
+                                        </div>
+                                    </form> 
+                            </ul>   
+                        {% endfor %}
 
                 </div>
             {% endfor %}

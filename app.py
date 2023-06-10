@@ -12,6 +12,7 @@ from flask_toastr import Toastr
 import psycopg2
 import os
 from datetime import date
+from stringManipulatorv2 import *
 #Import wastelands
 
 db = SQLAlchemy()
@@ -267,8 +268,8 @@ def alternateprogress():
 			match task_to_alternate[0]:
 				case "0":
 					print("case entered")
-					set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "1" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
-					query_student.tasks = set_progress
+					# set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "1" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
+					query_student.tasks = set_progressv2(task_to_alternate[1:],1,query_student.tasks)
 					db.session.commit()
 					if (session['page'] == 'students'):
 						return redirect(url_for('main.students'))
@@ -276,8 +277,8 @@ def alternateprogress():
 						return redirect(url_for('main.expandtasks'))
 					return redirect(url_for('main.students'))
 				case "1":
-					set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "2" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
-					query_student.tasks = set_progress
+					# set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "2" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
+					query_student.tasks = set_progressv2(task_to_alternate[1:],2,query_student.tasks)
 					db.session.commit()
 					if (session['page'] == 'students'):
 						return redirect(url_for('main.students'))
@@ -285,8 +286,8 @@ def alternateprogress():
 						return redirect(url_for('main.expandtasks'))
 					return redirect(url_for('main.students'))
 				case "2":
-					set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "0" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
-					query_student.tasks = set_progress
+					# set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "0" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
+					query_student.tasks = set_progressv2(task_to_alternate[1:],0,query_student.tasks)
 					db.session.commit()
 					if (session['page'] == 'students'):
 						return redirect(url_for('main.students'))
@@ -376,6 +377,38 @@ def exportstudent():
 		return generate_spreadsheet(query_student)
 #Route 5: Export student data. This method does not render its own page.
 
+# @main.route("/addgoal", methods=('GET', 'POST'))
+# @login_required
+# def addGoals():
+# 	if request.method == 'POST':
+# 		button_value = request.form["submit_goal"]
+# 		modify_student = re.sub("\D", "", button_value)
+# 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
+
+# 		goal_to_append = request.form["add_goal"+modify_student]
+# 		#Get the value in the text box for the goal to be added. Each text box is linked to each student by the student ID.
+
+# 		query_student = Students.query.filter_by(student_id=modify_student).first()
+# 		#Query the student to be modified
+
+# 		if query_student:
+# 			array_index = find_empty_array(parse_student_tasks(query_student.tasks))
+# 			formatted_task = "0" + "["+str(array_index)+"]" + goal_to_append + ";"
+# 			#Format the goal to be added to the student's tasks field
+
+# 			query_student.tasks = query_student.tasks + formatted_task
+# 			db.session.commit()
+# 			#Add the formatted task to the student's tasks and commit the changes to the database
+
+# 			if (session['page'] == 'students'):
+# 				return redirect(url_for('main.students'))
+# 			elif (session['page'] == 'tasks'):
+# 				return redirect(url_for('main.expandtasks'))
+# 			return redirect(url_for('main.students'))
+# 		else:
+# 			flash({'title': "SmartIEP:", 'message': "Cannot modify student!"}, 'error')
+# #Route 5: Add goal to student. This method does not render its own page. 
+
 @main.route("/addgoal", methods=('GET', 'POST'))
 @login_required
 def addGoals():
@@ -391,11 +424,13 @@ def addGoals():
 		#Query the student to be modified
 
 		if query_student:
-			array_index = find_empty_array(parse_student_tasks(query_student.tasks))
-			formatted_task = "0" + "["+str(array_index)+"]" + goal_to_append + ";"
+			array_index = find_empty_array(parse_student_tasksv2(query_student.tasks))
+			json_parcel = '{"Type": 0, "Index": "' + str(array_index) + '", "Task": "' + goal_to_append + '", "Progress": 0, "Category": "Math"}|'
+			# {"Type": 0, "Index": 0, "Task": "No data math goal at index 0", "Progress": 0, "Category": "Math"}
+
 			#Format the goal to be added to the student's tasks field
 
-			query_student.tasks = query_student.tasks + formatted_task
+			query_student.tasks = query_student.tasks + json_parcel
 			db.session.commit()
 			#Add the formatted task to the student's tasks and commit the changes to the database
 
@@ -407,6 +442,45 @@ def addGoals():
 		else:
 			flash({'title': "SmartIEP:", 'message': "Cannot modify student!"}, 'error')
 #Route 5: Add goal to student. This method does not render its own page. 
+
+# @main.route("/addobjectives", methods=('GET', 'POST'))
+# @login_required
+# def addObjectives():
+# 	if request.method == 'POST':
+# 		button_value = request.form["add_objective"]
+# 		student_and_goal = button_value.split(";")
+# 		#Collect student ID and goal key from the button value. The button value is formatted as "studentID;goalKey"
+
+# 		modify_student = student_and_goal[0]
+# 		goal_key = student_and_goal[1]
+# 		#Split the button value into the student ID and goal key
+
+# 		objective_to_add = request.form[modify_student+"obj"+goal_key]
+# 		#Get the value in the text box for the objective to be added. Each text box is linked to each student by the student ID and each goal by the goal key.
+
+# 		query_student = Students.query.filter_by(student_id=modify_student).first()
+# 		#Query the student to be modified
+
+# 		if query_student:
+# 			formatted_task = "0("+str(int(goal_key)-1)+")"+objective_to_add+";"
+# 			query_student.tasks = query_student.tasks + formatted_task
+# 			#Format the objective to be added to the student's tasks field
+
+# 			db.session.commit()
+# 			if (session['page'] == 'students'):
+# 				return redirect(url_for('main.students'))
+# 			elif (session['page'] == 'tasks'):
+# 				return redirect(url_for('main.expandtasks'))
+# 			return redirect(url_for('main.students'))
+# 			#Add the formatted objective to the student's tasks and commit the changes to the database
+# 		else:
+# 			flash({'title': "SmartIEP:", 'message': "Cannot remove objective!"}, 'error')
+# 			if (session['page'] == 'students'):
+# 				return redirect(url_for('main.students'))
+# 			elif (session['page'] == 'tasks'):
+# 				return redirect(url_for('main.expandtasks'))
+# 			return redirect(url_for('main.students'))
+# #Route 6: Add objective to goal. This method does not render its own page.
 
 @main.route("/addobjectives", methods=('GET', 'POST'))
 @login_required
@@ -427,8 +501,10 @@ def addObjectives():
 		#Query the student to be modified
 
 		if query_student:
-			formatted_task = "0("+str(int(goal_key)-1)+")"+objective_to_add+";"
-			query_student.tasks = query_student.tasks + formatted_task
+			# formatted_task = "0("+str(int(goal_key)-1)+")"+objective_to_add+";"
+			json_parcel = '{"Type": 1, "Index": "' + str(int(goal_key) - 1) + '", "Task": "' + objective_to_add + '", "Progress": 0}|'
+			#{"Type": 1, "Index": 0, "Task": "in progress objective for index 0", "Progress": 1}
+			query_student.tasks = query_student.tasks + json_parcel
 			#Format the objective to be added to the student's tasks field
 
 			db.session.commit()
@@ -447,6 +523,56 @@ def addObjectives():
 			return redirect(url_for('main.students'))
 #Route 6: Add objective to goal. This method does not render its own page.
 
+# @main.route("/removegoal", methods=('GET', 'POST'))
+# @login_required
+# def removeGoals():
+# 	if request.method == 'POST':
+# 		button_value = request.form["remove_goal"]
+# 		data = button_value.split("remove")
+# 		element_id = data[0]
+# 		modify_student = data[1]
+# 		# modify_student = re.sub("\D", "", button_value)
+# 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
+
+# 		# goal_to_remove = request.form["remove_goal"+modify_student]
+# 		goal_to_remove = request.form.get(element_id+"remove_goal"+modify_student)
+# 		print(element_id+"remove_goal"+modify_student)
+# 		print(goal_to_remove)
+# 		#Get the value in the text box for the goal to be removed. Each text box is linked to each student by the student ID.
+
+# 		query_student = Students.query.filter_by(student_id=modify_student).first()
+# 		#Query the student to be modified
+
+# 		if goal_to_remove in query_student.tasks and is_goal(query_student.tasks, goal_to_remove):
+# 			#Check if the goal to be removed exists in the student's tasks and if it is a goal
+# 			if query_student:
+# 				clean_tasks = poachGoal(query_student.tasks,goal_to_remove)
+# 				#Remove the goal and the objectives associated with it from the student's tasks
+
+# 				query_student.tasks = clean_tasks
+# 				#Set the student's tasks to equal the cleaned tasks
+
+# 				db.session.commit()
+# 				#return redirect(url_for('main.students'))
+# 				accounts = Accounts.query.all()
+# 				# return render_template('students.html',students=Students.query.all(),accounts=accounts)
+
+# 				if (session['page'] == 'students'):
+# 					return redirect(url_for('main.students'))
+# 				elif (session['page'] == 'tasks'):
+# 					return redirect(url_for('main.expandtasks'))
+# 				return redirect(url_for('main.students'))	
+# 				#Commit the changes to the database and render the students page
+# 			else:
+# 				flash({'title': "SmartIEP:", 'message': "Cannot remove goal!"}, 'error')
+# 		else:
+# 			flash({'title': "SmartIEP:", 'message': "Goal to remove does not exist!"}, 'error')
+# 			return redirect(url_for('main.students'))
+		
+# 	accounts = Accounts.query.all()
+# 	return render_template('students.html',students=Students.query.all(),accounts=accounts)
+# #Route 7: Remove goal from student. This method does not render its own page.
+
 @main.route("/removegoal", methods=('GET', 'POST'))
 @login_required
 def removeGoals():
@@ -460,17 +586,15 @@ def removeGoals():
 
 		# goal_to_remove = request.form["remove_goal"+modify_student]
 		goal_to_remove = request.form.get(element_id+"remove_goal"+modify_student)
-		print(element_id+"remove_goal"+modify_student)
-		print(goal_to_remove)
 		#Get the value in the text box for the goal to be removed. Each text box is linked to each student by the student ID.
 
 		query_student = Students.query.filter_by(student_id=modify_student).first()
 		#Query the student to be modified
 
-		if goal_to_remove in query_student.tasks and is_goal(query_student.tasks, goal_to_remove):
+		if goal_to_remove in query_student.tasks:
 			#Check if the goal to be removed exists in the student's tasks and if it is a goal
 			if query_student:
-				clean_tasks = poachGoal(query_student.tasks,goal_to_remove)
+				clean_tasks = remove_goalv2(goal_to_remove, query_student.tasks)
 				#Remove the goal and the objectives associated with it from the student's tasks
 
 				query_student.tasks = clean_tasks
@@ -497,6 +621,48 @@ def removeGoals():
 	return render_template('students.html',students=Students.query.all(),accounts=accounts)
 #Route 7: Remove goal from student. This method does not render its own page.
 
+
+# @main.route("/removeobjective", methods=('GET', 'POST'))
+# @login_required
+# def removeobjective():
+# 	if request.method == 'POST':
+# 		button_value = request.form["remove_obj"]
+
+# 		data = button_value.split("remove")
+		
+# 		modify_student = data[1]
+# 		student_key = data[0]
+# 		goal_key = data[2]
+# 		# modify_student = re.sub("\D", "", button_value)
+# 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
+
+# 		obj_to_remove = request.form[student_key+"remove_obj"+modify_student+"remove_obj"+goal_key]
+# 		#Get the value in the text box for the objective to be removed. Each text box is linked to each student by the student ID.
+
+# 		query_student = Students.query.filter_by(student_id=modify_student).first()
+# 		#Query the student to be modified
+
+# 		if query_student and obj_to_remove in query_student.tasks and is_obj(query_student.tasks,obj_to_remove):
+# 			#Check if the objective to be removed exists in the student's tasks and if it is an objective
+# 			query_student.tasks = remove_string(query_student.tasks,obj_to_remove)
+
+# 			#Remove the objective from the student's tasks
+# 			db.session.commit()
+# 			if (session['page'] == 'students'):
+# 				return redirect(url_for('main.students'))
+# 			elif (session['page'] == 'tasks'):
+# 				return redirect(url_for('main.expandtasks'))
+# 			return redirect(url_for('main.students'))
+# 			#Commit the changes to the database and render the students page
+# 		else:
+# 			flash({'title': "SmartIEP:", 'message': "Objective to remove does not exist!"}, 'error')
+# 			if (session['page'] == 'students'):
+# 				return redirect(url_for('main.students'))
+# 			elif (session['page'] == 'tasks'):
+# 				return redirect(url_for('main.expandtasks'))
+# 			return redirect(url_for('main.students'))
+# #Route 8: Remove objective from student. This method does not render its own page.
+
 @main.route("/removeobjective", methods=('GET', 'POST'))
 @login_required
 def removeobjective():
@@ -517,9 +683,9 @@ def removeobjective():
 		query_student = Students.query.filter_by(student_id=modify_student).first()
 		#Query the student to be modified
 
-		if query_student and obj_to_remove in query_student.tasks and is_obj(query_student.tasks,obj_to_remove):
+		if query_student and obj_to_remove in query_student.tasks:
 			#Check if the objective to be removed exists in the student's tasks and if it is an objective
-			query_student.tasks = remove_string(query_student.tasks,obj_to_remove)
+			query_student.tasks = remove_objectivev2(obj_to_remove, query_student.tasks)
 
 			#Remove the objective from the student's tasks
 			db.session.commit()
@@ -960,6 +1126,10 @@ def utility_processor():
 def add_imports():
     #Allowing JSON library to be used in the HTML page
     return dict(json=json)
+
+@app.context_processor
+def add_imports2():
+	return dict(parse_student_tasksv2=parse_student_tasksv2)
 
 @app.context_processor
 def auto_date():
