@@ -26,27 +26,33 @@
         <h1 class="mt-5" style="text-align: center">
             Settings
         </h1>
-        <div class="m-4">
-            <form class="mt-2" style="text-align: center" method = "post" action="/settings">
-                <label for="stuid">Student Database I.D</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" name="modid" id="modid" placeholder="I.D." required>
-                    <button type="submit" class="btn btn-primary form-control">Remove Student</button>
-                    <button class="btn btn-primary form-control" formaction="/debugstudent">Debug (Developer Tool)</button>
-                    <button class="btn btn-primary form-control" formaction="/wipedata">Wipe Student Data (all logs and tasks)</button>
-                </div>
-            </form>
-        </div>
-        <div class="m-4">
-            <form class="mt-2" style="text-align: center" method = "post" action="/accountmods">
-                <label for="stuid">Account Management</label>
-                <div class="input-group">
-                    <input type="number" class="form-control" name="account_id" id="account_id" placeholder="I.D." required>
-                    <button type="submit" class="btn btn-primary form-control">Remove Account</button>
-                    <input class="form-control" name="accountpass" id="accountpass" placeholder="Account Password (new password)">
-                    <button class="btn btn-primary form-control" formaction="/changepasswd">Change Account Password</button>
-                </div>
-            </form>
+        <div class="container mt-3 border border-2 border-light rounded shadow p-3 mb-5 bg-white rounded">
+            <div class="m-4">
+                <form class="mt-2" style="text-align: center" method = "post" action="/settings">
+                    <label for="stuid">Student Database I.D</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="modid" id="modid" placeholder="I.D." required>
+                        <button type="submit" class="btn btn-primary form-control">Remove Student</button>
+                        <button class="btn btn-primary form-control" formaction="/debugstudent">Debug (Developer Tool)</button>
+                        <button class="btn btn-primary form-control" formaction="/wipedata">Wipe Student Data (all logs and tasks)</button>
+                    </div>
+                </form>
+            </div>
+            <div class="m-4">
+                <form class="mt-2" style="text-align: center" method = "post" action="/accountmods">
+                    <label for="stuid">Account Management</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="account_id" id="account_id" placeholder="I.D." required>
+                        <button type="submit" class="btn btn-primary form-control">Remove Account</button>
+                    </div>
+                </form>
+                <form class="mt-2" style="text-align: center" method="post" action="/changepasswd">
+                    <div class="input-group mt-2">
+                        <input type="password" class="form-control" name="accountpass" id="accountpass" placeholder="Account Password (new password)" required>
+                        <button class="btn btn-primary form-control">Change This Account's Password</button>
+                    </div>
+                </form>
+            </div>
         </div>
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>

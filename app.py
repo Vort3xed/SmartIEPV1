@@ -129,10 +129,10 @@ def accountmods():
 @login_required
 def changepasswd():
 	if request.method == 'POST':
-		account_id = request.form["account_id"]
+		# account_id = request.form["account_id"]
 		#Get the account ID of the account to be modified
 
-		account = Accounts.query.filter_by(account_id=account_id).first()
+		account = Accounts.query.filter_by(account_id=current_user.account_id).first()
 		#Query the account to be modified
 
 		if account:
@@ -418,6 +418,7 @@ def addGoals():
 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
 
 		goal_to_append = request.form["add_goal"+modify_student]
+		category = request.form["goalcategory"+modify_student]
 		#Get the value in the text box for the goal to be added. Each text box is linked to each student by the student ID.
 
 		query_student = Students.query.filter_by(student_id=modify_student).first()
@@ -425,7 +426,7 @@ def addGoals():
 
 		if query_student:
 			array_index = find_empty_array(parse_student_tasksv2(query_student.tasks))
-			json_parcel = '{"Type": 0, "Index": "' + str(array_index) + '", "Task": "' + goal_to_append + '", "Progress": 0, "Category": "Math"}|'
+			json_parcel = '{"Type": 0, "Index": "' + str(array_index) + '", "Task": "' + goal_to_append + '", "Progress": 0, "Category": "' + category + '"}|'
 			# {"Type": 0, "Index": 0, "Task": "No data math goal at index 0", "Progress": 0, "Category": "Math"}
 
 			#Format the goal to be added to the student's tasks field
@@ -1034,6 +1035,7 @@ def signin():
 			return render_template("login.html")
 		else:
 			login_user(user)
+			current_user.account_id = user.account_id
 			#If the user exists and the password is correct, log the user in and redirect them to the accounts page
 			return redirect(url_for('main.accounts'))
 
@@ -1185,29 +1187,29 @@ def generate_spreadsheet(student):
 	sheet['B2'].font = Font(bold=True)
 	
 	opencell = 3
-	for array in parse_student_tasks(student.tasks):
+	for array in parse_student_tasksv2(student.tasks):
 		if (array != []):
-			if (array[0][0] == "0"):
-				sheet['B' + str(opencell)] = "- Not Measureable: " + array[0][1:]
+			if (json.loads(array[0])["Progress"] == 0):
+				sheet['B' + str(opencell)] = "- ("+json.loads(array[0])["Category"]+") Not Measureable: " + json.loads(array[0])["Task"]
 				sheet['B' + str(opencell)].alignment = Alignment(wrapText=True)
-			elif (array[0][0] == "1"):
-				sheet['B' + str(opencell)] = "- In Progress: " + array[0][1:]
+			elif (json.loads(array[0])["Progress"] == 1):
+				sheet['B' + str(opencell)] = "- ("+json.loads(array[0])["Category"]+") In Progress: " + json.loads(array[0])["Task"]
 				sheet['B' + str(opencell)].alignment = Alignment(wrapText=True)
 			else:
-				sheet['B' + str(opencell)] = "- Complete: " + array[0][1:]
+				sheet['B' + str(opencell)] = "- ("+json.loads(array[0])["Category"]+") Complete: " + json.loads(array[0])["Task"]
 				sheet['B' + str(opencell)].alignment = Alignment(wrapText=True)
 			opencell = opencell + 1
 	
 			for task in array[1:]:
 				if (task != ""):
-					if (task[0] == "0"):
-						sheet['B' + str(opencell)] = "- - Not Measureable: " + task[1:]
+					if (json.loads(task)["Progress"] == 0):
+						sheet['B' + str(opencell)] = "- - Not Measureable: " + json.loads(task)["Task"]
 						sheet['B' + str(opencell)].alignment = Alignment(wrapText=True)
-					elif (task[0] == "1"):
-						sheet['B' + str(opencell)] = "- - In Progress: " + task[1:]
+					elif (json.loads(task)["Progress"] == 1):
+						sheet['B' + str(opencell)] = "- - In Progress: " + json.loads(task)["Task"]
 						sheet['B' + str(opencell)].alignment = Alignment(wrapText=True)
 					else:
-						sheet['B' + str(opencell)] = "- - Complete: " + task[1:]
+						sheet['B' + str(opencell)] = "- - Complete: " + json.loads(task)["Task"]
 						sheet['B' + str(opencell)].alignment = Alignment(wrapText=True)
 					opencell = opencell + 1
 	
@@ -1223,9 +1225,16 @@ def generate_spreadsheet(student):
 	sheet['E2'] = "Log:"
 	sheet['E2'].font = Font(bold=True)
 
+	sheet['F2'] = "Future Plans:"
+	sheet['F2'].font = Font(bold=True)
+
+	sheet['G2'] = "Data:"
+	sheet['G2'].font = Font(bold=True)
+
 	sheet.column_dimensions['C'].width = 10
 	sheet.column_dimensions['D'].width = 20
 	sheet.column_dimensions['E'].width = 50
+	sheet.column_dimensions['F'].width = 50
 
 	progressOpenCell = 3
 	for log in student.logs[:-1].split("|"):
@@ -1234,6 +1243,9 @@ def generate_spreadsheet(student):
 		sheet['D' + str(progressOpenCell)] = log["Date"]
 		sheet['E' + str(progressOpenCell)] = log["Log"]
 		sheet['E' + str(progressOpenCell)].alignment = Alignment(wrapText=True)
+		sheet['F' + str(progressOpenCell)] = log["Future"]
+		sheet['F' + str(progressOpenCell)].alignment = Alignment(wrapText=True)
+		sheet['G' + str(progressOpenCell)] = log["Data"]
 		progressOpenCell = progressOpenCell + 1
 	
 	student_iep = BytesIO()

@@ -77,8 +77,10 @@ def set_progressv2(task,progress,task_list):
         finalarray = []
         for part in parts:
             if json.loads(part)["Task"] == task:
-
-                newPart = '{"Type": ' + str(json.loads(part)["Type"]) + ', "Index": ' + str(json.loads(part)["Index"]) + ', "Task": "' + str(json.loads(part)["Task"]) + '", "Progress": ' + str(progress) + '}'
+                if (json.loads(part)["Type"] == 0):
+                    newPart = '{"Type": ' + str(json.loads(part)["Type"]) + ', "Index": ' + str(json.loads(part)["Index"]) + ', "Task": "' + str(json.loads(part)["Task"]) + '", "Progress": ' + str(progress) + ', "Category": "' + str(json.loads(part)["Category"]) + '"}'
+                else:
+                    newPart = '{"Type": ' + str(json.loads(part)["Type"]) + ', "Index": ' + str(json.loads(part)["Index"]) + ', "Task": "' + str(json.loads(part)["Task"]) + '", "Progress": ' + str(progress) + '}'
                 finalarray.append(newPart)
             else:
                 finalarray.append(part)

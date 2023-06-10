@@ -309,6 +309,16 @@
                         <form method="post" action="/addgoal" onsubmit="return validateGoalInput();">
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" name="add_goal{{ student.student_id }}" id="add_goal" placeholder="Add Goals" required>
+                                <select class="" name="goalcategory{{ student.student_id }}" id="goalcategory">
+                                    <option selected="selected">Math</option>
+                                    <option>Reading Comp</option>
+                                    <option>Reading</option>
+                                    <option>Science</option>
+                                    <option>Language Arts</option>
+                                    <option>Writing</option>
+                                    <option>History</option>
+                                    <option>Other</option>
+                                </select>
                                 <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ student.student_id }}">+</button>
                             </div>
                         </form>

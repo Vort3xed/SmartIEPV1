@@ -55,17 +55,18 @@
     </script>
     <script>
         function validateLogAdditionInput() {
-            var input = document.getElementById("logtext");
-            var value = input.value;
+    var input = document.getElementById("logtext");
+    var input2 = document.getElementById("logfuture");
+    var value = input.value;
+    var value2 = input2.value;
 
-            // Check if the input contains the restricted character "|"
-            if (value.includes("|") || value.includes(";")) {
-                return false;
-            }
-            return true;
-        }
+    // Check if the input contains the restricted character "|"
+    if (value.includes("|") || value.includes(";") || value2.includes("|") || value2.includes(";")) {
+        return false;
+    }
+    return true;
+}
     </script>
-
 
     <body>
         {{ toastr.include_toastr_js() }}
@@ -139,15 +140,15 @@
                                             </div>
                                             <div class="form-group">
                                                 <label for="logmodlog">Log</label>
-                                                <input type="text" class="form-control" name="logmodlog{{ json.loads(json_unit)['ID'] }}" id="logmodlog" placeholder="Enter Log" required>
+                                                <input type="text" class="form-control" name="logmodlog{{ json.loads(json_unit)['ID'] }}" id="logmodlog{{ json.loads(json_unit)['ID'] }}" placeholder="Enter Log" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="logmodfuture">Future Actions</label>
-                                                <input type="text" class="form-control" name="logmodfuture{{ json.loads(json_unit)['ID'] }}" id="logmodfuture" placeholder="Enter Future Actions" required>
+                                                <input type="text" class="form-control" name="logmodfuture{{ json.loads(json_unit)['ID'] }}" id="logmodfuture{{ json.loads(json_unit)['ID'] }}" placeholder="Enter Future Actions">
                                             </div>
                                             <div class="form-group">
                                                 <label for="logmoddata">Data</label>
-                                                <input type="number" class="form-control" name="logmoddata{{ json.loads(json_unit)['ID'] }}" id="logmoddata" placeholder="Percent Grade/Qualitative Data (optional)">
+                                                <input type="number" class="form-control" name="logmoddata{{ json.loads(json_unit)['ID'] }}" id="logmoddata{{ json.loads(json_unit)['ID'] }}" placeholder="Percent Grade/Qualitative Data (optional)">
                                             </div>
                                         </div>
                                         <button type="submit" class="btn btn-primary mt-2" name="editlog" value="editlog{{ json.loads(json_unit)['ID'] }}">Submit</button>
@@ -157,10 +158,12 @@
                         <script>
                             function validateLogEditInput() {
                                 var input = document.getElementById("logmodlog{{ json.loads(json_unit)['ID'] }}");
+                                var input2 = document.getElementById("logmodfuture{{ json.loads(json_unit)['ID'] }}");
                                 var value = input.value;
+                                var value2 = input2.value;
                     
                                 // Check if the input contains the restricted character "|"
-                                if (value.includes("|") || value.includes(";")) {
+                                if (value.includes("|") || value.includes(";") || value2.includes("|") || value2.includes(";")) {
                                     return false;
                                 }
                                 return true;
