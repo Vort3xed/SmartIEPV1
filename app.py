@@ -77,14 +77,6 @@ class Students(db.Model):
 
 	tasks = db.Column(db.String(50000),nullable=False)
 	logs = db.Column(db.String(50000),nullable=False)
-#Table of all students
-
-# class Logs(db.Model):
-# 	__tablename__ = 'logs'
-# 	student_id = db.Column(db.Integer, primary_key=True)
-# 	date = db.Column(db.String(200),nullable=False)
-# 	log = db.Column(db.String(500),nullable=False)
-# #Table of progress logs for each student
 
 @login_manager.user_loader
 def load_user(account_id):
