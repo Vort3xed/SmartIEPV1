@@ -961,7 +961,7 @@ def wipedata():
 
 		if student:
 			student.tasks = ""
-			student.logs = '{"ID": 1, "Date": "Year-Month-Date", "Log": "Initial Log"}|'
+			student.logs = '{"ID": 1, "Date": "Year-Month-Date", "Log": "Student Created", "Future": "", "Data": ""}|'
 			db.session.commit()
 			#Set the student's tasks to an empty string and commit the changes
 

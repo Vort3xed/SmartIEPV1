@@ -44,14 +44,14 @@
 
     <script>
         function validateGoalInput() {
-          var input = document.getElementById("add_goal");
-          var value = input.value;
-    
-          // Check if the input contains any restricted characters
-          if (/[()\[\];]/.test(value)) {
-            return false;
-          }
-          return true;
+            var input = document.getElementById("add_goal");
+            var value = input.value;
+
+            // Check if the input contains the restricted character "|"
+            if (value.includes("|") || value.includes(";")) {
+                return false;
+            }
+            return true;
         }
     </script>
 
@@ -60,8 +60,8 @@
             var input = document.getElementById("add_objective");
             var value = input.value;
 
-            // Check if the input contains any restricted characters
-            if (/[()\[\];]/.test(value)) {
+            // Check if the input contains the restricted character "|"
+            if (value.includes("|") || value.includes(";")) {
                 return false;
             }
             return true;
