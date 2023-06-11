@@ -40,10 +40,15 @@
         <div class="m-4">
             <div class="container mt-3 border border-2 border-light rounded shadow p-3 mb-5 bg-white rounded">
             <form class="mt-2" style="text-align: center" method = "post" action="/register">
-                <div class="form-group">
-                    <label for="regcallname">Name</label>
+                <label for="regcallname">Name</label>
+                <div class="form-group input-group">
                     <input class="form-control" name="regcallname" id="regcallname"
                         placeholder="Name">
+                    <select class="form-control" id="regtype" name="regtype">
+                        <option>(Math Specialist)</option>
+                        <option>(English Specialist)</option>
+                        <option selected="selected">(Teacher)</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="regusername">Email address</label>

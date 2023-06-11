@@ -1047,6 +1047,7 @@ def signin():
 def register():
 	if request.method == 'POST':
 		callname = request.form["regcallname"]
+		teacher_type = request.form["regtype"]
 		username = request.form["regusername"]
 		password = request.form["regpassword"]
 		#Get the values from the form
@@ -1057,7 +1058,7 @@ def register():
 		if user:
 			flash({'title': "SmartIEP:", 'message': "Email already exists!"}, 'error')
 			return render_template("register.html")
-		account_user = Accounts(callname=callname, username=username, password=generate_password_hash(password, method='sha256'))
+		account_user = Accounts(callname=teacher_type + " " + callname, username=username, password=generate_password_hash(password, method='sha256'))
 		#Create the user using the values from the form
 
 		db.session.add(account_user)

@@ -343,7 +343,7 @@
                             <ul class="mt-1">
                                 <li>
                                     {% set taskcounter = taskcounter + 1 %}
-                                    <p id="remove_goal_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if json.loads(taskarr[0])["Progress"] == 0 %}text-secondary{% elif json.loads(taskarr[0])["Progress"] == 1 %}text-warning{% elif json.loads(taskarr[0])["Progress"] == 2 %}text-success{% endif %}">{{ json.loads(taskarr[0])["Task"] }}</p>
+                                    <p id="remove_goal_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if json.loads(taskarr[0])["Progress"] == 0 %}text-secondary{% elif json.loads(taskarr[0])["Progress"] == 1 %}text-warning{% elif json.loads(taskarr[0])["Progress"] == 2 %}text-success{% endif %}">({{ json.loads(taskarr[0])["Category"] }}) {{ json.loads(taskarr[0])["Task"] }}</p>
                                     <form method="post" action="/removegoal">
                                         <input type="hidden" value="{{ json.loads(taskarr[0])["Task"] }}" name="{{loop.index}}remove_goal{{ student.student_id }}" required>
                                         <input type="hidden" value="{{ json.loads(taskarr[0])["Progress"] }}{{ json.loads(taskarr[0])["Task"] }}" name="{{ taskcounter }}alternate{{ student.student_id }}" required>
