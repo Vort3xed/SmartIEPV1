@@ -1037,7 +1037,7 @@ def signin():
 			login_user(user)
 			current_user.account_id = user.account_id
 			#If the user exists and the password is correct, log the user in and redirect them to the accounts page
-			return redirect(url_for('main.accounts'))
+			return redirect(url_for('main.students'))
 
 	return render_template("login.html")
 #Route 13: Sign in. This method renders its own page.
