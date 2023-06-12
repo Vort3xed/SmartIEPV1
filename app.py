@@ -12,7 +12,6 @@ from flask_toastr import Toastr
 import psycopg2
 import os
 from datetime import date
-from stringManipulatorv2 import *
 #Import wastelands
 
 db = SQLAlchemy()
@@ -39,14 +38,14 @@ toastr = Toastr(app)
 #Create a toastr object and initialize the flask app with it
 
 MAX_GOALS = 100
+PERMANENT_COUNTER = 0
 #Maximum possible amount of goals that can be created
 
 # STUDENT_LOG_NAME = ""
 # STUDENT_LOG_ID = 1
 #The ID of the student that is currently being logged
 
-STUDENT_TASK_NAME = ""
-STUDENT_TASK_ID = 1
+# STUDENT_TASK_ID = 1
 # CURRENT_PAGE = 'students'
 
 CASE_MANAGER_FILTER = "NO FILTER"
@@ -761,18 +760,17 @@ def expandtasks():
 		#Query the student to be modified
 
 		if query_student:
-			global STUDENT_TASK_ID
-			STUDENT_TASK_ID = query_student.student_id
+			session['task_id'] = query_student.student_id
 
 			students = Students.query.all()
 			session['page'] = 'tasks'
-			return(render_template("tasks.html", students=students, student_task_id=STUDENT_TASK_ID))
+			return(render_template("tasks.html", students=students, student_task_id=session.get('task_id')))
 		else:
 			flash({'title': "SmartIEP:", 'message': "Cannot expand tasks!"}, 'error')
 			session['page'] = 'students'
 			return redirect(url_for('main.students'))
 	students = Students.query.all()
-	return(render_template("tasks.html", students=students, student_task_id=STUDENT_TASK_ID))
+	return(render_template("tasks.html", students=students, student_task_id=session.get('task_id')))
 
 @main.route("/settaskstudentid", methods=('GET', 'POST'))
 @login_required
@@ -782,13 +780,10 @@ def settaskstudentid():
 		
 		student = Students.query.filter_by(name=button_value).first()
 
-		global STUDENT_TASK_ID
-		STUDENT_TASK_ID = student.student_id
+		session['task_id'] = student.student_id
 
 		return redirect(url_for('main.expandtasks'))
 	
-PERMANENT_COUNTER = 0
-
 @main.route("/modifylogs", methods=('GET', 'POST'))
 @login_required
 def modifylogs():
