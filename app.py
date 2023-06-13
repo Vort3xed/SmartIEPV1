@@ -1247,7 +1247,7 @@ def generate_spreadsheet(student):
 	student_iep = BytesIO()
 	workbook.save(student_iep)
 	student_iep.seek(0)
-	return send_file(student_iep, download_name="Student IEP Data.xlsx", as_attachment=True)
+	return send_file(student_iep, download_name=student.name+"'s IEP Data.xlsx", as_attachment=True)
 
 if __name__ == '__main__':
 	app.run(debug=True)
