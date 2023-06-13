@@ -12,7 +12,7 @@ def generate_spreadsheet(student):
 	sheet.column_dimensions['A'].width = 30
 	sheet.column_dimensions['B'].width = 50
 
-	sheet.title = "Student IEP Data"
+	sheet.title = student.name + "'s IEP Data"
 	sheet['A1'] = "Student IEP Data"
 	sheet['A1'].font = Font(size=20, bold=True)
 	sheet['A2'] = "School ID: " + str(student.school_id)

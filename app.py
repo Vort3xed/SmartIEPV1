@@ -741,7 +741,7 @@ def genGraphParams(student_log_id):
 	if (student):
 		json_parcels = student.logs[:-1].split("|")
 		for json_unit in json_parcels:
-			if (json.loads(json_unit)['Data'] != ""):
+			if (json_unit != "" and json.loads(json_unit)['Data'] != ""):
 				data.append((json.loads(json_unit)['Date'],json.loads(json_unit)['Data']))
 	return data
 	#generate labels and data then parse that to logs page and render graphs 

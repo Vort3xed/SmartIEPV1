@@ -136,7 +136,7 @@
                                         <div style="display: flex;">
                                             <div class="form-group">
                                                 <label for="logmoddob">Date</label>
-                                                <input type="date" value="2007-01-01" class="form-control" name="logmoddob{{ json.loads(json_unit)['ID'] }}" id="logmoddob" required>
+                                                <input type="date" value="{{ get_date() }}" class="form-control" name="logmoddob{{ json.loads(json_unit)['ID'] }}" id="logmoddob" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="logmodlog">Log</label>
