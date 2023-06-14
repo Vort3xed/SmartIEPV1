@@ -40,6 +40,7 @@
         <div class="m-4">
             <div class="container mt-3 border border-2 border-light rounded shadow p-3 mb-5 bg-white rounded">
             <form class="mt-2" style="text-align: center" method = "post" action="/register">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <label for="regcallname">Name</label>
                 <div class="form-group input-group">
                     <input class="form-control" name="regcallname" id="regcallname"
@@ -68,14 +69,6 @@
             </form>
             </div>
         </div>
-
-        <!-- {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="notification is-danger border border-secondary border-3" style="width: 50%; position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                    {{ messages[0] }}. Go to <a href="/">login page</a>.
-                </div>
-            {% endif %}
-        {% endwith %} -->
         <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     </body>

@@ -104,6 +104,7 @@
                     <div style="text-align: center;">
                         <h1 class="p-2">Expanded Tasks: {% if students|length > 0 and hasattr(retrieve_student(student_task_id),'name') %} {{ retrieve_student(student_task_id).name }} {% endif %}</h1>
                         <form method = "post" action="/settaskstudentid">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <label for="selectstudent">Filter Students:</label>
                             <input type="text" id="searchInput" onkeyup="filterOptions()" placeholder="Search...">
                             <select id="selectstudent" name="selectstudent" onchange="this.form.submit()" required>
@@ -121,6 +122,7 @@
                     <div>
                         <div class="m-2">
                             <form method="post" action="/addgoal" onsubmit="return validateGoalInput();">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <div class="input-group mb-2">
                                     <input type="text" class="form-control" name="add_goal{{ retrieve_student(student_task_id).student_id }}" id="add_goal" placeholder="Add Goals" required>
                                     <select class="" name="goalcategory{{ retrieve_student(student_task_id).student_id }}" id="goalcategory">
@@ -145,6 +147,7 @@
                                     {% set taskcounter = taskcounter + 1 %}
                                     <p id="remove_goal_text{{ retrieve_student(student_task_id).student_id }}" style="margin-bottom: 0rem;" class="{% if json.loads(taskarr[0])["Progress"] == 0 %}text-secondary{% elif json.loads(taskarr[0])["Progress"] == 1 %}text-warning{% elif json.loads(taskarr[0])["Progress"] == 2 %}text-success{% endif %}">({{ json.loads(taskarr[0])["Category"] }}) {{ json.loads(taskarr[0])["Task"] }}</p>
                                     <form method="post" action="/removegoal">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <input type="hidden" value="{{ json.loads(taskarr[0])["Task"] }}" name="{{loop.index}}remove_goal{{ retrieve_student(student_task_id).student_id }}" required>
                                         <input type="hidden" value="{{ json.loads(taskarr[0])["Progress"] }}{{ json.loads(taskarr[0])["Task"] }}" name="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}" required>
                                         <div class="input-group">
@@ -156,13 +159,13 @@
                                     <ul>
                                         {% set counter = 1%}
                                         {% for objective in taskarr[1:] %}
-                                            <!-- <li>{{ taskarr[loop.index] }}</li> -->
                                             {% set taskcounter = taskcounter + 1 %}
                                             <li>
                                                 <p id="remove_obj_text{{ retrieve_student(student_task_id).student_id }}" style="margin-bottom: 0rem;" class="{% if json.loads(taskarr[loop.index])["Progress"] == 0 %}text-secondary{% elif json.loads(taskarr[loop.index])["Progress"] == 1 %}text-warning{% elif json.loads(taskarr[loop.index])["Progress"] == 2 %}text-success{% endif %}">{{ json.loads(taskarr[loop.index])["Task"] }}</p>
 
                                                 <div>
                                                     <form method="post" action="/removeobjective">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                                         <input type="hidden" value="{{ json.loads(taskarr[loop.index])["Task"] }}" name="{{loop.index}}remove_obj{{ retrieve_student(student_task_id).student_id }}remove_obj{{counter}}" id="{{loop.index}}remove_obj{{ retrieve_student(student_task_id).student_id }}" required>
                                                         <input type="hidden" value="{{ json.loads(taskarr[loop.index])["Progress"] }}{{ json.loads(taskarr[loop.index])["Task"] }}" name="{{ taskcounter }}alternate{{ retrieve_student(student_task_id).student_id }}" required>
                                                         <div class="input-group">
@@ -171,16 +174,15 @@
                                                             
                                                         </div>
                                                     </form>
-                                                </div>
-                                                
+                                                </div>         
                                             </li>
                                             
                                         {% endfor %}
                                         {% set counter = counter + 1%}
                                     </ul>
     
-                                    <!-- HERE -->
                                     <form method="post" class="m-2" action="/addobjectives" onsubmit="return validateObjectiveInput();">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <div class="input-group mb-3">
                                           <input type="text" class="form-control" name="{{ retrieve_student(student_task_id).student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives" required>
                                           <button class="btn btn-success" type="submit" name="add_objective" value="{{ retrieve_student(student_task_id).student_id }};{{ loop.index }}">+</button>      

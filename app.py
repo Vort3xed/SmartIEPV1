@@ -1,5 +1,6 @@
 import re
 import json
+from flask_wtf.csrf import CSRFProtect
 from flask import Flask, render_template, request, redirect, url_for, flash, Blueprint, send_file, session
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -34,6 +35,9 @@ login_manager.login_view = 'auth.signin'
 login_manager.init_app(app)
 #Create a login manager and set the login view to the sign in page. Then initialize the flask app with the login manager
 
+CSRFProtect(app)
+#Create a CSRF object and initialize the flask app with it. This will be used to defend against CSFR attacks
+
 toastr = Toastr(app)
 #Create a toastr object and initialize the flask app with it
 
@@ -47,6 +51,10 @@ PERMANENT_COUNTER = 0
 
 # STUDENT_TASK_ID = 1
 # CURRENT_PAGE = 'students'
+
+# Enabled Autoescape for Jinja2, should prevent against XSS attacks
+app.jinja_env.autoescape = True
+
 
 CASE_MANAGER_FILTER = "NO FILTER"
 GRADE_LEVEL_FILTER = "NO FILTER"
@@ -103,7 +111,6 @@ def accounts():
 	accounts = Accounts.query.all()
 	return render_template('accounts.html',accounts=accounts)
 	#Query all students and render the accounts page with the accounts queried
-#Route 3: Accounts page
 
 @main.route("/accountmods", methods=('GET', 'POST'))
 @login_required
@@ -119,6 +126,7 @@ def accountmods():
 			db.session.delete(account)
 			db.session.commit()
 			return redirect(url_for('main.settings'))
+			#Delete the account and redirect back to settings page
 		else:
 			flash({'title': "SmartIEP:", 'message': "Cannot delete account!"}, 'error')
 			return redirect(url_for('main.settings'))
@@ -151,10 +159,9 @@ def changepasswd():
 @login_required
 def students():
 	if request.method == 'POST':
-		# global CURRENT_PAGE
-		# CURRENT_PAGE = 'students'
 		button_value = request.form["submit_button"]
 		#Get the value of the button that was pressed
+
 		modify_student = re.sub("\D", "", button_value)
 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
 		
@@ -185,10 +192,9 @@ def students():
 				query_student.casemanager = casemanager
 			if last_annual_review:
 				query_student.last_annual_review = last_annual_review
-			#Set the query_student's fields to the values in the text boxes
+			#Set the query_student's fields to the values in the text boxes. If no value is found, do nothing.
 
 			db.session.commit()
-			students = Students.query.all()
 			accounts = Accounts.query.all()
 			# return render_template('students.html',students=students,accounts=accounts)
 			if session['page'] == 'students':
@@ -201,9 +207,7 @@ def students():
 			flash({'title': "SmartIEP:", 'message': "Cannot modify student!"}, 'error')
 	session['page'] = 'students'
 	accounts = Accounts.query.all()
-	students = Students.query.all()
 	return render_template('students.html',students=studentsByFilter(),accounts=accounts)
-#Route 4: Students page
 
 @main.route("/studentinfo", methods=('GET', 'POST'))
 @login_required
@@ -212,7 +216,7 @@ def studentinfo():
 	students = Students.query.all()
 	accounts = Accounts.query.all()
 	return(render_template("studentinfo.html",students=students,accounts=accounts))
-
+	#Render the student info page with all students and all accounts for the drop down menu
 
 @main.route("/setfilter", methods=('GET', 'POST'))
 @login_required
@@ -232,18 +236,23 @@ def setfilter():
 def studentsByFilter():
 	all_students = Students.query.all()
 	students_to_display = []
+
+	#If case manager filter is not set to no filter, but the grade level filter is, use only the case manager filter
 	if (CASE_MANAGER_FILTER != "NO FILTER" and GRADE_LEVEL_FILTER == "NO FILTER"):
 		for student in all_students:
 			if student.casemanager == CASE_MANAGER_FILTER:
 				students_to_display.append(student)
+	#If grade level filter is not set to no filter, but the case manager filter is, use only the grade level filter
 	elif (GRADE_LEVEL_FILTER != "NO FILTER" and CASE_MANAGER_FILTER == "NO FILTER"):
 		for student in all_students:
 			if student.grade == int(GRADE_LEVEL_FILTER):
 				students_to_display.append(student)
+	#If both filters are set to no filter, use all students
 	elif (CASE_MANAGER_FILTER != "NO FILTER" and GRADE_LEVEL_FILTER != "NO FILTER"):
 		for student in all_students:
 			if student.casemanager == CASE_MANAGER_FILTER and student.grade == int(GRADE_LEVEL_FILTER):
 				students_to_display.append(student)
+	#If both filters are active, only display students that match both filters
 	elif (CASE_MANAGER_FILTER == "NO FILTER" and GRADE_LEVEL_FILTER == "NO FILTER"):
 		students_to_display = all_students
 
@@ -257,17 +266,16 @@ def alternateprogress():
 		data = button_value.split("alternate")
 		element_id = data[0]
 		modify_student = data[1]
+		#Get the student ID of the student to be modified and the task key of the task to be modified
 
 		task_to_alternate = request.form.get(element_id+"alternate"+modify_student)
-		print(task_to_alternate)
+		#Retrieve the text box value for the task to be modified
+
 		query_student = Students.query.filter_by(student_id=modify_student).first()
 
 		if (query_student.tasks.find(task_to_alternate[1:]) > -1):
-			print(task_to_alternate[0])
 			match task_to_alternate[0]:
 				case "0":
-					print("case entered")
-					# set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "1" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
 					query_student.tasks = set_progressv2(task_to_alternate[1:],1,query_student.tasks)
 					db.session.commit()
 					if (session['page'] == 'students'):
@@ -276,7 +284,6 @@ def alternateprogress():
 						return redirect(url_for('main.expandtasks'))
 					return redirect(url_for('main.students'))
 				case "1":
-					# set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "2" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
 					query_student.tasks = set_progressv2(task_to_alternate[1:],2,query_student.tasks)
 					db.session.commit()
 					if (session['page'] == 'students'):
@@ -285,7 +292,6 @@ def alternateprogress():
 						return redirect(url_for('main.expandtasks'))
 					return redirect(url_for('main.students'))
 				case "2":
-					# set_progress = query_student.tasks[:query_student.tasks.find(task_to_alternate[1:]) - 4] + "0" + query_student.tasks[query_student.tasks.find(task_to_alternate[1:]) - 4 + 1:]
 					query_student.tasks = set_progressv2(task_to_alternate[1:],0,query_student.tasks)
 					db.session.commit()
 					if (session['page'] == 'students'):
@@ -301,66 +307,68 @@ def alternateprogress():
 		return redirect(url_for('main.expandtasks'))
 	return redirect(url_for('main.students'))
 
+# @main.route("/setnodata", methods=('GET','POST'))
+# @login_required
+# def setnodata():
+# 	if request.method == 'POST':
+# 		button_value = request.form["setnodata"]
+# 		modify_student = re.sub("\D", "", button_value)
 
-@main.route("/setnodata", methods=('GET','POST'))
-@login_required
-def setnodata():
-	if request.method == 'POST':
-		button_value = request.form["setnodata"]
-		modify_student = re.sub("\D", "", button_value)
+# 		user_input = request.form["set_progress" + modify_student]
 
-		user_input = request.form["set_progress" + modify_student]
+# 		query_student = Students.query.filter_by(student_id=modify_student).first()
 
-		query_student = Students.query.filter_by(student_id=modify_student).first()
+# 		if (query_student.tasks.find(user_input) > -1):
+# 			set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "0" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
+# 			query_student.tasks = set_progress
+# 			db.session.commit()
+# 		else:
+# 			flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
 
-		if (query_student.tasks.find(user_input) > -1):
-			set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "0" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
-			query_student.tasks = set_progress
-			db.session.commit()
-		else:
-			flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
+# 		return redirect(url_for('main.students'))
 
-		return redirect(url_for('main.students'))
+# @main.route("/setinprogress", methods=('GET','POST'))
+# @login_required
+# def setinprogress():
+# 	if request.method == 'POST':
+# 		button_value = request.form["setinprogress"]
+# 		modify_student = re.sub("\D", "", button_value)
 
-@main.route("/setinprogress", methods=('GET','POST'))
-@login_required
-def setinprogress():
-	if request.method == 'POST':
-		button_value = request.form["setinprogress"]
-		modify_student = re.sub("\D", "", button_value)
+# 		user_input = request.form["set_progress" + modify_student]
 
-		user_input = request.form["set_progress" + modify_student]
+# 		query_student = Students.query.filter_by(student_id=modify_student).first()
 
-		query_student = Students.query.filter_by(student_id=modify_student).first()
+# 		if (query_student.tasks.find(user_input) > -1):
+# 			set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "1" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
+# 			query_student.tasks = set_progress
+# 			db.session.commit()
+# 		else:
+# 			flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
 
-		if (query_student.tasks.find(user_input) > -1):
-			set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "1" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
-			query_student.tasks = set_progress
-			db.session.commit()
-		else:
-			flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
-
-		return redirect(url_for('main.students'))
+# 		return redirect(url_for('main.students'))
 	
-@main.route("/setcomplete", methods=('GET','POST'))
-@login_required
-def setcomplete():
-	if request.method == 'POST':
-		button_value = request.form["setcomplete"]
-		modify_student = re.sub("\D", "", button_value)
+# @main.route("/setcomplete", methods=('GET','POST'))
+# @login_required
+# def setcomplete():
+# 	if request.method == 'POST':
+# 		button_value = request.form["setcomplete"]
+# 		modify_student = re.sub("\D", "", button_value)
+# 		#Retrieve student ID and task key from the button value. The button value is formatted as "studentID;taskKey"
 
-		user_input = request.form["set_progress" + modify_student]
+# 		user_input = request.form["set_progress" + modify_student]
+# 		#Get the value in the text box for the task to be set to complete. Each text box is linked to each student by the student ID.
 
-		query_student = Students.query.filter_by(student_id=modify_student).first()
+# 		query_student = Students.query.filter_by(student_id=modify_student).first()
 
-		if (query_student.tasks.find(user_input) > -1):
-			set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "2" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
-			query_student.tasks = set_progress
-			db.session.commit()
-		else:
-			flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
+# 		if (query_student.tasks.find(user_input) > -1):
+# 			set_progress = query_student.tasks[:query_student.tasks.find(user_input) - 4] + "2" + query_student.tasks[query_student.tasks.find(user_input) - 4 + 1:]
+# 			query_student.tasks = set_progress
+# 			db.session.commit()
+# 			#Update tasks field in the database with the new task progress
+# 		else:
+# 			flash({'title': "SmartIEP:", 'message': "Task does not exist!"}, 'error')
 
-		return redirect(url_for('main.students'))
+# 		return redirect(url_for('main.students'))
 
 @main.route("/exportstudent", methods=('GET', 'POST'))
 @login_required
@@ -374,39 +382,6 @@ def exportstudent():
 		#Query the student to be modified
 
 		return generate_spreadsheet(query_student)
-#Route 5: Export student data. This method does not render its own page.
-
-# @main.route("/addgoal", methods=('GET', 'POST'))
-# @login_required
-# def addGoals():
-# 	if request.method == 'POST':
-# 		button_value = request.form["submit_goal"]
-# 		modify_student = re.sub("\D", "", button_value)
-# 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
-
-# 		goal_to_append = request.form["add_goal"+modify_student]
-# 		#Get the value in the text box for the goal to be added. Each text box is linked to each student by the student ID.
-
-# 		query_student = Students.query.filter_by(student_id=modify_student).first()
-# 		#Query the student to be modified
-
-# 		if query_student:
-# 			array_index = find_empty_array(parse_student_tasks(query_student.tasks))
-# 			formatted_task = "0" + "["+str(array_index)+"]" + goal_to_append + ";"
-# 			#Format the goal to be added to the student's tasks field
-
-# 			query_student.tasks = query_student.tasks + formatted_task
-# 			db.session.commit()
-# 			#Add the formatted task to the student's tasks and commit the changes to the database
-
-# 			if (session['page'] == 'students'):
-# 				return redirect(url_for('main.students'))
-# 			elif (session['page'] == 'tasks'):
-# 				return redirect(url_for('main.expandtasks'))
-# 			return redirect(url_for('main.students'))
-# 		else:
-# 			flash({'title': "SmartIEP:", 'message': "Cannot modify student!"}, 'error')
-# #Route 5: Add goal to student. This method does not render its own page. 
 
 @main.route("/addgoal", methods=('GET', 'POST'))
 @login_required
@@ -439,48 +414,9 @@ def addGoals():
 			elif (session['page'] == 'tasks'):
 				return redirect(url_for('main.expandtasks'))
 			return redirect(url_for('main.students'))
+			#Redirect to the page found in the session variable
 		else:
 			flash({'title': "SmartIEP:", 'message': "Cannot modify student!"}, 'error')
-#Route 5: Add goal to student. This method does not render its own page. 
-
-# @main.route("/addobjectives", methods=('GET', 'POST'))
-# @login_required
-# def addObjectives():
-# 	if request.method == 'POST':
-# 		button_value = request.form["add_objective"]
-# 		student_and_goal = button_value.split(";")
-# 		#Collect student ID and goal key from the button value. The button value is formatted as "studentID;goalKey"
-
-# 		modify_student = student_and_goal[0]
-# 		goal_key = student_and_goal[1]
-# 		#Split the button value into the student ID and goal key
-
-# 		objective_to_add = request.form[modify_student+"obj"+goal_key]
-# 		#Get the value in the text box for the objective to be added. Each text box is linked to each student by the student ID and each goal by the goal key.
-
-# 		query_student = Students.query.filter_by(student_id=modify_student).first()
-# 		#Query the student to be modified
-
-# 		if query_student:
-# 			formatted_task = "0("+str(int(goal_key)-1)+")"+objective_to_add+";"
-# 			query_student.tasks = query_student.tasks + formatted_task
-# 			#Format the objective to be added to the student's tasks field
-
-# 			db.session.commit()
-# 			if (session['page'] == 'students'):
-# 				return redirect(url_for('main.students'))
-# 			elif (session['page'] == 'tasks'):
-# 				return redirect(url_for('main.expandtasks'))
-# 			return redirect(url_for('main.students'))
-# 			#Add the formatted objective to the student's tasks and commit the changes to the database
-# 		else:
-# 			flash({'title': "SmartIEP:", 'message': "Cannot remove objective!"}, 'error')
-# 			if (session['page'] == 'students'):
-# 				return redirect(url_for('main.students'))
-# 			elif (session['page'] == 'tasks'):
-# 				return redirect(url_for('main.expandtasks'))
-# 			return redirect(url_for('main.students'))
-# #Route 6: Add objective to goal. This method does not render its own page.
 
 @main.route("/addobjectives", methods=('GET', 'POST'))
 @login_required
@@ -521,57 +457,7 @@ def addObjectives():
 			elif (session['page'] == 'tasks'):
 				return redirect(url_for('main.expandtasks'))
 			return redirect(url_for('main.students'))
-#Route 6: Add objective to goal. This method does not render its own page.
-
-# @main.route("/removegoal", methods=('GET', 'POST'))
-# @login_required
-# def removeGoals():
-# 	if request.method == 'POST':
-# 		button_value = request.form["remove_goal"]
-# 		data = button_value.split("remove")
-# 		element_id = data[0]
-# 		modify_student = data[1]
-# 		# modify_student = re.sub("\D", "", button_value)
-# 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
-
-# 		# goal_to_remove = request.form["remove_goal"+modify_student]
-# 		goal_to_remove = request.form.get(element_id+"remove_goal"+modify_student)
-# 		print(element_id+"remove_goal"+modify_student)
-# 		print(goal_to_remove)
-# 		#Get the value in the text box for the goal to be removed. Each text box is linked to each student by the student ID.
-
-# 		query_student = Students.query.filter_by(student_id=modify_student).first()
-# 		#Query the student to be modified
-
-# 		if goal_to_remove in query_student.tasks and is_goal(query_student.tasks, goal_to_remove):
-# 			#Check if the goal to be removed exists in the student's tasks and if it is a goal
-# 			if query_student:
-# 				clean_tasks = poachGoal(query_student.tasks,goal_to_remove)
-# 				#Remove the goal and the objectives associated with it from the student's tasks
-
-# 				query_student.tasks = clean_tasks
-# 				#Set the student's tasks to equal the cleaned tasks
-
-# 				db.session.commit()
-# 				#return redirect(url_for('main.students'))
-# 				accounts = Accounts.query.all()
-# 				# return render_template('students.html',students=Students.query.all(),accounts=accounts)
-
-# 				if (session['page'] == 'students'):
-# 					return redirect(url_for('main.students'))
-# 				elif (session['page'] == 'tasks'):
-# 					return redirect(url_for('main.expandtasks'))
-# 				return redirect(url_for('main.students'))	
-# 				#Commit the changes to the database and render the students page
-# 			else:
-# 				flash({'title': "SmartIEP:", 'message': "Cannot remove goal!"}, 'error')
-# 		else:
-# 			flash({'title': "SmartIEP:", 'message': "Goal to remove does not exist!"}, 'error')
-# 			return redirect(url_for('main.students'))
-		
-# 	accounts = Accounts.query.all()
-# 	return render_template('students.html',students=Students.query.all(),accounts=accounts)
-# #Route 7: Remove goal from student. This method does not render its own page.
+			#Render a page based on what page is found in the session variable
 
 @main.route("/removegoal", methods=('GET', 'POST'))
 @login_required
@@ -619,49 +505,6 @@ def removeGoals():
 		
 	accounts = Accounts.query.all()
 	return render_template('students.html',students=Students.query.all(),accounts=accounts)
-#Route 7: Remove goal from student. This method does not render its own page.
-
-
-# @main.route("/removeobjective", methods=('GET', 'POST'))
-# @login_required
-# def removeobjective():
-# 	if request.method == 'POST':
-# 		button_value = request.form["remove_obj"]
-
-# 		data = button_value.split("remove")
-		
-# 		modify_student = data[1]
-# 		student_key = data[0]
-# 		goal_key = data[2]
-# 		# modify_student = re.sub("\D", "", button_value)
-# 		#Remove all non-numeric characters from the button value to get the student ID. Student ID is linked to the number found in the button value.
-
-# 		obj_to_remove = request.form[student_key+"remove_obj"+modify_student+"remove_obj"+goal_key]
-# 		#Get the value in the text box for the objective to be removed. Each text box is linked to each student by the student ID.
-
-# 		query_student = Students.query.filter_by(student_id=modify_student).first()
-# 		#Query the student to be modified
-
-# 		if query_student and obj_to_remove in query_student.tasks and is_obj(query_student.tasks,obj_to_remove):
-# 			#Check if the objective to be removed exists in the student's tasks and if it is an objective
-# 			query_student.tasks = remove_string(query_student.tasks,obj_to_remove)
-
-# 			#Remove the objective from the student's tasks
-# 			db.session.commit()
-# 			if (session['page'] == 'students'):
-# 				return redirect(url_for('main.students'))
-# 			elif (session['page'] == 'tasks'):
-# 				return redirect(url_for('main.expandtasks'))
-# 			return redirect(url_for('main.students'))
-# 			#Commit the changes to the database and render the students page
-# 		else:
-# 			flash({'title': "SmartIEP:", 'message': "Objective to remove does not exist!"}, 'error')
-# 			if (session['page'] == 'students'):
-# 				return redirect(url_for('main.students'))
-# 			elif (session['page'] == 'tasks'):
-# 				return redirect(url_for('main.expandtasks'))
-# 			return redirect(url_for('main.students'))
-# #Route 8: Remove objective from student. This method does not render its own page.
 
 @main.route("/removeobjective", methods=('GET', 'POST'))
 @login_required
@@ -702,7 +545,7 @@ def removeobjective():
 			elif (session['page'] == 'tasks'):
 				return redirect(url_for('main.expandtasks'))
 			return redirect(url_for('main.students'))
-#Route 8: Remove objective from student. This method does not render its own page.
+			#Redirect a page based on what the current page in the session variable is
 
 @main.route("/logs", methods=('GET', 'POST'))
 @login_required
@@ -710,7 +553,6 @@ def logs():
 	if request.method == 'POST':
 		student_selected = request.form["selectstudent"]
 
-		
 		#Get the student selected from the drop down menu and set the global variable STUDENT_LOG_NAME to the student selected
 		session['log_name'] = student_selected
 
@@ -728,12 +570,10 @@ def logs():
 		#Render the progress logs page with the student selected and the student ID of the student selected
 	else:
 		students = Students.query.all()
-		# STUDENT_LOG_ID = students[0].student_id
 		data = genGraphParams(session.get('log_id'))
 		labels = [row[0] for row in data]
 		values = [row[1] for row in data]
 		return(render_template("progresslogs.html", students=students, student_log_id=session.get('log_id'), labels=labels, values=values))
-#Route 9: Progress logs. This method renders its own page.
 
 def genGraphParams(student_log_id):
 	student = Students.query.filter_by(student_id=student_log_id).first()
@@ -744,7 +584,7 @@ def genGraphParams(student_log_id):
 			if (json_unit != "" and json.loads(json_unit)['Data'] != ""):
 				data.append((json.loads(json_unit)['Date'],json.loads(json_unit)['Data']))
 	return data
-	#generate labels and data then parse that to logs page and render graphs 
+	#Generate labels and data then parse that to logs page and render graphs 
 
 @main.route("/expandtasks", methods=('GET', 'POST'))
 @login_required
@@ -761,13 +601,16 @@ def expandtasks():
 
 		if query_student:
 			session['task_id'] = query_student.student_id
+			session['page'] = 'tasks'
+			#Set session task id and page to the queried student's id and tasks page
 
 			students = Students.query.all()
-			session['page'] = 'tasks'
 			return(render_template("tasks.html", students=students, student_task_id=session.get('task_id')))
 		else:
 			flash({'title': "SmartIEP:", 'message': "Cannot expand tasks!"}, 'error')
 			session['page'] = 'students'
+			#Set session page to students page if the student cannot be queried
+
 			return redirect(url_for('main.students'))
 	students = Students.query.all()
 	return(render_template("tasks.html", students=students, student_task_id=session.get('task_id')))
@@ -777,10 +620,12 @@ def expandtasks():
 def settaskstudentid():
 	if request.method == 'POST':
 		button_value = request.form["selectstudent"]
+		#Get the student selected from the drop down menu and set the global variable STUDENT_TASK_NAME to the student selected
 		
 		student = Students.query.filter_by(name=button_value).first()
 
 		session['task_id'] = student.student_id
+		#Set the session task id to the queried student's id
 
 		return redirect(url_for('main.expandtasks'))
 	
@@ -793,6 +638,7 @@ def modifylogs():
 		log_text = request.form["logtext"]
 		log_future = request.form["logfuture"]
 		log_data = request.form["logdata"]
+		#Pull log information from front-end
 
 		modify_student = Students.query.filter_by(student_id=session.get('log_id')).first()
 		#Query the student to be modified
@@ -850,6 +696,7 @@ def editlogs():
 		log_date = request.form["logmoddob" + log_id]
 		log_future = request.form["logmodfuture" + log_id]
 		log_data = request.form["logmoddata" + log_id]
+		#Pull log information from front-end
 
 		modify_student = Students.query.filter_by(student_id=session.get('log_id')).first()
 		#Query the student to be modified
@@ -896,6 +743,7 @@ def viewlogs():
 		student = Students.query.filter_by(student_id=student_key).first()
 
 		session['log_id'] = student.student_id
+		#Set session log id to the selected student's id
 
 		return(redirect(url_for("main.logs")))
 

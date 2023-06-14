@@ -24,6 +24,7 @@
         </h1>
         <div class="m-4">
             <form class="mt-2" style="text-align: center" method = "post" action="/createstudent">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <!-- <div class="form-group">
                     <label for="stuid">I.D.</label>
                     <input class="form-control" name="stuid" id="stuid"

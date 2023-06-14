@@ -29,6 +29,7 @@
         <div class="container mt-3 border border-2 border-light rounded shadow p-3 mb-5 bg-white rounded">
             <div class="m-4">
                 <form class="mt-2" style="text-align: center" method = "post" action="/settings">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <label for="stuid">Student Database I.D</label>
                     <div class="input-group">
                         <input type="number" class="form-control" name="modid" id="modid" placeholder="I.D." required>
@@ -40,6 +41,7 @@
             </div>
             <div class="m-4">
                 <form class="mt-2" style="text-align: center" method = "post" action="/accountmods">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <label for="stuid">Account Management</label>
                     <div class="input-group">
                         <input type="number" class="form-control" name="account_id" id="account_id" placeholder="I.D." required>
@@ -47,6 +49,7 @@
                     </div>
                 </form>
                 <form class="mt-2" style="text-align: center" method="post" action="/changepasswd">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="input-group mt-2">
                         <input type="password" class="form-control" name="accountpass" id="accountpass" placeholder="Account Password (new password)" required>
                         <button class="btn btn-primary form-control">Change This Account's Password</button>

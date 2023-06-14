@@ -71,33 +71,12 @@
     <body>
 
         {{ toastr.include_toastr_js() }}
-        <!-- <div class="content">
-            
-        </div>
-
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header">
-              <img src="..." class="rounded mr-2" alt="...">
-              <strong class="mr-auto">Bootstrap</strong>
-              <small class="text-muted">11 mins ago</small>
-              <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="toast-body">
-              {{ messages[0] }}
-            </div>
-          </div>
-        {% endif %}
-        {% endwith %} -->
-
         <div class="content">
             <div class="m-4 border border-2 border-primary rounded">
                 <div class="row">
                     <div class="col">
                         <form class="m-4" method="post" action="/createstudent">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <h5>Create Student</h5>
                             <div class="form-group">
                                 <label for="stuname">Name</label>
@@ -116,20 +95,14 @@
                             </div>
                             <div class="form-group">
                                 <label for="studob">Date of Birth</label>
-                                <!-- <input class="form-control" name="studob" id="studob"
-                                    placeholder="Date of Birth" required> -->
                                 <input type="date" value="2007-01-01" class="form-control" name="studob" id="studob" required>
                             </div>
                             <div class="form-group">
                                 <label for="studisability">Disability</label>
-                                <!-- <input class="form-control" name="studob" id="studob"
-                                    placeholder="Date of Birth" required> -->
                                 <input class="form-control" name="studisability" id="studisability" placeholder="Disability" required>
                             </div>
                             <div class="form-group"> 
                                 <label for="stumanager">Case Manager</label>
-                                <!-- <input class="form-control" name="stumanager" id="stumanager"
-                                    placeholder="Case Manager" required> -->
                                 <select class="form-control" id="stumanager" name="stumanager" required>
                                     {% for account in accounts %}
                                     <option>{{ account.callname }}</option>
@@ -138,8 +111,6 @@
                             </div>
                             <div class="form-group">
                                 <label for="stulastreview">Last Annual Review</label>
-                                <!-- <input class="form-control" name="studob" id="studob"
-                                    placeholder="Date of Birth" required> -->
                                 <input type="date" value="{{ get_date() }}" class="form-control" name="stulastreview" id="stulastreview" required>
                             </div>
                             <div class="form-group">
@@ -149,11 +120,10 @@
                     </div>
                     <div class="col">
                         <form class="m-4" method="post" action="/setfilter">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <h5>Filter</h5>
                             <div class="form-group">
                                 <label for="stumanager">Case Manager</label>
-                                <!-- <input class="form-control" name="stumanager" id="stumanager"
-                                    placeholder="Case Manager" required> -->
                                 <select class="form-control" id="case_manager" name="case_manager" required>
                                     <option>NO FILTER</option>
                                     {% for account in accounts %}
@@ -163,9 +133,6 @@
                             </div>
                             <div class="form-group">
                                 <label for="stumanager">Grade</label>
-                                <!-- <input class="form-control" name="stumanager" id="stumanager"
-                                    placeholder="Case Manager" required> -->
-                                <!-- <input type="number" class="form-control" value="NO FILTER" name="grade_level" id="grade_level" placeholder="Grade"> -->
                                 <select class="form-control" id="grade_level" name="grade_level" required>
                                     <option>NO FILTER</option>
                                     <option>0</option>
@@ -194,28 +161,6 @@
             {% for student in students %}
                 <div style="height: 500px; overflow-y: scroll;" class="m-4 border border-2 border-primary rounded">
                     <h2 class="p-2" style="text-align: center">{{ student.name }}</h2>
-                    <!-- <ul>
-                        <li><b>Student Database ID:</b> #{{ student.student_id }}</li>
-                        <li><b>MCPS ID:</b> {{ student.school_id }}</li>
-                        <li><b>Grade:</b> {{ student.grade }}</li>
-                        <li><b>Date of Birth:</b> {{ student.dateofbirth }}</li>
-                        <li><b>Case Manager:</b> {{ student.casemanager }}</li>
-                    </ul> -->
-                    <!-- <div class="container">
-                        <div class="col">
-                            
-                                <b class="row">Student Database ID:</b> #{{ student.student_id }}
-                                <b class="row">MCPS ID:</b> {{ student.school_id }}
-                                <b class="row">Grade:</b> {{ student.grade }}
-                                <b class="row">Date of Birth:</b> {{ student.dateofbirth }}
-                            
-                            <div class="col">
-                                <b class="col">Case Manager:</b> {{ student.casemanager }}
-                                <b class="col">Disability:</b> {{ student.disability }}
-                                <b class="col">Last Annual Review:</b> {{ student.last_annual_review }}
-                            </div>
-                        </div>
-                    </div> -->
                     <table class="table table-borderless table-sm m-3 w-auto">
                         <tbody>
                             <tr>
@@ -243,26 +188,27 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M7.127 22.562l-7.127 1.438 1.438-7.128 5.689 5.69zm1.414-1.414l11.228-11.225-5.69-5.692-11.227 11.227 5.689 5.69zm9.768-21.148l-2.816 2.817 5.691 5.691 2.816-2.819-5.691-5.689z"/></svg>
                             </button>
                             <form class="m-1" method="post" action="/exportstudent">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <button class="btn btn-primary" name="export_button" value="export_button{{ student.student_id }}" type="submit">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="#FFFFFF" d="M12 21l-8-9h6v-12h4v12h6l-8 9zm9-1v2h-18v-2h-2v4h22v-4h-2z"/></svg>
                                 </button>
                             </form>
-                        <!-- </div>
-                        <div class="d-flex justify-content-center align-items-center"> -->
                             <form class="m-1" method="post" action="/viewlogs">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <button class="btn btn-primary" name="viewlog" value="viewlog{{ student.student_id }}" type="submit">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16"> <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/> </svg> Logs
                                 </button>
                             </form>
                             <form class="m-1" method="post" action="/expandtasks">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <button class="btn btn-primary" name="expandtasks" value="expandtasks{{ student.student_id }}" type="submit">
-                                    <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-clipboard-check" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0z"/> <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/> <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/> </svg> Tasks -->
                                     <svg fill="#000000" height="24" width="24" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path fill="#FFFFFF" d="M192,224c-17.672,0-32,14.328-32,32s14.328,32,32,32h128c17.672,0,32-14.328,32-32s-14.328-32-32-32H192z"></path> <path fill="#FFFFFF" d="M256,320h-64c-17.672,0-32,14.328-32,32s14.328,32,32,32h64c17.672,0,32-14.328,32-32S273.672,320,256,320z"></path> <path fill="#FFFFFF" d="M416,32h-80c0-17.674-11.938-32-26.668-32H202.668C187.938,0,176,14.326,176,32H96c-17.672,0-32,14.328-32,32v416 c0,17.672,14.328,32,32,32h320c17.672,0,32-14.328,32-32V64C448,46.328,433.672,32,416,32z M256,32c17.672,0,32,14.326,32,32 c0,17.673-14.328,32-32,32s-32-14.327-32-32C224,46.326,238.328,32,256,32z M384,448H128V96h48v32h160V96h48V448z"></path> </g> </g></svg> Tasks
                                 </button>
                             </form>
                         </div>
                         <div class="collapse" id="dropDownForm{{ student.student_id }}">
                             <form method = "post" action="/students">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <div class="form-group">
                                     <label for="boxmodname">Name</label>
                                     <input type="text" class="form-control" value="{{ student.name }}" name="boxmodname{{ student.student_id }}" id="boxmodname" placeholder="Enter name">
@@ -277,17 +223,14 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmoddob">Date of Birth</label>
-                                    <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
-                                    <input type="date" value="2007-01-01" class="form-control" value="{{ student.dateofbirth }}" name="boxmoddob{{ student.student_id }}" id="boxmoddob">
+                                    <input type="date" value="{{ student.dateofbirth }}" class="form-control" value="{{ student.dateofbirth }}" name="boxmoddob{{ student.student_id }}" id="boxmoddob">
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmoddisability">Disability</label>
-                                    <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
                                     <input type="text" class="form-control" value="{{ student.disability }}" name="boxmoddisability{{ student.student_id }}" id="boxmoddisability" placeholder="Enter disability">
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmodmanager">Case Manager</label>
-                                    <!-- <input type="text" class="form-control" name="boxmodmanager{{ student.student_id }}" id="boxmodmanager" placeholder="Enter Case Manager" required> -->
                                     <select class="form-control" id="boxmodmanager" value="{{ student.casemanager }}" name="boxmodmanager{{ student.student_id }}" required>
                                         {% for account in accounts %}
                                         <option>{{ account.callname }}</option>
@@ -296,7 +239,6 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="boxmodlastreview">Last Review</label>
-                                    <!-- <input type="text" class="form-control" name="boxmoddob{{ student.student_id }}" id="boxmoddob" placeholder="Enter date of birth" required> -->
                                     <input type="date" value="{{ get_date() }}" class="form-control" value="{{ student.last_annual_review }}" name="boxmodlastreview{{ student.student_id }}" id="boxmodlastreview" required>
                                 </div>
                                 <button type="submit" class="btn btn-primary mt-2" name="submit_button" value="submit{{ student.student_id }}">Submit</button>
@@ -304,9 +246,9 @@
                         </div>
                     </div>
 
-                    <!-- HERE -->
                     <div class="m-2">
                         <form method="post" action="/addgoal" onsubmit="return validateGoalInput();">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" name="add_goal{{ student.student_id }}" id="add_goal" placeholder="Add Goals" required>
                                 <select class="" name="goalcategory{{ student.student_id }}" id="goalcategory">
@@ -322,21 +264,6 @@
                                 <button type="submit" class="btn btn-success" name="submit_goal" value="submit{{ student.student_id }}">+</button>
                             </div>
                         </form>
-                        <!-- <form method="post" action="/removegoal">
-                            <div class="input-group mb-2">
-                                <input type="text" class="form-control" name="remove_goal{{ student.student_id }}" id="remove_goal" placeholder="Remove Task" required>
-                                <button type="submit" class="btn btn-danger" name="remove_goal" value="remove{{ student.student_id }}">Goal</button>
-                                <button type="submit" class="btn btn-danger" name="remove_obj" formaction="/removeobjective" value="remove_obj{{ student.student_id }}">Obj</button>
-                            </div>
-                        </form> -->
-                        <!-- <form method="post" action="/setprogress">
-                            <div class="input-group mb-2">
-                                <input type="text" class="form-control" name="set_progress{{ student.student_id }}" id="set_progress" placeholder="Update Task Progress" required>
-                                <button type="submit" class="btn btn-secondary" name="setnodata" formaction="/setnodata" value="setnodata{{ student.student_id }}">No Data</button>
-                                <button type="submit" class="btn btn-warning" name="setinprogress" formaction="/setinprogress" value="setinprogress{{ student.student_id }}">In Progress</button>
-                                <button type="submit" class="btn btn-success" name="setcomplete" formaction="/setcomplete" value="setcomplete{{ student.student_id }}">Complete</button>
-                            </div>
-                        </form> -->
                     </div>
                     {% set taskcounter = 1 %}
                         {% for taskarr in parse_student_tasksv2(student.tasks) if not taskarr|length == 0%}
@@ -345,6 +272,7 @@
                                     {% set taskcounter = taskcounter + 1 %}
                                     <p id="remove_goal_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if json.loads(taskarr[0])["Progress"] == 0 %}text-secondary{% elif json.loads(taskarr[0])["Progress"] == 1 %}text-warning{% elif json.loads(taskarr[0])["Progress"] == 2 %}text-success{% endif %}">({{ json.loads(taskarr[0])["Category"] }}) {{ json.loads(taskarr[0])["Task"] }}</p>
                                     <form method="post" action="/removegoal">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <input type="hidden" value="{{ json.loads(taskarr[0])["Task"] }}" name="{{loop.index}}remove_goal{{ student.student_id }}" required>
                                         <input type="hidden" value="{{ json.loads(taskarr[0])["Progress"] }}{{ json.loads(taskarr[0])["Task"] }}" name="{{ taskcounter }}alternate{{ student.student_id }}" required>
                                         <div class="input-group">
@@ -356,19 +284,17 @@
                                     <ul>
                                         {% set counter = 1%}
                                         {% for objective in taskarr[1:] %}
-                                            <!-- <li>{{ taskarr[loop.index] }}</li> -->
                                             {% set taskcounter = taskcounter + 1 %}
                                             <li>
                                                 <p id="remove_obj_text{{ student.student_id }}" style="margin-bottom: 0rem;" class="{% if json.loads(taskarr[loop.index])["Progress"] == 0 %}text-secondary{% elif json.loads(taskarr[loop.index])["Progress"] == 1 %}text-warning{% elif json.loads(taskarr[loop.index])["Progress"] == 2 %}text-success{% endif %}">{{ json.loads(taskarr[loop.index])["Task"] }}</p>
-
                                                 <div>
                                                     <form method="post" action="/removeobjective">
+                                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                                         <input type="hidden" value="{{ json.loads(taskarr[loop.index])["Task"] }}" name="{{loop.index}}remove_obj{{ student.student_id }}remove_obj{{counter}}" id="{{loop.index}}remove_obj{{ student.student_id }}" required>
                                                         <input type="hidden" value="{{ json.loads(taskarr[loop.index])["Progress"] }}{{ json.loads(taskarr[loop.index])["Task"] }}" name="{{ taskcounter }}alternate{{ student.student_id }}" required>
                                                         <div class="input-group">
                                                             <button type="submit" class="btn btn-sm {% if json.loads(taskarr[loop.index])["Progress"] == 0 %}btn-secondary{% elif json.loads(taskarr[loop.index])["Progress"] == 1 %}btn-warning{% elif json.loads(taskarr[loop.index])["Progress"] == 2 %}btn-success{% endif %}" name="alternate_button" formaction="/alternateprogress" value="{{ taskcounter }}alternate{{ student.student_id }}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bar-chart-line-fill" viewBox="0 0 16 16"> <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2z"/> </svg></button>
                                                             <button type="submit" class="btn btn-sm btn-danger" name="remove_obj" value="{{loop.index}}remove{{ student.student_id }}remove{{counter}}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg></button>
-                                                            
                                                         </div>
                                                     </form>
                                                 </div>
@@ -379,8 +305,8 @@
                                         {% set counter = counter + 1%}
                                     </ul>
     
-                                    <!-- HERE -->
                                     <form method="post" class="m-2" action="/addobjectives" onsubmit="return validateObjectiveInput();">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <div class="input-group mb-3">
                                           <input type="text" class="form-control" name="{{ student.student_id }}obj{{ loop.index }}" id="add_objective" placeholder="Objectives" required>
                                           <button class="btn btn-success" type="submit" name="add_objective" value="{{ student.student_id }};{{ loop.index }}">+</button>      
@@ -392,15 +318,6 @@
                 </div>
             {% endfor %}
         </div>
-        <!-- {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="notification is-danger border border-secondary border-3" 
-            style="width: 50%; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); 
-            text-align: center;">
-            {{ messages[0] }}.
-        </div>
-        {% endif %}
-        {% endwith %} -->
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>

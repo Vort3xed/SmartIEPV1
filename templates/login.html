@@ -40,6 +40,7 @@
         <div class="container mt-3 border border-2 border-light rounded shadow p-3 mb-5 bg-white rounded">
             <div class="m-4">
                 <form class="mt-2 col-md-auto" style="text-align: center" method="post" action="/signin">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="form-group">
                         <label for="logusername">Email address</label>
                         <input type="email" class="form-control col-md-auto" id="logusername"

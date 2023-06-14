@@ -66,21 +66,6 @@
         <div class="content">
             &nbsp;
             <h1 class="mt-5" style="text-align: center">Student Information</h1>
-            <!-- <div style="text-align: center">
-                
-                <form method = "post" action="/logs">
-                    <label for="selectstudent">Filter Students:</label>
-                    <input type="text" id="searchInput" onkeyup="filterOptions()" placeholder="Search...">
-                    <select id="selectstudent" name="selectstudent" onchange="this.form.submit()" required>
-                        <option selected disabled hidden>Select a Student</option>
-                        {% for student in students %}
-                        {% if students|length > 0 %}
-                        <option>{{ student.name }}</option>
-                        {% endif %}
-                        {% endfor %}
-                    </select>
-                </form>
-            </div> -->
             {% if students|length > 0 %}
             <div class="m-4">
                 <table class="table table-striped">
@@ -102,6 +87,7 @@
                         <tr>
                             <td>
                                 <form method = "post" action="/logs">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                     <input type="hidden" name="selectstudent" value="{{ student.name }}">
                                     <div class="input-group">
                                         <button type="button" class="btn btn-sm btn-light" data-toggle="collapse" data-target="#dropDownForm{{ student.student_id }}" aria-expanded="false" aria-controls="dropDownForm">
@@ -131,6 +117,7 @@
                             
                                 <div class="collapse" id="dropDownForm{{ student.student_id }}">
                                     <form method = "post" action="/students">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <div style="display: flex;">
                                             <div class="form-group">
                                                 <label for="boxmodname">Name</label>
@@ -180,15 +167,6 @@
             </div>
             {% endif %}
         </div>
-        <!-- {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="notification is-danger border border-secondary border-3" 
-            style="width: 50%; position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); 
-            text-align: center;">
-            {{ messages[0] }}. Go to <a href="/">login page</a>.
-        </div>
-        {% endif %}
-        {% endwith %} -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
