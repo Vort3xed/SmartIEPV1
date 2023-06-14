@@ -9,7 +9,9 @@
             </style>
 
         <title>SmartIEP</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet">
         <link rel="icon" type="image/x-icon" href="static\smallsmartieplogo.png">
         {{ toastr.include_jquery() }}
         {{ toastr.include_toastr_css() }}
@@ -17,7 +19,7 @@
     </head>
 
     <header>
-      {% include 'nav.html' %}
+        {% include 'nav.html' %}
     </header>
 
     <script>
@@ -37,25 +39,33 @@
         <h1 class="mt-5" style="text-align: center">
             Sign In
         </h1>
-        <div class="container mt-3 border border-2 border-light rounded shadow p-3 mb-5 bg-white rounded">
+        <div
+            class="container mt-3 border border-2 border-light rounded shadow p-3 mb-5 bg-white rounded">
             <div class="m-4">
-                <form class="mt-2 col-md-auto" style="text-align: center" method="post" action="/signin">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <form class="mt-2 col-md-auto" style="text-align: center"
+                    method="post" action="/signin">
+                    <input type="hidden" name="csrf_token"
+                        value="{{ csrf_token() }}" />
                     <div class="form-group">
                         <label for="logusername">Email address</label>
-                        <input type="email" class="form-control col-md-auto" id="logusername"
+                        <input type="email" class="form-control col-md-auto"
+                            id="logusername"
                             name="logusername" placeholder="Email">
                     </div>
                     <div class="form-group">
                         <label for="logpassword">Password</label>
                         <div class="input-group">
                             <input type="password" class="form-control"
-                            name="logpassword" id="logpassword" placeholder="Password">
-                            <input class="btn btn-sm btn-light border border-2" value="Show Password" type="button" onclick="myFunction()">
+                                name="logpassword" id="logpassword"
+                                placeholder="Password">
+                            <input class="btn btn-sm btn-light border border-2"
+                                value="Show Password" type="button"
+                                onclick="myFunction()">
                         </div>
                     </div>
                     <div class="form-group">
-                        <button type="submit" class="btn btn-default border border-secondary border-3">Submit</button>
+                        <button type="submit"
+                            class="btn btn-default border border-secondary border-3">Submit</button>
                     </div>
                 </form>
             </div>
@@ -69,9 +79,12 @@
         </div>
         {% endif %}
         {% endwith %} -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-	    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     </body>
 </html>
