@@ -20,12 +20,8 @@ db = SQLAlchemy()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'fa1(0nwar3'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///people.db'
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgressql://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://wzfngjfstkfzln:e38ae9c20d8874b1022fdf58b53afed4de288636a274b641a0e89452064ba7b7@ec2-44-215-40-87.compute-1.amazonaws.com:5432/d3749ss0lqr8hm'
-# SQLALCHEMY_DATABASE_URI = os.environ.get('postgres://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn').replace("://", "ql://", 1)
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('postgres://xmvleqgwilzadg:ec90bb70ab8ad3961a80cc29cab40682fb878bf219e176082f11dcfe8cfcd2df@ec2-3-208-74-199.compute-1.amazonaws.com:5432/dchctetf9iqttn').replace("://", "ql://", 1)
-#Create and configure flask app
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
 db.init_app(app)
 #Initialize the flask app with the database
