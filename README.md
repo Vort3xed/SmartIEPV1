@@ -2,4 +2,8 @@
 Simple database webapp for student IEP's
 
 ## Please note:
-Due to security risks, the DATABASE_URI has been changed on heroku. This means that the website will not be able to connect to the PostgreSQL database and will not function properly. This functionality will be re-implemented at the end of August. 
+~~Due to security risks, the DATABASE_URI has been changed on heroku. This means that the website will not be able to connect to the PostgreSQL database and will not function properly. This functionality will be re-implemented at the end of August.~~
+
+SMARTIEP IS BACK UP!!! The database (and app) are now both deployed on render.com. The app is currently running on a free tier, so it may take a few seconds to load. If you have any questions, please contact me.
+
+https://smartiep.onrender.com
