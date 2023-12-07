@@ -13,6 +13,7 @@ from flask_toastr import Toastr
 import psycopg2
 import os
 from datetime import date
+from dotenv import load_dotenv
 #Import wastelands
 
 db = SQLAlchemy()
@@ -20,6 +21,8 @@ db = SQLAlchemy()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'fa1(0nwar3'
+
+load_dotenv()
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 
@@ -98,7 +101,7 @@ def home():
 
 @main.route("/contactus")
 def contactus():
-	return render_template("contactus.html")
+	return render_template("contactusv2.html")
 #Route 2: Contact us page
 
 @main.route("/accounts")

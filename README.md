@@ -7,3 +7,13 @@ Simple database webapp for student IEP's
 SMARTIEP IS BACK UP!!! The database (and app) are now both deployed on render.com. The app is currently running on a free tier, so it may take a few seconds to load. If you have any questions, please contact me.
 
 https://smartiep.onrender.com
+
+## Future Reference:
+python3 -m flask shell
+from app import Accounts
+from werkzeug.security import generate_password_hash
+account = Accounts(callname='administrator',username='administrator@mcpsmd.net',password=generate_password_hash('password'))
+db.session.add(account)
+db.session.commit()
+
+## Place EXTERNAL database URI into .env
