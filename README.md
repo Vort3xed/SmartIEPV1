@@ -9,11 +9,16 @@ SMARTIEP IS BACK UP!!! The database (and app) are now both deployed on render.co
 https://smartiep.onrender.com
 
 ## Future Reference:
-- python3 -m flask shell
-- from app import Accounts
-- from werkzeug.security import generate_password_hash
-- account = Accounts(callname='administrator',username='administrator@mcpsmd.net',password=generate_password_hash('pword'))
-- db.session.add(account)
-- db.session.commit()
+```
+python3 -m flask shell
+from app import Students, Accounts
+db.create_all()
+db.session.commit()
+from werkzeug.security import generate_password_hash
+account = Accounts(callname='administrator',username='administrator@mcpsmd.net',password=generate_password_hash('pword'))
+db.session.add(account)
+db.session.commit()
+```
 
-### Place EXTERNAL database URI into .env
+### Place EXTERNAL database URI into .env and in render environments
+### Ensure the address is modified from "postgres://" to "postgresql://"
