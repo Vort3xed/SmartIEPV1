@@ -12,7 +12,7 @@ https://smartiep.onrender.com
 python3 -m flask shell
 from app import Accounts
 from werkzeug.security import generate_password_hash
-account = Accounts(callname='administrator',username='administrator@mcpsmd.net',password=generate_password_hash('password'))
+account = Accounts(callname='admin',username='admin@mcpsmd.net',password=generate_password_hash('password'))
 db.session.add(account)
 db.session.commit()
 
